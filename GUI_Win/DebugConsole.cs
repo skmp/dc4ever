@@ -279,36 +279,45 @@ namespace System
 	public class DebugConsole : TraceListener
 	{
 
-
+#if nrt
 		public DebugConsoleWrapper DebugForm = new DebugConsoleWrapper();
-		
-		// if this parameter is set to true, a call to WriteLine will always create a new row
+#else	
+        public DebugConsoleWrapper DebugForm ;
+#endif
+        // if this parameter is set to true, a call to WriteLine will always create a new row
 		// (if false, it may be appended to the current buffer created with some Write calls)
 		public bool UseCrWl = true;
 
 		public DebugConsole() 
 		{
+#if nrt
 			DebugForm.Show();
+#endif
 		}
 
 		public void Init(bool UseDebugOutput, bool UseCrForWriteLine)
 		{
+            #if nrt
 			if (UseDebugOutput==true)
 				Debug.Listeners.Add(this);
 			else
 				Trace.Listeners.Add(this);
 
 			this.UseCrWl = UseCrForWriteLine;
+#endif
 		}
 
 		override public void Write(string message) 
 		{   
+            #if nrt
 			DebugForm.Buffer.Append(message);
 			DebugForm.UpdateCurrentRow(false);
+#endif
 		}
 
 		override public void WriteLine(string message) 
 		{
+            #if nrt
             //return;
             if (this.UseCrWl==true) 
 			{
@@ -319,6 +328,7 @@ namespace System
 			DebugForm.Buffer.Append(message); 
 			DebugForm.UpdateCurrentRow(true);
 			DebugForm.Buffer = new StringBuilder(); 
+#endif
 		}
 	}
 
