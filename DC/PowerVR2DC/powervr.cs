@@ -11,14 +11,21 @@
 
 using System;
 using System.Drawing;
+#if nrt
 using System.Runtime.InteropServices;
+#endif
 namespace DC4Ever
 {
 	/// <summary>
 	/// Summary description for 
 	/// </summary>
-    public static partial class emu
+    #if nrt 
+    public unsafe static partial  class emu
+ #else 
+    public unsafe partial   class emu
+ #endif
     {
+#if nrt
 		#region WinApi
 		public struct BITMAPINFOHEADER
 		{
@@ -51,11 +58,15 @@ namespace DC4Ever
 			int dwRop);
 		public static BITMAPINFOHEADER bitinfo;
 		#endregion
+#endif
         public static uint mw=0;
         public static uint f;
 		public static uint fps;
-		public static byte[] vram= new byte[8*dc.mb];
-		public static unsafe void writemem(uint adr,uint data,int len)
+		//public static byte[] vram= new byte[8*mb];
+        public static byte* vram_b = (byte*)mmgr.AllocMem(8 * mb);
+        public static ushort* vram_w = (ushort*)vram_b;
+        public static uint* vram_dw = (uint*)vram_b;
+        public static unsafe void writemem(uint adr,uint data,int len)
 		{
             mw += (uint)len;
 			#region Address translation
@@ -81,16 +92,18 @@ namespace DC4Ever
 		    switch (len)
 			{
 				case 0x1://1 byte write
-					vram[adr]=(byte)data;
+					vram_b[adr]=(byte)data;
 					return;
 				case 0x2://2 byte write
-					fixed(byte *p=&vram[adr])
-						*(ushort*)p=(ushort)data;
-					return;
+					//fixed(byte *p=&vram[adr])
+					//	*(ushort*)p=(ushort)data;
+                    vram_w[adr >> 1] = (ushort)data;
+                    return;
 				case 0x4://4 byte write
-					fixed(byte *p=&vram[adr])
-						*(uint*)p=data;
-					return; 
+					//fixed(byte *p=&vram[adr])
+					//	*(uint*)p=data;
+                    vram_dw[adr >> 2] = data;
+                    return; 
 			}
 			dc.dcon.WriteLine("Wrong write size in write (" + len+") at pc "+pc);
 		}
@@ -120,14 +133,16 @@ namespace DC4Ever
 			switch (len)
 			{
 				case 0x1://1 byte read
-						return vram[adr];
+						return vram_b[adr];
 				case 0x2://2 byte read
-					fixed(byte *p=&vram[adr])
-						return *(ushort*)p;
-				case 0x4://4 byte read
-					fixed(byte *p=&vram[adr])
-						return *(uint*)p;
-			}
+					//fixed(byte *p=&vram[adr])
+					//	return *(ushort*)p;
+                    return vram_w[adr>>1];
+                case 0x4://4 byte read
+					//fixed(byte *p=&vram[adr])
+					//	return *(uint*)p;
+                    return vram_dw[adr>>2];
+            }
 			dc.dcon.WriteLine("Wrong read size in read (" + len+") at pc "+pc);
 			return 0;
 		}
@@ -136,11 +151,8 @@ namespace DC4Ever
 		{
             #if nrt
                 System.IntPtr hdc = dx.bb.GetDc();
-                fixed (byte* i = &vram[0])
-                {
-                    fixed (BITMAPINFOHEADER* bi = &bitinfo)
-                        StretchDIBits(hdc, 0, 0, 640, 480, 0, 0, 640, 480, i, bi, 0, 13369376);
-                }
+                fixed (BITMAPINFOHEADER* bi = &bitinfo)
+                    StretchDIBits(hdc, 0, 0, 640, 480, 0, 0, 640, 480,vram_b , bi, 0, 13369376);
                 dx.bb.ReleaseDc(hdc);
                 dx.fb.Draw(new Rectangle(dc.frmMain.PointToScreen(new Point(dc.frmMain.ClientRectangle.X + 8, dc.frmMain.ClientRectangle.Y + 8))
                     , new Size(dc.frmMain.screen.Width, dc.frmMain.screen.Height)), dx.bb, Microsoft.DirectX.DirectDraw.DrawFlags.DoNotWait | Microsoft.DirectX.DirectDraw.DrawFlags.Async);
