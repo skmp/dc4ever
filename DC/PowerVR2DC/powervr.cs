@@ -40,11 +40,13 @@ namespace DC4Ever
 			int dwRop);
 		public static BITMAPINFOHEADER bitinfo;
 		#endregion
-		public static uint f;
+        public static uint mw=0;
+        public static uint f;
 		public static uint fps;
 		public static byte[] vram= new byte[8*dc.mb];
 		public static unsafe void writemem(uint adr,uint data,int len)
 		{
+            mw += (uint)len;
 			#region Address translation
 			if (adr<0x800000)//(adr>>24)&0x1//using 64 bit interface
 			{
