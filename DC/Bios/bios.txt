@@ -10,3 +10,5 @@ All flash calls
 hle:
 All gdrom calls
 65535+100:return from bios call
+
+Curently all this is just history ;D
