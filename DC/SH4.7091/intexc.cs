@@ -15,7 +15,11 @@ namespace DC4Ever
 	/// <summary>
 	/// Interups ,Exeptions ,Resets Handling
 	/// </summary>
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu
+ #else  
+    public partial  class emu 
+ #endif
     {
 
 	}
