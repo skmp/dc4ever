@@ -18,8 +18,11 @@ namespace DC4Ever
 		private System.Windows.Forms.Timer timer1;
 		public System.Windows.Forms.PictureBox screen;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.MenuItem menuItem3;
-		private System.ComponentModel.IContainer components;
+        private System.Windows.Forms.MenuItem menuItem3;
+        private TrackBar trackBar1;
+        private Label label2;
+        private Label label3;
+        private System.ComponentModel.IContainer components;
 
 		public frmmain()
 		{
@@ -64,7 +67,11 @@ namespace DC4Ever
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.screen = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.screen)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
 // 
 // mainMenu1
@@ -120,18 +127,52 @@ namespace DC4Ever
             this.label1.TabIndex = 1;
             this.label1.Text = "label1";
 // 
+// trackBar1
+// 
+            this.trackBar1.Location = new System.Drawing.Point(8, 519);
+            this.trackBar1.Maximum = 382;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(636, 45);
+            this.trackBar1.TabIndex = 2;
+            this.trackBar1.Value = 128;
+            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+// 
+// label2
+// 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(535, 507);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(87, 14);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Unrolling depth :";
+// 
+// label3
+// 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(622, 507);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(23, 14);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "128";
+// 
 // frmmain
 // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(656, 513);
+            this.ClientSize = new System.Drawing.Size(656, 564);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.screen);
             this.Menu = this.mainMenu1;
             this.Name = "frmmain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Dc4Ever v 1.0 - beta1";
+            this.Text = "Dc4Ever v 1.0 - beta2 - Managed Recompiler - Static Condtional/Uncoditional brach" +
+                " inlining";
             ((System.ComponentModel.ISupportInitialize)(this.screen)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 		#endregion
@@ -150,16 +191,17 @@ namespace DC4Ever
             emu.runcpu();
         }
 
-		private void timer1_Tick(object sender, System.EventArgs e)
-		{
-            this.label1.Text = "Running at " + System.Convert.ToString(((double)emu.opcount / 1024 / 1024) / ((double)(System.DateTime.Now.Ticks - told) / 10000000)) + " mips , " + emu.fps + " fps(not real, just screen refresh)";
+        private void timer1_Tick(object sender, System.EventArgs e)
+        {
+            this.label1.Text = "Running at " + System.Convert.ToString(((double)emu.opcount / 1024 / 1024) / ((double)(System.DateTime.Now.Ticks - told) / 10000000)) + " mips , " + emu.fps + " fps(not real, just screen refresh) " + ((float)emu.mw / 1024 / 1204).ToString() + " megabyte vram writes per sec " + emu.ch.ToString() + ",cache hits " + emu.cm.ToString() + ",cache misses " + ((emu.ch + 1) / (emu.cm + 1)).ToString() + ":1 cache hit ratio ";
             emu.opcount = 0;
             emu.fps = 0;
-            told=System.DateTime.Now.Ticks;
-			//if (runsh) fastint.showstats();
-		}
+            emu.mw = 0;
+            told = System.DateTime.Now.Ticks;
+            //if (runsh) fastint.showstats();
+        }
 
-		private void menuItem3_Click(object sender, System.EventArgs e)
+        private void menuItem3_Click(object sender, System.EventArgs e)
 		{
 			dc.dcon.WriteLine("Loading ip.bin and Resetting sh4");
             emu.loadipbin("ip.bin");
@@ -168,6 +210,17 @@ namespace DC4Ever
 			//runcpuDyna();
 		}
 
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            emu.br_8_b_level_max = (uint)trackBar1.Value;
+            emu.br_8_f_level_max = (uint)trackBar1.Value;
+            label3.Text = trackBar1.Value.ToString();
+            for (int i = 0; i < emu.RecMB; i++) 
+            {
+                emu.DynaCache[i].BaseAddress = 0;
+            }
+        }
 
-	}
+
+    }
 }
