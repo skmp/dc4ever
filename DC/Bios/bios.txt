@@ -1,0 +1,12 @@
+bios is Emulated using full emulation mode (no bios)
+or mixed emulated mode (some hle and direct bios calls)
+
+hle calls are interpreted using "fake" opcodes
+here is the list of fake opcodes:
+(Notice when running in nobios the hle table is used too)
+nobios:
+All font calls
+All flash calls
+hle:
+All gdrom calls
+65535+100:return from bios call
