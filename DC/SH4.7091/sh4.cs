@@ -1426,8 +1426,8 @@ namespace DC4Ever
                 #endregion
                 opcount += tc;//opcode count - inacurate on recompiler
                 opc += tc;   //cycle count - if 1 opcode takes 1 cycle to execute then this is corect :P
-                if (opc>(1461409))
-				{present();System.Windows.Forms.Application.DoEvents();opc=0;}
+                if (opc > (3495253))//60 ~herz = 200 mhz / 60=3495253 cycles per screen refresh
+                {present();System.Windows.Forms.Application.DoEvents();opc=0;}
 			} while (runsh);
 
 		}
@@ -1448,7 +1448,8 @@ namespace DC4Ever
         {
             for (int i = 0; i < 65536; i++)
             {
-                ccount[i] = 1;
+                //this is a realy bad approximation
+                ccount[i] = 3;//3 is the average case for the best conditions [no cache miss ect]
             }
         }
         public static void RBchange()
