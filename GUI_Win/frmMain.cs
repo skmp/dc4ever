@@ -193,7 +193,7 @@ namespace DC4Ever
 
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            this.label1.Text = "Running at " + System.Convert.ToString(((double)emu.opcount / 1024 / 1024) / ((double)(System.DateTime.Now.Ticks - told) / 10000000)) + " MHz , " + emu.fps + " fps(not real, just screen refresh) " + ((float)emu.mw / 1024 / 1204).ToString() + " megabyte vram writes per sec " + emu.ch.ToString() + ",cache hits " + emu.cm.ToString() + ",cache misses " + ((emu.ch + 1) / (emu.cm + 1)).ToString() + ":1 cache hit ratio ";
+            this.label1.Text = "Running at " + System.Convert.ToString(((double)emu.opcount / 1024 / 1024) / ((double)(System.DateTime.Now.Ticks - told) / 10000000)) + " MHz , " + emu.fps + " fps(not real, just screen refresh) ";// + ((float)emu.mw / 1024 / 1204).ToString() + " megabyte vram writes per sec " + emu.ch.ToString() + ",cache hits " + emu.cm.ToString() + ",cache misses " + ((emu.ch + 1) / (emu.cm + 1)).ToString() + ":1 cache hit ratio ";
             emu.opcount = 0;
             emu.fps = 0;
             emu.mw = 0;
