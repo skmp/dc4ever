@@ -1424,9 +1424,9 @@ namespace DC4Ever
                                 #endregion
                 #endif
                 #endregion
-                opcount += tc;//opcode count- way off
-                opc += tc;   //cycle count
-                if (opc>1461409)
+                opcount += tc;//opcode count - inacurate on recompiler
+                opc += tc;   //cycle count - if 1 opcode takes 1 cycle to execute then this is corect :P
+                if (opc>(1461409))
 				{present();System.Windows.Forms.Application.DoEvents();opc=0;}
 			} while (runsh);
 
