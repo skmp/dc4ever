@@ -11,7 +11,11 @@
 using System;
 namespace DC4Ever
 {
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -349,7 +353,11 @@ namespace DC4Ever
 
 	}
 
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -364,7 +372,11 @@ namespace DC4Ever
 		}
 	}
 
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -486,7 +498,11 @@ namespace DC4Ever
 		}
 	}
 
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -604,7 +620,11 @@ namespace DC4Ever
 
 		}
 	}
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -1187,7 +1207,11 @@ namespace DC4Ever
 		}
 	}
 
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -1202,7 +1226,11 @@ namespace DC4Ever
 		}
 	}
 
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -1349,7 +1377,11 @@ namespace DC4Ever
 
 		} 
 	}
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -1366,7 +1398,11 @@ namespace DC4Ever
 		}
 	}
 
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -1456,7 +1492,11 @@ namespace DC4Ever
 
 		}
 	}
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -1469,7 +1509,11 @@ namespace DC4Ever
 			r[n]=(uint)(short)read(disp*2 + pc + 4,2);
 		}
 	}
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -1482,7 +1526,11 @@ namespace DC4Ever
 		}
 	}
 
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -1493,7 +1541,11 @@ namespace DC4Ever
 
 		}
 	}
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -1616,7 +1668,11 @@ namespace DC4Ever
 
 		}
 	}
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -1630,7 +1686,11 @@ namespace DC4Ever
 		}
 	}
 
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
@@ -1643,7 +1703,11 @@ namespace DC4Ever
 		}
 	}
 
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu r
+ #else  
+    public partial  class emu 
+ #endif
     {
 		static uint n;
 		static uint m;
