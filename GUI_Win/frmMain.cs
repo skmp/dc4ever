@@ -1,3 +1,5 @@
+#if nrt
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -34,7 +36,9 @@ namespace DC4Ever
 			//
 			// 
 			//
+                    #if nrt
 			dx.init(this.screen);
+                #endif
 		}
 
 		/// <summary>
@@ -182,21 +186,25 @@ namespace DC4Ever
 
 		}
 
-		private void menuItem2_Click(object sender, System.EventArgs e)
+        
+        //System.Threading.Thread thr = new System.Threading.Thread(new System.Threading.ThreadStart(emu.runcpu));
+        private void menuItem2_Click(object sender, System.EventArgs e)
 		{
 			dc.dcon.WriteLine("Loading ip.bin and Resetting sh4");
             emu.loadipbin("ip.bin");
             emu.resetsh4();
             dc.dcon.WriteLine("runcpu");
+            //if (!thr.IsAlive)
+            //    thr.Start();
             emu.runcpu();
         }
 
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            this.label1.Text = "Running at " + System.Convert.ToString(((double)emu.opcount / 1024 / 1024) / ((double)(System.DateTime.Now.Ticks - told) / 10000000)) + " MHz , " + emu.fps + " fps(not real, just screen refresh) ";// + ((float)emu.mw / 1024 / 1204).ToString() + " megabyte vram writes per sec " + emu.ch.ToString() + ",cache hits " + emu.cm.ToString() + ",cache misses " + ((emu.ch + 1) / (emu.cm + 1)).ToString() + ":1 cache hit ratio ";
+            this.label1.Text = "Running at " + System.Convert.ToString(((double)emu.opcount / 1024 / 1024) / ((double)(System.DateTime.Now.Ticks - told) / 10000000)) + " MHz , " + emu.fps + " fps(not real, just screen refresh) ;vram:" + (emu.mw>>20).ToString()+ " mb";// + ((float)emu.mw / 1024 / 1204).ToString() + " megabyte vram writes per sec " + emu.ch.ToString() + ",cache hits " + emu.cm.ToString() + ",cache misses " + ((emu.ch + 1) / (emu.cm + 1)).ToString() + ":1 cache hit ratio " + ;
             emu.opcount = 0;
             emu.fps = 0;
-            emu.mw = 0;
+            //emu.mw = 0;
             told = System.DateTime.Now.Ticks;
             //if (runsh) fastint.showstats();
         }
@@ -212,6 +220,7 @@ namespace DC4Ever
 
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
+#if !interpreter
             emu.br_8_b_level_max = (uint)trackBar1.Value;
             emu.br_8_f_level_max = (uint)trackBar1.Value;
             label3.Text = trackBar1.Value.ToString();
@@ -219,8 +228,11 @@ namespace DC4Ever
             {
                 emu.DynaCache[i].BaseAddress = 0;
             }
+#endif
         }
 
 
     }
 }
+
+#endif
