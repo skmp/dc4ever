@@ -134,7 +134,7 @@ namespace DC4Ever
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(636, 45);
             this.trackBar1.TabIndex = 2;
-            this.trackBar1.Value = 128;
+            this.trackBar1.Value = 35;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
 // 
 // label2
@@ -151,9 +151,9 @@ namespace DC4Ever
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(622, 507);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(23, 14);
+            this.label3.Size = new System.Drawing.Size(17, 14);
             this.label3.TabIndex = 4;
-            this.label3.Text = "128";
+            this.label3.Text = "35";
 // 
 // frmmain
 // 
@@ -167,7 +167,7 @@ namespace DC4Ever
             this.Menu = this.mainMenu1;
             this.Name = "frmmain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Dc4Ever v 1.0 - beta2 - Managed Recompiler - Static Condtional/Uncoditional brach" +
+            this.Text = "Dc4Ever v 1.0 - beta3 - Managed Recompiler - Static Condtional/Uncoditional brach" +
                 " inlining";
             ((System.ComponentModel.ISupportInitialize)(this.screen)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
@@ -193,7 +193,7 @@ namespace DC4Ever
 
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            this.label1.Text = "Running at " + System.Convert.ToString(((double)emu.opcount / 1024 / 1024) / ((double)(System.DateTime.Now.Ticks - told) / 10000000)) + " mips , " + emu.fps + " fps(not real, just screen refresh) " + ((float)emu.mw / 1024 / 1204).ToString() + " megabyte vram writes per sec " + emu.ch.ToString() + ",cache hits " + emu.cm.ToString() + ",cache misses " + ((emu.ch + 1) / (emu.cm + 1)).ToString() + ":1 cache hit ratio ";
+            this.label1.Text = "Running at " + System.Convert.ToString(((double)emu.opcount / 1024 / 1024) / ((double)(System.DateTime.Now.Ticks - told) / 10000000)) + " MHz , " + emu.fps + " fps(not real, just screen refresh) " + ((float)emu.mw / 1024 / 1204).ToString() + " megabyte vram writes per sec " + emu.ch.ToString() + ",cache hits " + emu.cm.ToString() + ",cache misses " + ((emu.ch + 1) / (emu.cm + 1)).ToString() + ":1 cache hit ratio ";
             emu.opcount = 0;
             emu.fps = 0;
             emu.mw = 0;
