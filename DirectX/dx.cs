@@ -10,7 +10,9 @@
 
 
 using System;
+#if nrt
 using didr = Microsoft.DirectX.DirectDraw;
+#endif
 namespace DC4Ever
 {
 	/// <summary>
@@ -18,6 +20,7 @@ namespace DC4Ever
 	/// </summary>
 	public static class dx
 	{
+        #if nrt
 		public static Microsoft.DirectX.DirectDraw.Device dddev; 
 		public static Microsoft.DirectX.DirectDraw.Surface fb;//frontbuffer
 		public static Microsoft.DirectX.DirectDraw.Surface bb;//backbuffer
@@ -45,6 +48,6 @@ namespace DC4Ever
             emu.bitinfo.biBitCount = 16;
             emu.bitinfo.biSizeImage = 640 * 480 * 2;
         }
-
-	}
+        #endif
+    }
 }
