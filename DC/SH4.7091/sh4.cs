@@ -1,4 +1,16 @@
+//This is a part of the DC4Ever emulator
+//You are not allowed to release modified(or unmodified) versions
+//without asking me (drk||Raziel).
+//For Suggestions ect please e-mail at : stef_mp@yahoo.gr
+//Note : This is just to prove that Fast emulation is possible with 
+//	C# /.net ...And yes , this code could be writen at VB.net and 
+//	run more or less at the same speed on dynarec mode
+//	This code requires C#.net 2.0 (Get the C# epxress 2005 Beta from microsoft)
+//
+
 //#define interpreter
+//Define this to get a exe that runs on iterpreter mode
+
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -8,15 +20,17 @@ namespace DC4Ever
 	/// <summary>
 	/// Summary description for 
 	/// </summary>
-    public partial class emu
+    public static partial  class emu
     {
 
 		#region sh4 regs and shit declares
         //sr bits
         public const uint sr_T_bit_set = 1;//to set with or
         public const uint sr_T_bit_reset = uint.MaxValue - sr_T_bit_set;//to unset with and
+        
+        #if interpreter
         //sr,fpscr reg emulation class
-		public class sr
+        public class sr
 		{
 
 			public static uint T,S,IMASK,Q,M,FD,BL,RB_,MD;
@@ -65,7 +79,6 @@ namespace DC4Ever
 				}
 			}
 		}
-		
 		public class fpscr
 		{
 			public static uint RM,finexact,funderflow,foverflow,fdivbyzero,
@@ -123,7 +136,116 @@ namespace DC4Ever
 			}
 
 		}
-		public static uint gbr,ssr,spc,sgr,dbr,vbr;
+        #else
+                public class sr_c
+		{
+
+			public static uint T,S,IMASK,Q,M,FD,BL,RB_,MD;
+			public static void srregInit()
+			{
+				T=0;S=0;IMASK=1;Q=0;M=0;FD=0;BL=1;RB=1;MD=1;                                                                       
+			}
+			public static uint RB// Register bank change..
+			{
+				get {return RB_;}
+				set {
+						if (value!=RB_) RBchange();
+						RB_=value;
+					}
+			}
+			public static uint _MD// Mode Change..
+			{
+				get {return _MD;}
+				set {
+						if (_MD==0) 
+						{
+							//if (RB_=1) RBchange();
+							//TODO : Check SR.md=0<sr.rb=1>-->?
+						} 
+						_MD=value;
+					}
+			}
+			public static uint reg
+			{
+				get
+				{
+					return T|(S<<1)|(IMASK<<4)|(Q<<8)|(M<<9)|
+						(FD<<15)|(BL<<28)|(RB<<29)|(MD<<30);
+				}
+				set
+				{
+					T=value&0x1;
+					S=(value>>1)&0x1;
+					IMASK=(value>>4)&0xF;
+					Q=(value>>8)&0x1;
+					M=(value>>9)&0x1;
+					FD=(value>>15)&0x1;
+					BL=(value>>28)&0x1;
+					RB=(value>>29)&0x1;
+					MD=(value>>30)&0x1;
+				}
+			}
+		}
+		public class fpscr_c
+		{
+			public static uint RM,finexact,funderflow,foverflow,fdivbyzero,
+				 finvalidop,einexact,eunderflow,eoverflow,edivbyzero,
+				 einvalidop,cinexact,cunderflow,coverflow,cdivbyzero,
+				 cinvalid,cfpuerr,DN,PR_,SZ,FR_;
+			public static void init()
+			{
+				reg=0x0004001;
+			}
+			public static uint reg
+			{
+				get
+				{
+					return RM|(finexact<<2)|(funderflow<<3)|(foverflow<<4)|(fdivbyzero<<5)|(
+						   finvalidop<<6)|(einexact<<7)|(eunderflow<<8)|(eoverflow<<9)|(edivbyzero<<10)|(
+						   einvalidop<<11)|(cinexact<<12)|(cunderflow<<13)|(coverflow<<14)|(cdivbyzero<<15)|(
+						   cinvalid<<16)|(cfpuerr<<17)|(DN<<18)|(PR<<19)|(SZ<<20)|(FR<<21);
+				}
+				set
+				{
+				RM=value&0x3;
+				finexact=(value>>2)&0x1;
+				funderflow=(value>>3)&0x1;
+				foverflow=(value>>4)&0x1;
+				fdivbyzero=(value>>5)&0x1;
+				finvalidop=(value>>6)&0x1;
+				einexact=(value>>7)&0x1;
+				eunderflow=(value>>8)&0x1;
+				eoverflow=(value>>9)&0x1;
+				edivbyzero=(value>>10)&0x1;
+				einvalidop=(value>>11)&0x1;
+				cinexact=(value>>12)&0x1;
+				cunderflow=(value>>13)&0x1;
+				coverflow=(value>>14)&0x1;
+				cdivbyzero=(value>>15)&0x1;
+				cinvalid=(value>>16)&0x1;
+				cfpuerr=(value>>17)&0x1;
+				DN=(value>>18)&0x1;
+				PR=(value>>19)&0x1;
+				SZ=(value>>20)&0x1;
+				FR=(value>>21)&0x1;
+				}
+			}
+
+			public static uint PR
+			{
+				get{return PR_;}
+				set{if (value!=PR_){PR_=value; PRchange();}}
+			}
+			public static uint FR
+			{
+				get{return FR_;}
+				set{if (value!=FR_) FRchange();FR_=value;}
+			}
+
+		}
+        public static uint sr, fpscr;
+        #endif
+        public static uint gbr,ssr,spc,sgr,dbr,vbr;
 		public static uint mach,macl,pr,fpul;
 		public static uint pc;
 		public static uint[] r = new uint[16];
@@ -1437,9 +1559,14 @@ namespace DC4Ever
 		public static void resetsh4()
 		{//boot directly to the bootfile(no boot strap :P)
 			pc=0x8C010000;//0x8C008300 to boot to sega logo 0x8C00B800 to boot to the bootstrap1  A0000000 to boot bios,0x8C0010000 to boot directly to the code
-			sr.srregInit ();
-			fpscr.init();
-			//reset regs (MMRs and cpu regs)
+            #if interpreter
+#else
+            sr_c.srregInit ();
+			fpscr_c.init();
+            sr = sr_c.reg;
+            fpscr = fpscr_c.reg;
+#endif
+            //reset regs (MMRs and cpu regs)
             //init cycle count table
             initclk();
         }
@@ -1465,6 +1592,7 @@ namespace DC4Ever
 
 		public static void PRchange()
 		{//Precision Mode change
+#if interpreter
 			if (fpscr.FR_==0 )//change to single
 			{
 				//Todo : PR change
@@ -1473,6 +1601,7 @@ namespace DC4Ever
 			{
 				//Todo : PR change
 			}
+#endif
 		}
 		public static void FRchange()
 		{//change FP register bank..
