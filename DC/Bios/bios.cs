@@ -15,12 +15,16 @@ namespace DC4Ever
 	/// Emulates the 
 	/// HLE Syscall emulation
 	/// </summary>
-	public static partial class emu
+	#if nrt 
+    public unsafe static partial  class emu
+ #else  
+    public unsafe partial  class emu 
+ #endif
 	{
-		public static bool nobios;//no bios so everything has to be emulated(forced full hle)
-		public static bool hle;//use hle emulation mixed mode (hle+bios)
-		public static byte[] bios_file = new byte[2*dc.mb];// 2mb bios rom
-		public static byte[] bios_flash = new byte[256*dc.kb];//256 kb internal flash ram
+		static bool nobios;//no bios so everything has to be emulated(forced full hle)
+		static bool hle;//use hle emulation mixed mode (hle+bios)
+		static byte[] bios_file = new byte[2*mb];// 2mb bios rom
+		static byte[] bios_flash = new byte[256*kb];//256 kb internal flash ram
 
 		public static int loadipbin(string name)//load and proc ip.bin/bootfile  -1/-2 on error
 		{
@@ -28,8 +32,11 @@ namespace DC4Ever
 			{
 				System.IO.FileInfo fi= new System.IO.FileInfo(name);
 				System.IO.FileStream fs = fi.OpenRead();
-				fs.Read(ram,0x8000,32*dc.kb);
-				fs.Close();
+                byte[] tmp=new byte[32*kb];
+				fs.Read(tmp,0,32*kb);
+                pointerlib.unmanaged_pointer.ArrCpy(ram_b, tmp, 0, 0x8000, 32 * kb);
+                tmp = null; GC.Collect();
+                fs.Close();
 			}
 			catch 
 			{
@@ -40,8 +47,11 @@ namespace DC4Ever
 			{//load 1st_read.bin
 				System.IO.FileInfo fi= new System.IO.FileInfo("1st_read.bin");
 				System.IO.FileStream fs = fi.OpenRead();
-				fs.Read(ram,32*dc.kb+0x8000, (int) fi.Length);
-				fs.Close();
+                byte[] tmp = new byte[fi.Length];
+                fs.Read(tmp,0, (int)fi.Length);
+                pointerlib.unmanaged_pointer.ArrCpy(ram_b, tmp, 0,32 * kb + 0x8000,(uint) fi.Length);
+                tmp = null; GC.Collect();
+                fs.Close();
 				return 0;
 			}
 			catch //no 1st_read.bin found
@@ -56,7 +66,7 @@ namespace DC4Ever
 			{
 				System.IO.FileInfo fi= new System.IO.FileInfo(name);
 				System.IO.FileStream fs = fi.OpenRead();
-				fs.Read(bios_file,0,2*dc.mb);
+				fs.Read(bios_file,0,2*mb);
 				fs.Close();
 				dc.dcon.WriteLine("Bios File \""+ name + "\" loaded");
 			}
@@ -76,7 +86,7 @@ namespace DC4Ever
 			{
 				System.IO.FileInfo fi= new System.IO.FileInfo(name);
 				System.IO.FileStream fs = fi.OpenRead();
-				fs.Read(bios_flash,0,256*dc.kb);
+				fs.Read(bios_flash,0,256*kb);
 				fs.Close();
 				dc.dcon.WriteLine("Flash ram readed from \"" + name + "\"");
 			}
@@ -92,7 +102,7 @@ namespace DC4Ever
 			{
 				System.IO.FileInfo fi= new System.IO.FileInfo(name);
 				System.IO.FileStream fs = fi.OpenWrite();
-				fs.Write(bios_flash,0,256*dc.kb);
+				fs.Write(bios_flash,0,256*kb);
 				fs.Close();
 				dc.dcon.WriteLine("Flash ram saved to \"" + name + "\"");
 			}
