@@ -16,7 +16,11 @@ namespace DC4Ever
 	/// MMU is emulated here (Memory managment usint)
 	/// Also some simple adress proc may be done here
 	/// </summary>
-    public static partial class emu
+    #if nrt 
+    public static partial  class emu 
+ #else  
+    public partial  class emu 
+ #endif
     {
 		public static uint mmutrans(uint adr)
 		{
