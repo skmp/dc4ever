@@ -10,18 +10,21 @@
 #define TRACE
 
 using System;
+
+using System.Diagnostics;
+#if nrt
+using System.Windows.Forms;
+using System.Text;
+using System.IO;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
-using System.Windows.Forms;
-using System.IO;
-using System.Text;
-using System.Diagnostics;
-
+#endif
 
 
 namespace System
 {
+    #if nrt
 	/// <summary>
 	/// Summary description for DebugConsole.
 	/// </summary>
@@ -276,13 +279,14 @@ namespace System
 
 	}
 	// DebugConsole Singleton
+    #endif
 	public class DebugConsole : TraceListener
 	{
 
 #if nrt
 		public DebugConsoleWrapper DebugForm = new DebugConsoleWrapper();
 #else	
-        public DebugConsoleWrapper DebugForm ;
+        //public DebugConsoleWrapper DebugForm ;
 #endif
         // if this parameter is set to true, a call to WriteLine will always create a new row
 		// (if false, it may be appended to the current buffer created with some Write calls)
@@ -312,6 +316,8 @@ namespace System
             #if nrt
 			DebugForm.Buffer.Append(message);
 			DebugForm.UpdateCurrentRow(false);
+#else
+            Console.Write(message);
 #endif
 		}
 
@@ -328,6 +334,8 @@ namespace System
 			DebugForm.Buffer.Append(message); 
 			DebugForm.UpdateCurrentRow(true);
 			DebugForm.Buffer = new StringBuilder(); 
+#else
+            Console.WriteLine(message);
 #endif
 		}
 	}
