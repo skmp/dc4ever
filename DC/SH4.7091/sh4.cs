@@ -20,13 +20,19 @@ namespace DC4Ever
 	/// <summary>
 	/// Summary description for 
 	/// </summary>
-    public static partial  class emu
+#if nrt 
+    public unsafe static partial  class emu
+#else  
+    public unsafe partial  class emu 
+#endif
     {
-
+        //public emu()
+        //{
+        //}
 		#region sh4 regs and shit declares
         //sr bits
-        public const uint sr_T_bit_set = 1;//to set with or
-        public const uint sr_T_bit_reset = uint.MaxValue - sr_T_bit_set;//to unset with and
+        const uint sr_T_bit_set = 1;//to set with or
+        const uint sr_T_bit_reset = uint.MaxValue - sr_T_bit_set;//to unset with and
         
         #if interpreter
         //sr,fpscr reg emulation class
@@ -245,13 +251,17 @@ namespace DC4Ever
 		}
         public static uint sr, fpscr;
         #endif
-        public static uint gbr,ssr,spc,sgr,dbr,vbr;
-		public static uint mach,macl,pr,fpul;
-		public static uint pc;
-		public static uint[] r = new uint[16];
-		public static uint[] r_bank = new uint[8];
-		public static float[] fr=new float[16];//fp regs set 1
-		public static float[] xr=new float[16];//fp regs set 2
+        static uint gbr,ssr,spc,sgr,dbr,vbr;
+		static uint mach,macl,pr,fpul;
+		static uint pc;
+        static pointerlib.MemoryManager mmgr = new pointerlib.MemoryManager();
+        static uint* r =(uint*) mmgr.AllocMem(16 * sizeof(uint));
+        static uint* r_bank = (uint*)mmgr.AllocMem(8 * sizeof(uint));
+        static float* fr =(float*) mmgr.AllocMem(16 * sizeof(float));//fp regs set 1
+        static float* xr = (float*)mmgr.AllocMem(16 * sizeof(float));//fp regs set 2
+        static uint* fr_uint = (uint*)fr;//fp regs set 1, in uint form
+        static uint* xr_uint = (uint*)xr;//fp regs set 2, in uint form
+
 		#endregion
 
 		#region Internal vars ect
@@ -277,15 +287,19 @@ namespace DC4Ever
 		#region Interpreter/Dynarec-Main Loop
 		public static unsafe void runcpu()
 		{
+
             #if interpreter
                 dc.dcon.WriteLine("Runing in Interpreter Mode");
             #else
                 dc.dcon.WriteLine("Runing in Dynarec Mode");
             #endif
-            runsh=true;
+
+                runsh =true;
             uint tc=0;
+
             do
             {
+
                 #region Interpreter-Dynarec
                 #if !interpreter
                 
@@ -294,9 +308,10 @@ namespace DC4Ever
                 #else
                                 opcode=read(pc,2);
                                 tc = ccount[opcode];
+#region st
                                 switch (opcode>>12)//proc opcode
-				                {
-					                case 0x0://finished
+                                {
+                                    case 0x0://finished
 						                #region case 0x0
                 					
 					                switch (opcode&0xf)
@@ -525,7 +540,8 @@ namespace DC4Ever
 					                }
 						                #endregion
 						                break;
-					                case 0x1://finished
+
+                                    case 0x1://finished
 						                //i0001_nnnn_mmmm_iiii();
 						                n = (opcode >> 8) & 0x0F;
 						                m = (opcode >> 4) & 0x0F;
@@ -1249,12 +1265,12 @@ namespace DC4Ever
 							                break;
 						                case 0xB://1011
 							                //i1000_1011_iiii_iiii();
-							                if (sr.T==0)
-							                {
-								                delayslot  = (uint)((sbyte)(opcode  & 0xFF))*2 + 4 + pc ;
-								                pc_funct = 1;//jump , no delay
-							                }
-							                break;
+                                            if (sr.T == 0)
+                                            {
+                                                delayslot = (uint)((sbyte)(opcode & 0xFF)) * 2 + 4 + pc;
+                                                pc_funct = 1;//jump , no delay
+                                            }
+                                            break;
 						                case 0xD://1101
 							                //i1000_1101_iiii_iiii();
 							                delayslot =(uint) ((sbyte)(opcode & 0xFF))*2 + pc + 4; // antes era disp = ...
@@ -1403,6 +1419,7 @@ namespace DC4Ever
 						                uint tmp=read(r[m],4);
 						                fr[n]=*(float*)&tmp;
 							                break;
+
 						                case 0x9://1001
 							                //i1111_nnnn_mmmm_1001();
 							                break;
@@ -1410,8 +1427,10 @@ namespace DC4Ever
 							                //i1111_nnnn_mmmm_1010();
 							                n = (opcode >> 8) & 0x0F;
 							                m = (opcode >> 4) & 0x0F;
-							                fixed (float*p=&fr[m]){write(r[n],*(uint*)p,4);}
-							                break;
+     
+                                            write(r[n], fr_uint[m], 4);
+                                            
+                                            break;
 						                case 0xB://1011
 							                //i1111_nnnn_mmmm_1011();
 							                break;
@@ -1516,18 +1535,21 @@ namespace DC4Ever
 						                case 0xE://1110
 							                //i1111_nnnn_mmmm_1110();
 							                break;
-						                default:
+                                        default:
 							                //dc.dcon.WriteLine("Warning:Invalid opcode at pc "+System.Convert.ToString(pc,16).ToUpper()+ " with code " +System.Convert.ToString(opcode,16).ToUpper());
 							                //System.Windows.Forms.Application.DoEvents();
 							                break;
 					                }
 						                #endregion
+
 						                break;
+
+
 					                default:
-						                //handle any custom opcodes (>65535)
-						                //bios hle ect
 						                break;
 				                }
+#endregion
+
 				                #region Proc PC
 				                switch(pc_funct)	   
 				                {
@@ -1544,13 +1566,18 @@ namespace DC4Ever
 						                break;
 				                }
                                 #endregion
+
                 #endif
                 #endregion
-                opcount += tc;//opcode count - inacurate on recompiler
+                opcount += tc;//opcode count 
                 opc += tc;   //cycle count - if 1 opcode takes 1 cycle to execute then this is corect :P
                 if (opc > (3495253))//60 ~herz = 200 mhz / 60=3495253 cycles per screen refresh
-                {present();System.Windows.Forms.Application.DoEvents();opc=0;}
-			} while (runsh);
+                { present(); System.Windows.Forms.Application.DoEvents(); opc -= 3495253; 
+#if !nrt 
+                 if (fps>50) dc.t_Tick(null, null);
+#endif
+                }
+            } while (runsh);
 
 		}
 		#endregion
@@ -1571,7 +1598,7 @@ namespace DC4Ever
             initclk();
         }
 
-        public static void initclk()
+        static void initclk()
         {
             for (int i = 0; i < 65536; i++)
             {
@@ -1579,18 +1606,36 @@ namespace DC4Ever
                 ccount[i] = 3;//3 is the average case for the best conditions [no cache miss ect]
             }
         }
-        public static void RBchange()
+        static void RBchange()
 		{//change register bank..
-			uint[] r_tmp = new uint[8];
-			r_tmp[0]=r[0];r_tmp[4]=r[4];
+            //somewhat faster with stackalloc and pointers.. actualy , 6.2x faster..
+			uint* r_tmp = stackalloc uint[8];
+			
+            r_tmp[0]=r[0];r_tmp[4]=r[4];
 			r_tmp[1]=r[1];r_tmp[5]=r[5];
 			r_tmp[2]=r[2];r_tmp[6]=r[6];
 			r_tmp[3]=r[3];r_tmp[7]=r[7];
-			r_bank.CopyTo(r,0);
-			r_tmp.CopyTo(r_bank,0);
-		}
 
-		public static void PRchange()
+            //r_bank.CopyTo(r,0);
+            r[0] = r_bank[0]; r[4] = r_bank[4];
+            r[1] = r_bank[1]; r[5] = r_bank[5];
+            r[2] = r_bank[2]; r[6] = r_bank[6];
+            r[3] = r_bank[3]; r[7] = r_bank[7];
+
+            
+			//r_tmp.CopyTo(r_bank,0);
+            r_bank[0] = r_tmp[0]; r_bank[4] = r_tmp[4];
+            r_bank[1] = r_tmp[1]; r_bank[5] = r_tmp[5];
+            r_bank[2] = r_tmp[2]; r_bank[6] = r_tmp[6];
+            r_bank[3] = r_tmp[3]; r_bank[7] = r_tmp[7];
+
+        }
+
+        public static bool UpdateSystem(uint nCucles)
+        {
+            return false;
+        }
+        static void PRchange()
 		{//Precision Mode change
 #if interpreter
 			if (fpscr.FR_==0 )//change to single
@@ -1603,15 +1648,18 @@ namespace DC4Ever
 			}
 #endif
 		}
-		public static void FRchange()
+		static void FRchange()
 		{//change FP register bank..
-			float[] fp_tmp = new float[16];
-			fr.CopyTo(fp_tmp,0);
-			xr.CopyTo(fr,0);
-			fp_tmp.CopyTo(xr,0);
+            //somewhat faster with stackalloc and pointers.. actualy , 17.4x faster..
+            //fr.CopyTo(fp_tmp, 0);
+            float* fp_tmp = fr;
+            //xr.CopyTo(fr, 0);
+            fr = xr;
+            //fp_tmp.CopyTo(xr, 0);
+            xr = fp_tmp;
 		}
 
-        private static void GetCodeBuffer()
+        static void GetCodeBuffer()
         {
             throw new NotImplementedException();
         }
