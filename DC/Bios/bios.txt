@@ -9,6 +9,6 @@ All font calls
 All flash calls
 hle:
 All gdrom calls
-65535+100:return from bios call
+65537:return from call,direct
 
 Curently all this is just history ;D
