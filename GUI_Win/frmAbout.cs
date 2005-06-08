@@ -54,7 +54,7 @@ namespace DC4Ever
 			// 
 			// frmabout
 			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(5, 13);
 			this.ClientSize = new System.Drawing.Size(292, 266);
 			this.Name = "frmabout";
 			this.Text = "frmAbout";
