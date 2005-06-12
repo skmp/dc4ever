@@ -80,117 +80,117 @@ namespace System
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.BtnSave = new System.Windows.Forms.Button();
-			this.BtnClear = new System.Windows.Forms.Button();
-			this.SaveFileDlg = new System.Windows.Forms.SaveFileDialog();
-			this.CheckScroll = new System.Windows.Forms.CheckBox();
-			this.OutputView = new System.Windows.Forms.ListView();
-			this.Col1 = new System.Windows.Forms.ColumnHeader();
-			this.Col2 = new System.Windows.Forms.ColumnHeader();
-			this.Col3 = new System.Windows.Forms.ColumnHeader();
-			this.CheckTop = new System.Windows.Forms.CheckBox();
-			this.panel2 = new System.Windows.Forms.Panel();
-			this.panel2.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// BtnSave
-			// 
-			this.BtnSave.Location = new System.Drawing.Point(8, 16);
-			this.BtnSave.Name = "BtnSave";
-			this.BtnSave.Size = new System.Drawing.Size(64, 24);
-			this.BtnSave.TabIndex = 8;
-			this.BtnSave.Text = "Save";
-			this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
-			// 
-			// BtnClear
-			// 
-			this.BtnClear.Location = new System.Drawing.Point(80, 16);
-			this.BtnClear.Name = "BtnClear";
-			this.BtnClear.Size = new System.Drawing.Size(64, 24);
-			this.BtnClear.TabIndex = 8;
-			this.BtnClear.Text = "Clear";
-			this.BtnClear.Click += new System.EventHandler(this.BtnClear_Click);
-			// 
-			// CheckScroll
-			// 
-			this.CheckScroll.Checked = true;
-			this.CheckScroll.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.CheckScroll.Location = new System.Drawing.Point(152, 16);
-			this.CheckScroll.Name = "CheckScroll";
-			this.CheckScroll.Size = new System.Drawing.Size(80, 16);
-			this.CheckScroll.TabIndex = 8;
-			this.CheckScroll.Text = "autoscroll";
-			this.CheckScroll.CheckedChanged += new System.EventHandler(this.CheckScroll_CheckedChanged);
-			// 
-			// OutputView
-			// 
-			this.OutputView.AutoArrange = false;
-			this.OutputView.BackColor = System.Drawing.Color.MediumAquamarine;
-			this.OutputView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																						 this.Col1,
-																						 this.Col2,
-																						 this.Col3});
-			this.OutputView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.OutputView.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.OutputView.ForeColor = System.Drawing.Color.Black;
-			this.OutputView.Location = new System.Drawing.Point(0, 0);
-			this.OutputView.Name = "OutputView";
-			this.OutputView.Size = new System.Drawing.Size(640, 200);
-			this.OutputView.TabIndex = 7;
-			this.OutputView.View = System.Windows.Forms.View.Details;
-			// 
-			// Col1
-			// 
-			this.Col1.Text = "#";
-			this.Col1.Width = 30;
-			// 
-			// Col2
-			// 
-			this.Col2.Text = "Time";
-			this.Col2.Width = 99;
-			// 
-			// Col3
-			// 
-			this.Col3.Text = "Message";
-			this.Col3.Width = 506;
-			// 
-			// CheckTop
-			// 
-			this.CheckTop.Location = new System.Drawing.Point(240, 16);
-			this.CheckTop.Name = "CheckTop";
-			this.CheckTop.Size = new System.Drawing.Size(96, 16);
-			this.CheckTop.TabIndex = 8;
-			this.CheckTop.Text = "always on top";
-			this.CheckTop.CheckedChanged += new System.EventHandler(this.CheckTop_CheckedChanged);
-			// 
-			// panel2
-			// 
-			this.panel2.Controls.Add(this.BtnSave);
-			this.panel2.Controls.Add(this.BtnClear);
-			this.panel2.Controls.Add(this.CheckScroll);
-			this.panel2.Controls.Add(this.CheckTop);
-			this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.panel2.Location = new System.Drawing.Point(0, 200);
-			this.panel2.Name = "panel2";
-			this.panel2.Size = new System.Drawing.Size(640, 48);
-			this.panel2.TabIndex = 8;
-			this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
-			// 
-			// DebugConsoleWrapper
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(640, 248);
-			this.Controls.Add(this.OutputView);
-			this.Controls.Add(this.panel2);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-			this.MinimumSize = new System.Drawing.Size(390, 160);
-			this.Name = "DebugConsoleWrapper";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-			this.Text = "Debug Console";
-			this.panel2.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this.BtnSave = new System.Windows.Forms.Button();
+            this.BtnClear = new System.Windows.Forms.Button();
+            this.SaveFileDlg = new System.Windows.Forms.SaveFileDialog();
+            this.CheckScroll = new System.Windows.Forms.CheckBox();
+            this.OutputView = new System.Windows.Forms.ListView();
+            this.Col1 = new System.Windows.Forms.ColumnHeader("");
+            this.Col2 = new System.Windows.Forms.ColumnHeader("");
+            this.Col3 = new System.Windows.Forms.ColumnHeader("");
+            this.CheckTop = new System.Windows.Forms.CheckBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel2.SuspendLayout();
+            this.SuspendLayout();
+// 
+// BtnSave
+// 
+            this.BtnSave.Location = new System.Drawing.Point(8, 16);
+            this.BtnSave.Name = "BtnSave";
+            this.BtnSave.Size = new System.Drawing.Size(64, 24);
+            this.BtnSave.TabIndex = 8;
+            this.BtnSave.Text = "Save";
+            this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
+// 
+// BtnClear
+// 
+            this.BtnClear.Location = new System.Drawing.Point(80, 16);
+            this.BtnClear.Name = "BtnClear";
+            this.BtnClear.Size = new System.Drawing.Size(64, 24);
+            this.BtnClear.TabIndex = 8;
+            this.BtnClear.Text = "Clear";
+            this.BtnClear.Click += new System.EventHandler(this.BtnClear_Click);
+// 
+// CheckScroll
+// 
+            this.CheckScroll.Checked = true;
+            this.CheckScroll.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CheckScroll.Location = new System.Drawing.Point(152, 16);
+            this.CheckScroll.Name = "CheckScroll";
+            this.CheckScroll.Size = new System.Drawing.Size(80, 16);
+            this.CheckScroll.TabIndex = 8;
+            this.CheckScroll.Text = "autoscroll";
+            this.CheckScroll.CheckedChanged += new System.EventHandler(this.CheckScroll_CheckedChanged);
+// 
+// OutputView
+// 
+            this.OutputView.AutoArrange = false;
+            this.OutputView.BackColor = System.Drawing.Color.MediumAquamarine;
+            this.OutputView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.Col1,
+            this.Col2,
+            this.Col3});
+            this.OutputView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.OutputView.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OutputView.ForeColor = System.Drawing.Color.Black;
+            this.OutputView.Location = new System.Drawing.Point(0, 0);
+            this.OutputView.Name = "OutputView";
+            this.OutputView.Size = new System.Drawing.Size(993, 200);
+            this.OutputView.TabIndex = 7;
+            this.OutputView.View = System.Windows.Forms.View.Details;
+// 
+// Col1
+// 
+            this.Col1.Text = "#";
+            this.Col1.Width = 30;
+// 
+// Col2
+// 
+            this.Col2.Text = "Time";
+            this.Col2.Width = 99;
+// 
+// Col3
+// 
+            this.Col3.Text = "Message";
+            this.Col3.Width = 860;
+// 
+// CheckTop
+// 
+            this.CheckTop.Location = new System.Drawing.Point(240, 16);
+            this.CheckTop.Name = "CheckTop";
+            this.CheckTop.Size = new System.Drawing.Size(96, 16);
+            this.CheckTop.TabIndex = 8;
+            this.CheckTop.Text = "always on top";
+            this.CheckTop.CheckedChanged += new System.EventHandler(this.CheckTop_CheckedChanged);
+// 
+// panel2
+// 
+            this.panel2.Controls.Add(this.BtnSave);
+            this.panel2.Controls.Add(this.BtnClear);
+            this.panel2.Controls.Add(this.CheckScroll);
+            this.panel2.Controls.Add(this.CheckTop);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 200);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(993, 48);
+            this.panel2.TabIndex = 8;
+            this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
+// 
+// DebugConsoleWrapper
+// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(5, 13);
+            this.ClientSize = new System.Drawing.Size(993, 248);
+            this.Controls.Add(this.OutputView);
+            this.Controls.Add(this.panel2);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.MinimumSize = new System.Drawing.Size(390, 160);
+            this.Name = "DebugConsoleWrapper";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+            this.Text = "Debug Console";
+            this.panel2.ResumeLayout(false);
+            this.ResumeLayout(false);
 
-		}
+        }
 		#endregion
 
 		public void CreateEventRow()
@@ -222,7 +222,7 @@ namespace System
 			if (this.CheckScroll.CheckState == CheckState.Checked)
 			{
 				this.OutputView.EnsureVisible(this.OutputView.Items.Count-1);
-                Windows.Forms.Application.DoEvents();
+				DC4Ever.emu.DoEvents();
             }
 		}
 
@@ -321,10 +321,11 @@ namespace System
 #endif
 		}
 
-		override public void WriteLine(string message) 
+		override public void WriteLine(string msg) 
 		{
             #if nrt
             //return;
+            string message = DC4Ever.emu.gl_cop_cnt.ToString() + "|||" + msg;
             if (this.UseCrWl==true) 
 			{
 				DebugForm.CreateEventRow();
