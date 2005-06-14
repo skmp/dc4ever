@@ -10,20 +10,7 @@
 
 
 using System;
-#if nrt
 using System.Windows.Forms;
-#else
-namespace System.Windows.Forms
-{
-    public class Application
-    {
-        public static void DoEvents()
-        {
-
-        }
-    }
-}
-#endif
 
 namespace DC4Ever
 {
@@ -32,47 +19,32 @@ namespace DC4Ever
 	/// </summary>
 	public class dc
 	{
-#if nrt
 		public static frmmain frmMain;
 		public static frmabout frmAbout;
-#endif
         public static DebugConsole dcon;//debug console
+		public static Debugger dbger;
+		
+		public static pointerlib.MemoryManager mmgr = new pointerlib.MemoryManager();
 
 		#region Init and Startup code
 		public static void run()//run the gui
 		{
 			Console.WriteLine ("Starting");
             emu.Init();
-#if nrt
 			frmMain=new frmmain();
-
 			frmAbout= new frmabout();
-#endif
+			dbger = new Debugger();
 			Console.WriteLine ("Loaded forms");
 			dcon=new DebugConsole();
 			Console.WriteLine ("Loaded visual console");
 			dcon.WriteLine("Loading Bios and Flash Ram");
-            emu.loadbiosfile("bin");
+            emu.loadbiosfile("bios.bin");
             emu.loadbiosflashfile("bios_flash.bin");
 			//fastint.init();
 			dcon.WriteLine("Running GUI");
 			Console.WriteLine ("Serial output:");
-#if nrt
+			dbger.Show();
 			Application.Run(frmMain);
-#else
-            dc.dcon.WriteLine("Loading ip.bin and Resetting sh4");
-#if !interpreter
-            Console.WriteLine("Please give inlining level settings..");
-            emu.br_8_b_level_max = Convert.ToUInt32(Console.ReadLine());
-            emu.br_8_f_level_max = Convert.ToUInt32(Console.ReadLine());
-#endif
-            emu.loadipbin("ip.bin");
-            emu.resetsh4();
-            dc.dcon.WriteLine("runcpu");
-            emu.runcpu();
-#endif
-			emu.runsh=false;//stop cpu if it is running..
-            emu.DeInit();
         }
 		//Startup Code
 		[STAThread]
@@ -81,16 +53,5 @@ namespace DC4Ever
 			dc.run();
 		}
 		#endregion
-#if !nrt
-        static long told = System.DateTime.Now.Ticks;
-        public static void t_Tick(object sender, EventArgs e)
-        {
-            Console.WriteLine("Running at " + System.Convert.ToString(((double)emu.opcount / 1024 / 1024) / ((double)(System.DateTime.Now.Ticks - told) / 10000000)) + " MHz , " + emu.fps + " fps(not real, just screen refresh) ");// + ((float)emu.mw / 1024 / 1204).ToString() + " megabyte vram writes per sec " + emu.ch.ToString() + ",cache hits " + emu.cm.ToString() + ",cache misses " + ((emu.ch + 1) / (emu.cm + 1)).ToString() + ":1 cache hit ratio ");
-            emu.opcount = 0;
-            emu.fps = 0;
-            emu.mw = 0;
-            told = System.DateTime.Now.Ticks;
-        }
-#endif
     }
 }
