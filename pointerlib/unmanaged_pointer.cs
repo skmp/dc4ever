@@ -28,7 +28,7 @@ namespace pointerlib
 			void* Destination,
 			uint Length,
 			byte Fill);
-		[DllImport("ole32.dll")]
+		/*[DllImport("ole32.dll")]
 		static extern void* CoTaskMemAlloc ( 
 			uint size);
 		[DllImport("ole32.dll")]
@@ -37,7 +37,7 @@ namespace pointerlib
 		[DllImport("ole32.dll")]
 		static extern void* CoTaskMemRealloc ( 
 			void* buffer,
-			uint size);
+			uint size);*/
 		[DllImport("crtdll.dll")]
 		static extern void memmove ( 
 			void* dVoid,
@@ -264,8 +264,8 @@ namespace pointerlib
 		{
 			if (ptr!=null)
 			{
-				CoTaskMemFree(ptr);
-				ptr=null;
+                Marshal.FreeCoTaskMem(new IntPtr(ptr));
+                ptr=null;
 				memsz=0;
 			}
 		}
@@ -277,7 +277,7 @@ namespace pointerlib
 		{
 			if (ptr!=null)
 				free();
-			ptr=(byte*)CoTaskMemAlloc(size);
+			ptr=(byte*)Marshal.AllocCoTaskMem((int)size).ToPointer();
 			if (ptr==null)
 				throw new OutOfMemoryException("Can't Create Memoby block of size " + size.ToString());
 			memsz=size;
@@ -291,7 +291,7 @@ namespace pointerlib
 		{
 			memsz=newsize;
 			//do reallocation
-			ptr=(byte*)CoTaskMemRealloc(ptr,newsize);
+			ptr=(byte*)Marshal.ReAllocCoTaskMem(new IntPtr(ptr),(int)newsize).ToPointer();
 			if (ptr==null)
 				throw new OutOfMemoryException("Can't Create Memoby block of size " + newsize.ToString());
 		}
@@ -2374,8 +2374,37 @@ namespace pointerlib
                 pCollection[i].free();
                 pCollection.RemoveAt(i);
             }
-            pCollection.TrimToSize();
+            pCollection.TrimExcess();
             GC.Collect();
         }
     }
+
+	//A simple class for memory manament
+	//it allocates mem and can de allocate it all :)
+	public static unsafe class MemoryManager_s
+	{
+		 static public List<unmanaged_pointer> pCollection = new List<unmanaged_pointer>();
+		//~MemoryManager_s()
+		//{
+		//	FreeAll();
+		//}
+
+		static public void* AllocMem(uint MemSize)
+		{
+			unmanaged_pointer temp = new unmanaged_pointer(MemSize);
+			pCollection.Add(temp);
+			temp.ZeroMemory();
+			return temp.Ptr;
+		}
+		static public void FreeAll()
+		{
+			for (int i = 0; i < pCollection.Count; i++)
+			{
+				pCollection[i].free();
+				pCollection.RemoveAt(i);
+			}
+			pCollection.TrimExcess();
+			GC.Collect();
+		}
+	}
 }
