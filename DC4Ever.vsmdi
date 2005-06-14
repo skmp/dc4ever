@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Tests>
+  <TestCategory type="Microsoft.VisualStudio.QualityTools.Common.TestCategory, Microsoft.VisualStudio.QualityTools.Common, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <id type="Microsoft.VisualStudio.QualityTools.Common.TestCategoryId, Microsoft.VisualStudio.QualityTools.Common, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <id type="System.Guid">8c43106b-9dc1-4907-a29f-aa66a61bf5b6</id>
+    </id>
+    <name type="System.String">Lists of Tests</name>
+    <description type="System.String" />
+    <enabled type="System.Boolean">True</enabled>
+    <parentCategoryId type="Microsoft.VisualStudio.QualityTools.Common.TestCategoryId, Microsoft.VisualStudio.QualityTools.Common, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <id type="System.Guid">00000000-0000-0000-0000-000000000000</id>
+    </parentCategoryId>
+  </TestCategory>
+</Tests>
