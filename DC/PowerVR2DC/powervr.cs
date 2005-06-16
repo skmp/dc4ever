@@ -14,18 +14,18 @@ using System.Drawing;
 #if nrt
 using System.Runtime.InteropServices;
 #endif
+using Tao.OpenGl;
+using Tao.Sdl;
+using SdlDotNet;
+
 namespace DC4Ever
 {
 	/// <summary>
 	/// Summary description for 
 	/// </summary>
-    #if nrt 
     public unsafe static partial  class emu
- #else 
-    public unsafe partial   class emu
- #endif
     {
-#if nrt
+
 		#region WinApi
 		public struct BITMAPINFOHEADER
 		{
@@ -58,15 +58,16 @@ namespace DC4Ever
 			int dwRop);
 		public static BITMAPINFOHEADER bitinfo;
 		#endregion
-#endif
         public static uint mw=0;
         public static uint f;
 		public static uint fps;
+		static int clc_pvr_frame = 0;
+		public static int clc_pvr_renderdone = 0;
 		//public static byte[] vram= new byte[8*mb];
-        public static byte* vram_b = (byte*)mmgr.AllocMem(8 * mb);
-        public static ushort* vram_w = (ushort*)vram_b;
-        public static uint* vram_dw = (uint*)vram_b;
-        public static unsafe void writemem(uint adr,uint data,int len)
+        static byte* vram_b = (byte*)dc.mmgr.AllocMem(8 * mb);
+        static ushort* vram_w = (ushort*)vram_b;
+        static uint* vram_dw = (uint*)vram_b;
+        static unsafe void writePvr(uint adr,uint data,int len)
 		{
             mw += (uint)len;
 			#region Address translation
@@ -89,7 +90,7 @@ namespace DC4Ever
 				return;
 			}
 			#endregion
-		    switch (len)
+            switch (len)
 			{
 				case 0x1://1 byte write
 					vram_b[adr]=(byte)data;
@@ -98,6 +99,7 @@ namespace DC4Ever
 					//fixed(byte *p=&vram[adr])
 					//	*(ushort*)p=(ushort)data;
                     vram_w[adr >> 1] = (ushort)data;
+					//dc.dbger.mode = 1;
                     return;
 				case 0x4://4 byte write
 					//fixed(byte *p=&vram[adr])
@@ -107,8 +109,7 @@ namespace DC4Ever
 			}
 			dc.dcon.WriteLine("Wrong write size in write (" + len+") at pc "+pc);
 		}
-		
-		public static unsafe uint readmem(uint adr,int len)
+		static unsafe uint readPvr(uint adr, int len)
 		{
 			#region Address translation
 			if ((adr > 0xFFFFFF)&& (adr<0x1800000))//using 32 bit interface
@@ -146,18 +147,61 @@ namespace DC4Ever
 			dc.dcon.WriteLine("Wrong read size in read (" + len+") at pc "+pc);
 			return 0;
 		}
-		
-		public static unsafe  void present()// draw the framebuffer(640*480*16 bit)
+		static unsafe  void present()// draw the framebuffer(640*480*16 bit)
 		{
             #if nrt
                 System.IntPtr hdc = dx.bb.GetDc();
                 fixed (BITMAPINFOHEADER* bi = &bitinfo)
-                    StretchDIBits(hdc, 0, 0, 640, 480, 0, 0, 640, 480,vram_b , bi, 0, 13369376);
+                    StretchDIBits(hdc, 0, 0, 640, 480, 0, 0, 640, 480,vram_b+*FB_R_SOF1 , bi, 0, 13369376);
                 dx.bb.ReleaseDc(hdc);
                 dx.fb.Draw(new Rectangle(dc.frmMain.PointToScreen(new Point(dc.frmMain.ClientRectangle.X + 8, dc.frmMain.ClientRectangle.Y + 8))
                     , new Size(dc.frmMain.screen.Width, dc.frmMain.screen.Height)), dx.bb, Microsoft.DirectX.DirectDraw.DrawFlags.DoNotWait | Microsoft.DirectX.DirectDraw.DrawFlags.Async);
-#endif
+            #endif
             fps+=1;
 		}
-	}
+        static void UpdatePvr(uint cycles)
+        {
+			clc_pvr_frame += (int)cycles;    //cycle count  #2
+			if (clc_pvr_frame > (3495253))//60 ~herz = 200 mhz / 60=3495253 cycles per screen refresh
+			{
+				//ok .. here , after much effort , we reached a full screen redraw :P
+				//now , we will copy everything onto the screen (meh) and raise a vblank interupt
+				RaiseInterupt(sh4_int.VBLank);//weeeee
+				present();
+				DoEvents();
+				clc_pvr_frame -= 3495253;
+			}
+
+			if (clc_pvr_renderdone > 0)
+			{
+				clc_pvr_renderdone -= (int)cycles;
+				if (clc_pvr_renderdone <= 0)
+				{
+					//render done interupt :P
+					RaiseInterupt(sh4_int.RENDER_DONE);
+					//I MUST FIX THAT .. SOMEDAY
+					if ((pvr_registered & (1 << 0))!=0)
+						RaiseInterupt(sh4_int.OPAQUE);	// ASIC_EVT_PVR_OPAQUEDONE
+
+					if ((pvr_registered & (1 << 1)) != 0)
+						RaiseInterupt(sh4_int.OPAQUEMOD); 	// ASIC_EVT_PVR_OPAQUEMODDONE
+
+					if ((pvr_registered & (1 << 2)) != 0)
+						RaiseInterupt(sh4_int.TRANS); 	// ASIC_EVT_PVR_TRANSDONE
+
+					if ((pvr_registered & (1 << 3)) != 0)
+						RaiseInterupt(sh4_int.TRANSMOD);	// ASIC_EVT_PVR_TRANSMODDONE
+
+					if ((pvr_registered & (1 << 4)) != 0)
+						RaiseInterupt(sh4_int.PUNCHTHRU); 	// ASIC_EVT_PVR_PTDONE
+
+					Video.GLSwapBuffers();
+					//*ACK_A |= 0x80; // end of rendering
+
+					Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
+					DoEvents();
+				}
+			}
+		}
+    }
 }
