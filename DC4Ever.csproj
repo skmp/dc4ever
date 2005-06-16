@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.40607</ProductVersion>
+    <ProductVersion>8.0.50215</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1F32EA73-0483-4323-9F8A-CDD1D0B8A066}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -30,7 +30,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>nrt</DefineConstants>
+    <DefineConstants>nrt,interpreter</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -53,7 +53,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>nrt</DefineConstants>
+    <DefineConstants>nrt,interpreter,optimised_b</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
@@ -72,22 +72,25 @@
   <ItemGroup>
     <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
-    <Reference Include="System">
-      <Name>System</Name>
-      <HintPath>..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll</HintPath>
+    <Reference Include="SdlDotNet, Version=3.1.0.0, Culture=neutral, PublicKeyToken=26ad4f7e10c61408">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Deps\Managed\SdlDotNet.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-      <HintPath>..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <Name>System.Drawing</Name>
-      <HintPath>..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll</HintPath>
-    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
       <HintPath>..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.OpenGl, Version=1.5.0.3, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Deps\Managed\Tao.OpenGl.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Sdl, Version=1.2.8.0, Culture=neutral, PublicKeyToken=9c7a200e36c0094e">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Deps\Managed\Tao.Sdl.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -96,10 +99,23 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DC\maple\maple.cs" />
+    <Compile Include="DC\PowerVR2DC\Ta.cs" />
+    <Compile Include="DC\SH4.7091\CallStackTrace.cs" />
+    <Compile Include="DC\SH4.7091\disasm.cs" />
+    <Compile Include="DC\SH4.7091\sh4_opcodes_test.cs" />
+    <Compile Include="DC\SH4.7091\sh4imp.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <None Include="ip.bin" />
     <Content Include="App.ico" />
     <Content Include="marcos.txt" />
-    <Compile Include="DC\SH4.7091\sh4_managed_recomplier.cs" />
+    <Compile Include="GUI_Win\Debugger.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI_Win\Debugger.Designer.cs">
+      <DependentUpon>Debugger.cs</DependentUpon>
+    </Compile>
     <Compile Include="mybase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -116,16 +132,12 @@
     <Compile Include="DC\PowerVR2DC\powervr.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="DC\SH4.7091\backup.cs" />
     <Compile Include="DC\SH4.7091\intexc.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DC\SH4.7091\sh4.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="DC\SH4.7091\sh4imp.cs">
-      <SubType>Code</SubType>
-    </None>
     <Compile Include="DirectX\dx.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -139,6 +151,9 @@
     <Compile Include="GUI_Win\frmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
+    <EmbeddedResource Include="GUI_Win\Debugger.resx">
+      <DependentUpon>Debugger.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI_Win\frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </EmbeddedResource>
