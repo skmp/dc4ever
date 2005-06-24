@@ -7,269 +7,350 @@
 //	run more or less at the same speed on dynarec mode
 //	This code requires C#.net 2.0 (Get the C# epxress 2005 Beta from microsoft)
 //
-
+//#define Old_IntCCode
 using System;
+using System.Collections.Generic;
 
 //SET_BIT(reg, bit) (reg |= (bit))
 //REMOVE_BIT(reg, bit) (reg &= ~(bit))
 
 namespace DC4Ever
 {
+
+	//ok , we have 3 types of interupts on the sh4
+	//NMI,RL and Internal Module interupts
+	//on the dreamcast the NMI interupts are not used
+	//The Interupt input to RL is form the holly sub system (the output of the holly interupt controler)
+	//The holly manages all external interupts , and it has 3 types of interupts normal , external and error
+
+
 	/// <summary>
 	/// Interups ,Exeptions ,Resets Handling
 	/// </summary>
 	public static unsafe partial class emu
 	{
-		enum sh4_expt
+
+		public enum InteruptType
 		{
-			USER_BREAK_BEFORE_INSTRUCTION_EXECUTION = 0x1e0,
-			INSTRUCTION_ADDRESS_ERROR = 0x0e0,
-			INSTRUCTION_TLB_MISS = 0x040,
-			INSTRUCTION_TLB_PROTECTION_VIOLATION = 0x0a0,
-			GENERAL_ILLEGAL_INSTRUCTION = 0x180,
-			SLOT_ILLEGAL_INSTRUCTION = 0x1a0,
-			GENERAL_FPU_DISABLE = 0x800,
-			SLOT_FPU_DISABLE = 0x820,
-			DATA_ADDRESS_ERROR_READ = 0x0e0,
-			DATA_ADDRESS_ERROR_WRITE = 0x100,
-			DATA_TLB_MISS_READ = 0x040,
-			DATA_TLB_MISS_WRITE = 0x060,
-			DATA_TLB_PROTECTION_VIOLATION_READ = 0x0a0,
-			DATA_TLB_PROTECTION_VIOLATION_WRITE = 0x0c0,
-			FPU = 0x120,
-			TRAP = 0x160,
-			INITAL_PAGE_WRITE = 0x080
+			sh4_int   = 0x00000000,
+			sh4_exp   = 0x01000000,
+			holly_nrm = 0x20000000,
+			holly_ext = 0x21000000,
+			holly_err = 0x22000000,
+			InteruptTypeMask = 0x7F000000,
+			InteruptIDMask=0x00FFFFFF
 		}
 
-		enum sh4_int
+
+		public enum sh4_int
 		{
-			// for asic9a only
-			RENDER_DONE = 1 << 0x02,
-			SCANINT1 = 1 << 0x03,
+			//sh4 internal module interupts
 
-			SCANINT2 = 1 << 0x04,
-			VBLank = 1 << 0x05,
-			OPAQUE = 1 << 0x07,
-			OPAQUEMOD = 1 << 0x08,
-			TRANS = 1 << 0x09,
-			TRANSMOD = 1 << 0x0a,
-			MAPLE_DMA = 1 << 0x0c,
-			MAPLE_ERR = 1 << 0x0d,
-			GDROM_DMA = 1 << 0x0e,
-			SPU_DMA = 1 << 0x0f,
-			PVR_DMA = 1 << 0x13,
-			PUNCHTHRU = 1 << 0x15
+			//sh4 exeptions 
+			sh4_ex_USER_BREAK_BEFORE_INSTRUCTION_EXECUTION = InteruptType.sh4_exp | 0x1e0,
+			sh4_ex_INSTRUCTION_ADDRESS_ERROR =InteruptType.sh4_exp | 0x0e0,
+			sh4_ex_INSTRUCTION_TLB_MISS =InteruptType.sh4_exp | 0x040,
+			sh4_ex_INSTRUCTION_TLB_PROTECTION_VIOLATION = InteruptType.sh4_exp |0x0a0,
+			sh4_ex_GENERAL_ILLEGAL_INSTRUCTION = InteruptType.sh4_exp |0x180,
+			sh4_ex_SLOT_ILLEGAL_INSTRUCTION = InteruptType.sh4_exp |0x1a0,
+			sh4_ex_GENERAL_FPU_DISABLE = InteruptType.sh4_exp |0x800,
+			sh4_ex_SLOT_FPU_DISABLE = InteruptType.sh4_exp |0x820,
+			sh4_ex_DATA_ADDRESS_ERROR_READ =InteruptType.sh4_exp |0x0e0,
+			sh4_ex_DATA_ADDRESS_ERROR_WRITE = InteruptType.sh4_exp | 0x100,
+			sh4_ex_DATA_TLB_MISS_READ = InteruptType.sh4_exp | 0x040,
+			sh4_ex_DATA_TLB_MISS_WRITE = InteruptType.sh4_exp | 0x060,
+			sh4_ex_DATA_TLB_PROTECTION_VIOLATION_READ = InteruptType.sh4_exp | 0x0a0,
+			sh4_ex_DATA_TLB_PROTECTION_VIOLATION_WRITE = InteruptType.sh4_exp | 0x0c0,
+			sh4_ex_FPU = InteruptType.sh4_exp | 0x120,
+			sh4_ex_TRAP = InteruptType.sh4_exp | 0x160,
+			sh4_ex_INITAL_PAGE_WRITE = InteruptType.sh4_exp | 0x080,
 
-			//// for asic9b only
-			//PRIM_NOMEM = 0x0100 | 0x02,
-			//MATR_NOMEM = 0x0100 | 0x03,
+			// asic9a /sh4 external holly normal [internal]
+			holly_RENDER_DONE = InteruptType.holly_nrm | 0x02,
+			holly_SCANINT1 = InteruptType.holly_nrm | 0x03,
+			holly_SCANINT2 = InteruptType.holly_nrm | 0x04,
+			holly_VBLank = InteruptType.holly_nrm | 0x05,
+			holly_OPAQUE = InteruptType.holly_nrm | 0x07,
+			holly_OPAQUEMOD = InteruptType.holly_nrm | 0x08,
+			holly_TRANS = InteruptType.holly_nrm | 0x09,
+			holly_TRANSMOD = InteruptType.holly_nrm | 0x0a,
+			holly_MAPLE_DMA = InteruptType.holly_nrm | 0x0c,
+			holly_MAPLE_ERR = InteruptType.holly_nrm | 0x0d,
+			holly_GDROM_DMA = InteruptType.holly_nrm | 0x0e,
+			holly_SPU_DMA = InteruptType.holly_nrm | 0x0f,
+			holly_PVR_DMA = InteruptType.holly_nrm | 0x13,
+			holly_PUNCHTHRU = InteruptType.holly_nrm | 0x15,
 
-			//// for asic9c only
-			//GDROM_CMD = 0x0200 | 0x00,
-			//SPU_IRQ = 0x0200 | 0x01,
-			//EXP_8BIT = 0x0200 | 0x02,
-			//EXP_PCI = 0x0200 | 0x03
+			// asic9c/sh4 external holly external [EXTERNAL]
+			holly_GDROM_CMD = InteruptType.holly_ext | 0x00,
+			holly_SPU_IRQ = InteruptType.holly_ext | 0x01,
+			holly_EXP_8BIT = InteruptType.holly_ext | 0x02,
+			holly_EXP_PCI = InteruptType.holly_ext | 0x03,
+
+			// asic9b/sh4 external holly err only error [error]
+			holly_PRIM_NOMEM = InteruptType.holly_err | 0x02,
+			holly_MATR_NOMEM = InteruptType.holly_err | 0x03
 		}
 
-		const int ASIC_IRQ9 = 1;
-		const int ASIC_IRQB = 2;
-		const int ASIC_IRQD = 3;
+		const int IPr_LVL6 = 0x5;
+		const int IPr_LVL4 = 0x3;
+		const int IPr_LVL2 = 0x1;
 
-		//static int intdelay = 0;
-		//static int intcnt = 0;
+		static Queue<sh4_int> pending_interups = new Queue<sh4_int>();
+
+		static bool zleeping = false, awake = false;
 		static int pvr_registered = 0;
-		static uint pending_interups=0;
+		
 		static void UpdateIntExc(uint cycles)
 		{
 			check_ints();
 		}
 
-		static void RaiseExecption(sh4_expt exept)
-		{}
-		static void RaiseInterupt(sh4_int interupt)
+		public static void RaiseInterupt(sh4_int interupt)
 		{
-			pending_interups |= (uint)interupt;
+			pending_interups.Enqueue(interupt);
 		}
 
-		static bool inside_int = false;
+		//static bool inside_int = false;
 
 		static bool check_ints()
 		{
 			if (pc_funct != 0)
-				/* 	||  IS_SET(SR, SR_BL)
-					||  VBR == 0) */
 				return false;
 
-				#region old code
+			
+			#region new code
+			if (pending_interups.Count == 0)
+				return false;
+
+			sh4_int interupt=pending_interups.Dequeue();
+
+			InteruptType type = (InteruptType)((uint)interupt & (uint)InteruptType.InteruptTypeMask);
+
+
+
+			switch (type)
+			{
+				case InteruptType.sh4_int:
+					return HandleSH4_int((sh4_int)((uint)interupt));
+
+				case InteruptType.sh4_exp:
+					return HandleSH4_exept((sh4_int)((uint)interupt ));
+
+				case InteruptType.holly_nrm:
+					return HandleHolly_nrm((sh4_int)((uint)interupt));
+
+				case InteruptType.holly_ext:
+					return HandleHolly_ext((sh4_int)((uint)interupt));
+
+				case InteruptType.holly_err:
+					return HandleHolly_err((sh4_int)((uint)interupt ));
+			}
+
+			return false;
 /*
-			//intdelay++;
-				
-			if (intdelay == 150000)
+			if (((interupt >> 24) & 0xFF) != 0)
 			{
-				uint dw = 0;
-
-				if (intcnt > 9)
-					intcnt = 0;
-
-				switch (intcnt)
-				{
-					case 0:
-						dw = 1 << 3;	// ASIC_EVT_PVR_SCANINT1
-						break;
-
-					case 1:
-						dw = 1 << 4;	// ASIC_EVT_PVR_SCANINT2
-						break;
-
-					case 2:
-						if ((pvr_registered & (1 << 0))!=0)
-							dw = 1 << 7;	// ASIC_EVT_PVR_OPAQUEDONE
-						break;
-
-					case 3:
-						if ((pvr_registered & (1 << 1)) != 0)
-							dw = 1 << 8;	// ASIC_EVT_PVR_OPAQUEMODDONE
-						break;
-
-					case 4:
-						if ((pvr_registered & (1 << 2)) != 0)
-							dw = 1 << 9;	// ASIC_EVT_PVR_TRANSDONE
-						break;
-
-					case 5:
-						if ((pvr_registered & (1 << 3)) != 0)
-							dw = 1 << 10;	// ASIC_EVT_PVR_TRANSMODDONE
-						break;
-
-					case 6:
-						if ((pvr_registered & (1 << 4)) != 0)
-							dw = 1 << 21;	// ASIC_EVT_PVR_PTDONE
-						break;
-
-					case 7:
-						//			if (pvr_registering == -1)
-						dw = 1 << 2;	// ASIC_EVT_PVR_RENDERDONE
-						break;
-
-					case 8:
-						dw = 1 << 5;	// ASIC_EVT_PVR_VBLINT
-						break;
-
-					case 9:
-						if (MapleDMAFinished)
-						{
-							dw = 1 << 12;				// maple dma complete
-							MapleDMAFinished = false;	//interupt raised , clear the flag
-						}
-						break;
-				}
-
-				
-				//intcnt++;
-				//intdelay = 0;
-
-				if (dw == 0)
-					return;
-				*/
-				#endregion
-
-			 if (pending_interups==0)
-				 return false;
-
-				//logxmsg(LOG_INTC, "seteando bit %x\n", dw);
-				*ACK_A|= pending_interups;
-				
-				if ((*IRQ9_A & pending_interups)!=0)
-				{
-					//logxmsg(LOG_INTC, "intc: asic_irq9, %d\n", intcnt);
-					if (intc(ASIC_IRQ9))
-					{
-						return true;
-					}
-				}
-				if ((*IRQD_A & pending_interups)!=0)
-				{
-					//logxmsg(LOG_INTC, "intc: asic_irqd, %d\n", intcnt);
-					if (intc(ASIC_IRQD))
-					{
-						return true;
-					}
-				}
-				if ((*IRQB_A & pending_interups)!=0)
-				{
-					//logxmsg(LOG_INTC, "intc: asic_irqb, %d\n", intcnt);
-					if (intc(ASIC_IRQB))
-					{
-						return true;
-					}
-				}
-
-				pending_interups = 0;
+				WriteLine("WARNING : OLNY INTERNAL INTERUPS ARE SUPORTED");
 				return false;
 			}
-		
 
-		static bool intc(uint irq)
+			uint* IST_reg = null, IML6_reg = null, IML4_reg = null, IML2_reg = null;
+
+			uint interupt_type=(interupt >> 24) & 0xFF;
+
+			switch (interupt_type)
+			{
+				case 0:		//normal
+					IST_reg = ISTNRM;
+					IML6_reg = IML6NRM;
+					IML4_reg = IML4NRM;
+					IML2_reg = IML2NRM;
+					break;
+				case 1:		//external
+					IST_reg = ISTEXT;
+					IML6_reg = IML6EXT;
+					IML4_reg = IML4EXT;
+					IML2_reg = IML2EXT;
+					break;
+				case 2:		//error
+					IST_reg = ISTERR;
+					IML6_reg = IML6ERR;
+					IML4_reg = IML4ERR;
+					IML2_reg = IML2ERR;
+					break;
+			}
+
+			interupt =(uint)( 1 << ((int)(interupt & 0xFF)));
+			*IST_reg |= interupt;
+
+			if ((*IML6_reg & interupt) != 0)
+			{
+				if (intc(IPr_LVL6, interupt_type))
+					return true;
+			}
+			else if ((*IML4_reg & interupt) != 0)
+			{
+				if (intc(IPr_LVL4, interupt_type))
+					return true;
+			}
+			else if ((*IML2_reg & interupt) != 0)
+			{
+				if (intc(IPr_LVL2, interupt_type))
+					return true;
+			}
+ * */
+			#endregion
+
+			//return false;
+		}
+
+		static bool HandleSH4_exept(sh4_int expt)
 		{
-			byte v=0;
+			return false;
+		}
 
-			if (sr.BL==0 || vbr == 0)
+		static bool HandleSH4_int(sh4_int intpt)
+		{
+			return false;
+		}
+
+		static bool HandleHolly_nrm(sh4_int intpt)
+		{
+			uint interupt = (uint)(1 << (((int)((uint)intpt & (uint)InteruptType.InteruptIDMask))));
+			*ISTNRM |= interupt;
+
+			if ((*IML6NRM & interupt) != 0)
+			{
+				if (Do_interupt(IPr_LVL6, 0x320, 0x600))
+					return true;
+			}
+			else if ((*IML4NRM & interupt) != 0)
+			{
+				if (Do_interupt(IPr_LVL4, 0x360, 0x600))
+					return true;
+			}
+			else if ((*IML2NRM & interupt) != 0)
+			{
+				if (Do_interupt(IPr_LVL2, 0x3A0, 0x600))
+					return true;
+			}
+			
+			return false;
+		}
+
+		static bool HandleHolly_ext(sh4_int intpt)
+		{
+			uint interupt = (uint)(1 << ((int)((uint)intpt & (uint)InteruptType.InteruptIDMask)));
+			*ISTEXT |= interupt;
+
+			if ((*IML6EXT & interupt) != 0)
+			{
+				if (Do_interupt(IPr_LVL6, 0x320, 0x600))
+					return true;
+			}
+			else if ((*IML4EXT & interupt) != 0)
+			{
+				if (Do_interupt(IPr_LVL4, 0x360, 0x600))
+					return true;
+			}
+			else if ((*IML2EXT & interupt) != 0)
+			{
+				if (Do_interupt(IPr_LVL2, 0x3a0, 0x600))
+					return true;
+			}
+			return false;
+		}
+
+		static bool HandleHolly_err(sh4_int intpt)
+		{
+			uint interupt = (uint)(1 << ((int)((uint)intpt & (uint)InteruptType.InteruptIDMask)));
+			*ISTERR |= interupt;
+
+			if ((*IML6ERR & interupt) != 0)
+			{
+				if (Do_interupt(IPr_LVL6, 0x320, 0x600))
+					return true;
+			}
+			else if ((*IML4ERR & interupt) != 0)
+			{
+				if (Do_interupt(IPr_LVL4, 0x360, 0x600))
+					return true;
+			}
+			else if ((*IML2ERR & interupt) != 0)
+			{
+				if (Do_interupt(IPr_LVL2, 0x3a0, 0x600))
+					return true;
+			}
+			return false;
+		}
+
+		static bool Do_interupt(uint lvl, uint intEvn, uint CallVect)
+		{
+
+			if (!zleeping)
+			{
+				if (sr.BL == 1 || vbr == 0)
+					return false;
+			}
+
+			//interupt disabled :)
+			if (sr.IMASK == 0xf || lvl == 0)
 				return false;
 
-			if (inside_int == true)
-			{
-				//logmsg("llamando intc mientras se procesa otra int.\n");
-				//		return;
-			}
-
-			/*	logmsg("antes:");
-				dump_registers(); */
-
-			// a revisar por int's pendientes
-			//logmsg("imask: %x, VBR: %x\r\n", SR_GET_IMASK(), VBR);
-
-			switch (irq)
-			{
-				case ASIC_IRQ9: v = 0x9; break;
-				case ASIC_IRQB: v = 0xb; break;
-				case ASIC_IRQD: v = 0xd; break;
-				default: /*logmsg("ERROR: IRQ NO RECONOCIDA!"); abort();*/ break;
-			}
-
-			if (sr.IMASK > v)
-			{
-				//logmsg("imask > irq, retornando.\n");
+			//test interupt level
+			if (sr.IMASK > lvl)
 				return false;
-			}
 
-			switch (irq)
-			{
-				case ASIC_IRQ9: *INTEVT = 0x320; break;
-				case ASIC_IRQB: *INTEVT = 0x360; break;
-				case ASIC_IRQD: *INTEVT = 0x3a0; break;
-			}
+			*INTEVT = intEvn;
+
+			if (zleeping)
+				awake = true;
 
 			ssr = sr.reg;
 			spc = pc;
 			sgr = r[15];
-			//SET_BIT(SR, SR_BL);
 			sr.BL = 1;
-			//SET_BIT(SR, SR_MD);
 			sr.MD = 1;
-			//SET_BIT(SR, SR_RB);
 			sr.RB = 1;
 
 			cstAddCall(pc, pc, vbr + 0x600, CallType.Interupt);
 
-			pc = vbr + 0x600;
+			pc = vbr + CallVect;
 			
-			//logmsg("intc: saltando a %x, con registros:\n", PC);
-			//dump_registers();
-			inside_int = true;
-			//	filelogging = FILELOG_CALLS;
 			return true;
 		}
 
+		static bool Do_Exeption(uint lvl, uint expEvn, uint CallVect)
+		{
+
+			if (!zleeping)
+			{
+				if (sr.BL == 1 || vbr == 0)
+					return false;
+			}
+
+			if (sr.IMASK > lvl)
+				return false;
+
+			*EXPEVT = expEvn;
+
+			if (zleeping)
+				awake = true;
+
+			ssr = sr.reg;
+			spc = pc;
+			sgr = r[15];
+			sr.BL = 1;
+			sr.MD = 1;
+			sr.RB = 1;
+
+			cstAddCall(pc, pc, vbr + 0x600, CallType.Interupt);
+
+			pc = vbr + CallVect;
+
+			return true;
+		}
 
 	}
 }
