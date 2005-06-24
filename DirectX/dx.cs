@@ -26,6 +26,7 @@ namespace DC4Ever
 		public static Microsoft.DirectX.DirectDraw.Surface bb;//backbuffer
 		public static void init(System.Windows.Forms.Control targ)
 		{
+			//#if!zezuExt
 			dddev = new Microsoft.DirectX.DirectDraw.Device();
 			dddev.SetCooperativeLevel(targ,Microsoft.DirectX.DirectDraw.CooperativeLevelFlags.Normal);
 			didr.SurfaceCaps caps=new Microsoft.DirectX.DirectDraw.SurfaceCaps();
@@ -40,6 +41,7 @@ namespace DC4Ever
 			//desc.PixelFormatStructure.RgbBitCount= 16;
 			bb=new didr.Surface(desc,dddev);
 			bb.ColorFill (0);
+//#endif
             emu.bitinfo = new DC4Ever.emu.BITMAPINFOHEADER();
             emu.bitinfo.biSize = 40;
             emu.bitinfo.biWidth = 640;
