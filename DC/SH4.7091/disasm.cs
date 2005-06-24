@@ -393,30 +393,6 @@ namespace DC4Ever
 								case 0x6://0100_xxxx_0110_0010
 									return d0100_nnnn_0110_0010(opcode, pc);
 								//break;
-								case 0x8://0100_xxxx_1000_0010
-									return d0100_nnnn_1000_0010(opcode, pc);
-								//break;
-								case 0x9://0100_xxxx_1001_0010
-									return d0100_nnnn_1001_0010(opcode, pc);
-								//break;
-								case 0xA://0100_xxxx_1010_0010
-									return d0100_nnnn_1010_0010(opcode, pc);
-								//break;
-								case 0xB://0100_xxxx_1011_0010
-									return d0100_nnnn_1011_0010(opcode, pc);
-								//break;
-								case 0xC://0100_xxxx_1100_0010
-									return d0100_nnnn_1100_0010(opcode, pc);
-								//break;
-								case 0xD://0100_xxxx_1101_0010
-									return d0100_nnnn_1101_0010(opcode, pc);
-								//break;
-								case 0xE://0100_xxxx_1110_0010
-									return d0100_nnnn_1110_0010(opcode, pc);
-								//break;
-								case 0xF://0100_xxxx_1111_0010
-									return d0100_nnnn_1111_0010(opcode, pc);
-								//break;
 								default:
 									return "Invalid opcode";
 								//break;
@@ -441,6 +417,30 @@ namespace DC4Ever
 								//break;
 								case 0x4://0100_xxxx_0100_0011
 									return d0100_nnnn_0100_0011(opcode, pc);
+								//break;
+								case 0x8://0100_xxxx_1000_0010
+									return d0100_nnnn_1000_0011(opcode, pc);
+								//break;
+								case 0x9://0100_xxxx_1001_0010
+									return d0100_nnnn_1001_0011(opcode, pc);
+								//break;
+								case 0xA://0100_xxxx_1010_0010
+									return d0100_nnnn_1010_0011(opcode, pc);
+								//break;
+								case 0xB://0100_xxxx_1011_0010
+									return d0100_nnnn_1011_0011(opcode, pc);
+								//break;
+								case 0xC://0100_xxxx_1100_0010
+									return d0100_nnnn_1100_0011(opcode, pc);
+								//break;
+								case 0xD://0100_xxxx_1101_0010
+									return d0100_nnnn_1101_0011(opcode, pc);
+								//break;
+								case 0xE://0100_xxxx_1110_0010
+									return d0100_nnnn_1110_0011(opcode, pc);
+								//break;
+								case 0xF://0100_xxxx_1111_0010
+									return d0100_nnnn_1111_0011(opcode, pc);
 								//break;
 								default:
 									return "Invalid opcode";
@@ -1098,16 +1098,18 @@ namespace DC4Ever
 		public static string GetProcedureNameFromAddr(uint addr)
 		{
 
-			addr &= 0x1FFFFFFF;
-			if (addr == (dc_bios_vec & 0x1FFFFFFF))
+			//addr &= 0x1FFFFFFF;
+			if ((addr & 0x1FFFFFFF) == (dc_bios_vec & 0x1FFFFFFF))
 				return "Dreamcast Bios Boot Address";
-			else if (addr == (dc_boot_vec & 0x1FFFFFFF))
-				return "Dreamcast Boot Address";
+			else if ((addr & 0x1FFFFFFF) == (dc_boot_vec & 0x1FFFFFFF))
+				return "Dreamcast Boot Address[ip.bin]";
+			else if ((addr & 0x1FFFFFFF) == ((0x8C010000) & 0x1FFFFFFF))
+				return "1st_read.bin";
+			else if ((addr & 0x1FFFFFFF) == ((vbr+0x600) & 0x1FFFFFFF))
+				return "Interupt Hanlder Vector[0x" + Convert.ToString(addr, 16) + "]";
 			else
 				return "Unknown function name[0x" + Convert.ToString(addr, 16) + "]";
 		}
-
-
 	}
 
 
@@ -1658,63 +1660,6 @@ namespace DC4Ever
 			return "sts.l PR,@-" + RegToString(Get2N(opcode)) + "";
 		}
 
-
-		//stc R0_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
-		static string d0100_nnnn_1000_0010(uint opcode, uint pc)
-		{
-			return ("stc R0_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
-		}
-
-
-		//stc R1_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
-		static string d0100_nnnn_1001_0010(uint opcode, uint pc)
-		{
-			return ("stc R1_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
-		}
-
-
-		//stc R2_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
-		static string d0100_nnnn_1010_0010(uint opcode, uint pc)
-		{
-			return ("stc R2_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
-		}
-
-
-		//stc R3_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
-		static string d0100_nnnn_1011_0010(uint opcode, uint pc)
-		{
-			return ("stc R3_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
-		}
-
-
-		//stc R4_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
-		static string d0100_nnnn_1100_0010(uint opcode, uint pc)
-		{
-			return ("stc R4_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
-		}
-
-
-		//stc R5_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
-		static string d0100_nnnn_1101_0010(uint opcode, uint pc)
-		{
-			return ("stc R5_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
-		}
-
-
-		//stc R6_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
-		static string d0100_nnnn_1110_0010(uint opcode, uint pc)
-		{
-			return ("stc R6_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
-		}
-
-
-		//stc R7_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
-		static string d0100_nnnn_1111_0010(uint opcode, uint pc)
-		{
-			return ("stc R7_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
-		}
-
-
 		//stc.l SR,@-" + RegToString(Get2N(opcode)) + "            // no implemetation
 		static string d0100_nnnn_0000_0011(uint opcode, uint pc)
 		{
@@ -1747,6 +1692,62 @@ namespace DC4Ever
 		static string d0100_nnnn_0100_0011(uint opcode, uint pc)
 		{
 			return ("stc.l SPC,@-" + RegToString(Get2N(opcode)) + "		//nimp");
+		}
+
+
+		//stc R0_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
+		static string d0100_nnnn_1000_0011(uint opcode, uint pc)
+		{
+			return ("stc R0_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
+		}
+
+
+		//stc R1_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
+		static string d0100_nnnn_1001_0011(uint opcode, uint pc)
+		{
+			return ("stc R1_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
+		}
+
+
+		//stc R2_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
+		static string d0100_nnnn_1010_0011(uint opcode, uint pc)
+		{
+			return ("stc R2_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
+		}
+
+
+		//stc R3_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
+		static string d0100_nnnn_1011_0011(uint opcode, uint pc)
+		{
+			return ("stc R3_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
+		}
+
+
+		//stc R4_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
+		static string d0100_nnnn_1100_0011(uint opcode, uint pc)
+		{
+			return ("stc R4_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
+		}
+
+
+		//stc R5_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
+		static string d0100_nnnn_1101_0011(uint opcode, uint pc)
+		{
+			return ("stc R5_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
+		}
+
+
+		//stc R6_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
+		static string d0100_nnnn_1110_0011(uint opcode, uint pc)
+		{
+			return ("stc R6_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
+		}
+
+
+		//stc R7_BANK,@-" + RegToString(Get2N(opcode)) + "         // no implemetation
+		static string d0100_nnnn_1111_0011(uint opcode, uint pc)
+		{
+			return ("stc R7_BANK,@-" + RegToString(Get2N(opcode)) + "		//nimp");
 		}
 
 
