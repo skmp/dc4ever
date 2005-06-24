@@ -59,7 +59,7 @@ namespace DC4Ever
 #endif
 		}
 
-		static void cstRemCall(uint ret)
+		static void cstRemCall(uint ret,CallType rettype)
 		{
 #if !optimised_b
 			if (cstCallStack.Count > 0)
@@ -67,8 +67,16 @@ namespace DC4Ever
 				callstack_frame t = cstCallStack.Pop();
 				if (t.retadr != ret)
 				{
-					WriteLine("Call stack wrong Ret address;" + UintToHex(ret) + "!=" + UintToHex(t.retadr));
-					delayslot = t.retadr;
+					WriteLine("Call stack wrong Ret address;" + UintToHex(ret) + "!=" + UintToHex(t.retadr) + " sub start : " + UintToHex(t.startadr));
+					//dc.dbger.mode = 1;
+				}
+				if (t.calltype != rettype)
+				{
+					WriteLine("Call stack wrong TYPE address;" + t.calltype.ToString() + "!=" + rettype.ToString() + " sub start : " + UintToHex(t.startadr));
+					//cstCallStack.Push(t);
+					//dc.dbger.SetBP(t.startadr);
+					//dc.dbger.mode = 1;
+					pc = t.retadr;
 				}
 			}
 			else
