@@ -10,18 +10,15 @@ namespace DC4Ever
 {
 	public static unsafe partial class emu
 	{
-		static uint* TAmem = (uint*)dc.mmgr.AllocMem(0x200);
-		static uint TaRead(uint addr, int size)
-		{
-			return 0;
-		}
-		
+		static uint* TAmem = (uint*)dc.mmgr.AllocMem(0x200);	
 		static void TaWrite(uint addr, uint data, int size)
 		{
 			if (size == 4)
 				TAmem[(addr & 0x1ff)>>2] = data;
 			return;
 		}
+
+
 
 		struct Ta_listheader
 		{
@@ -40,14 +37,22 @@ namespace DC4Ever
 		static uint total_count = 0;
 		static Ta_listheader curListheader = new Ta_listheader();
 
+		static void TAStart(uint addr,uint data)
+		{
+			//dc.dcon.WriteLine("TA START:" + addr.ToString() + ";" +data.ToString() );
+		}
+
 		static void RenderStart()
 		{
-			clc_pvr_renderdone = 1747627;//just give us soem time to actualy render the data
+			clc_pvr_renderdone = 2048;//just give us soem time to actualy render the data
 										 // it takes 1/120th of the second to render em .. lol
+			WriteLine("TA - Render," + total_count.ToString() + " vertexes");
+			total_count = 0;
 		}
 
 		static void ProccessTaSQWrite(uint addr)
 		{
+			//dc.dcon.WriteLine("PTASQW : " + addr.ToString());
 			uint *data = &TAmem[addr & 0x1ff];
 			uint cmd = (data[0] >> 29) & 0x7;
 			switch (cmd)
@@ -57,10 +62,31 @@ namespace DC4Ever
 					if (curListheader.vertex_count != 0)
 					{
 						WriteLine("TA Warning : Command 7 end missing");
-						curListheader.vertex_count = 0;
-						Gl.glEnd();
+						//curListheader.vertex_count = 0;
+						//Gl.glEnd();
 					}
-					total_count = 0;
+					switch (curListheader.listtype)
+					{
+						case 0: //opaque polu
+							RaiseInterupt(sh4_int.holly_OPAQUE);//finished
+							break;
+
+						case 1: //opaque mod
+							RaiseInterupt(sh4_int.holly_OPAQUEMOD);//finished
+							break;
+
+						case 2: //transparent poly
+							RaiseInterupt(sh4_int.holly_TRANSMOD);//finished
+							break;
+
+						case 3://transparent mod
+							RaiseInterupt(sh4_int.holly_TRANS);//finished
+							break;
+
+						case 4://punchthru poly
+							RaiseInterupt(sh4_int.holly_PUNCHTHRU);//finished
+							break;
+					}
 					//RenderStart();
 					break;
 
@@ -110,7 +136,6 @@ namespace DC4Ever
 
 					if (curListheader.texture == 0)
 					{
-					
 						#region not textured triagle strip
 						float* pos = (float*)&data[1];
 						//WriteLine("Vertex Data :" + pos[0].ToString() + ";" + pos[1].ToString() + ";" + pos[2].ToString());
@@ -131,13 +156,6 @@ namespace DC4Ever
 								break;
 						}
 						Gl.glVertex3f(pos[0], pos[1], pos[2] - 100);
-						if ((data[0] & (1 << 28)) != 0)
-						{
-							Gl.glEnd();
-							curListheader.vertex_count = 0;
-						}
-						else
-							curListheader.vertex_count++;
 						#endregion
 					}
 					else
@@ -148,7 +166,7 @@ namespace DC4Ever
 						switch (curListheader.colour_type)
 						{
 							case 0://rgb
-								byte* col_b = (byte*)&data[4];
+								byte* col_b = (byte*)&data[6];
 								Gl.glColor4b(col_b[0], col_b[1], col_b[2], col_b[3]);
 								WriteLine("ARGB-b " + col_b[0].ToString() + " " + col_b[1].ToString() + " " + col_b[2].ToString() + " " + col_b[3].ToString() + " ");
 								break;
@@ -164,22 +182,24 @@ namespace DC4Ever
 								break;
 						}
 						Gl.glVertex3f(pos[0], pos[1], pos[2] - 100);
-						if ((data[0] & (1 << 28)) != 0)
-						{
-							if (curListheader.vertex_count != 0)
-							{
-								Gl.glEnd();
-								curListheader.vertex_count = 0;
-							}
-						}
-						else
-							curListheader.vertex_count++;
 						#endregion
 
 						WriteLine("Vertex Data :" + pos[0].ToString() + ";" + pos[1].ToString() + ";" + pos[2].ToString());
 						WriteLine("Textures not suported");
 						
 					}
+
+
+					if ((data[0] & (1 << 28)) != 0)
+					{
+						if (curListheader.vertex_count != 0)
+						{
+							Gl.glEnd();
+							curListheader.vertex_count = 0;
+						}
+					}
+					else
+						curListheader.vertex_count++;
 
 					break;
 			}
@@ -188,6 +208,10 @@ namespace DC4Ever
 		static Surface screen = null;
 		static void initOpenGL()
 		{
+#if zezuExt
+			return;
+#else
+
 			//Sdl.SDL_Init(Sdl.SDL_INIT_VIDEO);
 			int width = 640;
 			int height = 480;
@@ -212,11 +236,14 @@ namespace DC4Ever
 			//		glOrtho(0, width, height, 0, 0.1, 100.0);
 			Gl.glOrtho(0, width, height, 0, 0, 1024.0);
 			Events.Poll();
+#endif
 		}
 		public static void DoEvents()
 		{
 			System.Windows.Forms.Application.DoEvents();
+#if!zezuExt
 			Events.Poll();
+#endif
 		}
 	}
 
