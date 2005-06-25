@@ -137,11 +137,18 @@ namespace DC4Ever
 		}
 		static unsafe uint readBios(uint adr,int len)//read from bios mem - no write (rom)
 		{
-			
+
+			//0x38e
+			//0x98a
+
+
             //return 0xB;
             //TODO : BIOS HLE Force and Mixed modes
 			if (len ==0x3)//olny if this read is from an opcode fetch
 			{
+				//if ((adr == 0x38e) | (adr == 0x98a))
+					//return 0x9;
+
 				#region Bios HLE Mixed
 				if (hle==true)
 				{
@@ -250,6 +257,97 @@ namespace DC4Ever
 									//break;
 								case 0:
 									//GDROM superfunction 
+									switch (r[7])
+									{
+										case 0:
+											WriteLine("GDROM_SEND_COMMAND");
+											WriteLine("Bios call was skiped");
+											return 65537;//just jump back- no emulation :P
+//											break;
+
+										case 1:
+											WriteLine("GDROM_CHECK_COMMAND");
+											WriteLine("Bios call was skiped");
+											return 65537;//just jump back- no emulation :P
+//											break;
+
+										case 2:
+											WriteLine("GDROM_MAINLOOP");
+											WriteLine("Bios call was skiped");
+											return 65537;//just jump back- no emulation :P
+//											break;
+
+										case 3:
+											WriteLine("GDROM_INIT");
+											WriteLine("Bios call was skiped");
+											return 65537;//just jump back- no emulation :P
+//											break;
+
+										case 4:
+											WriteLine("GDROM_CHECK_DRIVE");
+											WriteLine("Bios call was FAKED");
+											write(r[4], 2, 4);// standby
+											write(r[4] + 4, 0x80, 4);// GD-ROM
+
+											r[0] = 0;
+											return 65537;//just jump back- no emulation :P
+//											break;
+
+										case 5:
+											WriteLine("GDROM_?DMA?");
+											WriteLine("Bios call was skiped");
+											return 65537;//just jump back- no emulation :P
+//											break;
+
+										case 6:
+											WriteLine("GDROM_?DMA?");
+											WriteLine("Bios call was skiped");
+											return 65537;//just jump back- no emulation :P
+//											break;
+
+										case 7:
+											WriteLine("GDROM_?DMA?");
+											WriteLine("Bios call was skiped");
+											return 65537;//just jump back- no emulation :P
+///											break;
+
+										case 8:
+											WriteLine("GDROM_ABORT_COMMAND");
+											WriteLine("Bios call was skiped");
+											return 65537;//just jump back- no emulation :P
+///											break;
+
+										case 9:
+											WriteLine("GDROM_RESET");
+											WriteLine("Bios call was skiped");
+											return 65537;//just jump back- no emulation :P
+///											break;
+
+										case 10:
+											WriteLine("GDROM_SECTOR_MODE");
+											WriteLine("Bios call was skiped");
+											return 65537;//just jump back- no emulation :P
+///											break;
+
+										case 11:
+											WriteLine("GDROM_?");
+											WriteLine("Bios call was skiped");
+											return 65537;//just jump back- no emulation :P
+//											break;
+
+										case 12:
+											WriteLine("GDROM_?");
+											WriteLine("Bios call was skiped");
+											return 65537;//just jump back- no emulation :P
+///											break;
+
+										case 13:
+											WriteLine("GDROM_?");
+											WriteLine("Bios call was skiped");
+											return 65537;//just jump back- no emulation :P
+///											break;
+									}
+
 									WriteLine("Bios call : GDROM superfunction ");
 									WriteLine("Bios call was skiped");
 									return 65537;//just jump back- no emulation :P
