@@ -11,9 +11,9 @@
 using System;
 namespace DC4Ever
 {
-    //0xxx -  finished nimpl
-    public static unsafe partial class emu
-    {
+
+	#region 0xxx
+    
 		static void iInvalidOpcode()
 		{
 			dc.dcon.WriteLine("Warning Invalid opcode at pc "+System.Convert.ToString(pc,16).ToUpper()+ " with code " +System.Convert.ToString(opcode,16).ToUpper());
@@ -502,8 +502,8 @@ namespace DC4Ever
             mach = (uint)((result >> 32) & 0xFFFFFFFF);
         }
 
-    }
-    //1xxx
+    #endregion
+	#region 1xxx
     public static unsafe partial class emu 
     {
 		//mov.l <REG_M>,@(<disp>,<REG_N>)
