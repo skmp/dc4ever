@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 
 using Tao.Sdl;
@@ -8,10 +8,10 @@ using Tao.OpenGl;
 
 namespace DC4Ever
 {
-	public static unsafe partial class emu
+	public unsafe class ta
 	{
 		static uint* TAmem = (uint*)dc.mmgr.AllocMem(0x200);	
-		static void TaWrite(uint addr, uint data, int size)
+		public static void TaWrite(uint addr, uint data, int size)
 		{
 			if (size == 4)
 				TAmem[(addr & 0x1ff)>>2] = data;
@@ -20,7 +20,7 @@ namespace DC4Ever
 
 
 
-		struct Ta_listheader
+		public struct Ta_listheader
 		{
 			public uint listtype;
 			public uint striplength;
@@ -35,7 +35,7 @@ namespace DC4Ever
 			public uint vertex_count;
 		}
 		static uint total_count = 0;
-		static Ta_listheader curListheader = new Ta_listheader();
+		public static Ta_listheader curListheader = new Ta_listheader();
 
 		static void TAStart(uint addr,uint data)
 		{
@@ -44,13 +44,13 @@ namespace DC4Ever
 
 		static void RenderStart()
 		{
-			clc_pvr_renderdone = 2048;//just give us soem time to actualy render the data
+			pvr.clc_pvr_renderdone = 2048;//just give us soem time to actualy render the data
 										 // it takes 1/120th of the second to render em .. lol
-			WriteLine("TA - Render," + total_count.ToString() + " vertexes");
+			mem.WriteLine("TA - Render," + total_count.ToString() + " vertexes");
 			total_count = 0;
 		}
 
-		static void ProccessTaSQWrite(uint addr)
+		public static void ProccessTaSQWrite(uint addr)
 		{
 			//dc.dcon.WriteLine("PTASQW : " + addr.ToString());
 			uint *data = &TAmem[addr & 0x1ff];
@@ -58,48 +58,48 @@ namespace DC4Ever
 			switch (cmd)
 			{
 				case 0:
-					WriteLine("TA - end of list," + total_count.ToString() + " vertexes");
+					mem.WriteLine("TA - end of list," + total_count.ToString() + " vertexes");
 					if (curListheader.vertex_count != 0)
 					{
-						WriteLine("TA Warning : Command 7 end missing");
+						mem.WriteLine("TA Warning : Command 7 end missing");
 						//curListheader.vertex_count = 0;
 						//Gl.glEnd();
 					}
 					switch (curListheader.listtype)
 					{
 						case 0: //opaque polu
-							RaiseInterupt(sh4_int.holly_OPAQUE);//finished
+							intc.RaiseInterupt(sh4_int.holly_OPAQUE);//finished
 							break;
 
 						case 1: //opaque mod
-							RaiseInterupt(sh4_int.holly_OPAQUEMOD);//finished
+							intc.RaiseInterupt(sh4_int.holly_OPAQUEMOD);//finished
 							break;
 
 						case 2: //transparent poly
-							RaiseInterupt(sh4_int.holly_TRANSMOD);//finished
+							intc.RaiseInterupt(sh4_int.holly_TRANSMOD);//finished
 							break;
 
 						case 3://transparent mod
-							RaiseInterupt(sh4_int.holly_TRANS);//finished
+							intc.RaiseInterupt(sh4_int.holly_TRANS);//finished
 							break;
 
 						case 4://punchthru poly
-							RaiseInterupt(sh4_int.holly_PUNCHTHRU);//finished
+							intc.RaiseInterupt(sh4_int.holly_PUNCHTHRU);//finished
 							break;
 					}
 					//RenderStart();
 					break;
 
 				case 1:
-					WriteLine("TA - USER_CLIP");
+					mem.WriteLine("TA - USER_CLIP");
 					break;
 
 				case 2:
-					WriteLine("TA - ??? 2");
+					mem.WriteLine("TA - ??? 2");
 					break;
 
 				case 3:
-					WriteLine("TA - ??? 3");
+					mem.WriteLine("TA - ??? 3");
 					break;
 
 				case 4:
@@ -120,12 +120,12 @@ namespace DC4Ever
 					break;
 
 				case 5:
-					WriteLine("TA - SPRITE");
+					mem.WriteLine("TA - SPRITE");
 					//total_count = 0;
 					break;
 
 				case 6:
-					WriteLine("TA - ??? 6");
+					mem.WriteLine("TA - ??? 6");
 					break;
 
 				case 7:
@@ -168,13 +168,13 @@ namespace DC4Ever
 							case 0://rgb
 								byte* col_b = (byte*)&data[6];
 								Gl.glColor4b(col_b[0], col_b[1], col_b[2], col_b[3]);
-								WriteLine("ARGB-b " + col_b[0].ToString() + " " + col_b[1].ToString() + " " + col_b[2].ToString() + " " + col_b[3].ToString() + " ");
+								mem.WriteLine("ARGB-b " + col_b[0].ToString() + " " + col_b[1].ToString() + " " + col_b[2].ToString() + " " + col_b[3].ToString() + " ");
 								break;
 
 							case 1://float
 								float* col_f = (float*)&data[4];
 								Gl.glColor4f(col_f[0], col_f[1], col_f[2], col_f[3]);
-								WriteLine("ARGB-f " + col_f[0].ToString() + " " + col_f[1].ToString() + " " + col_f[2].ToString() + " " + col_f[3].ToString() + " ");
+								mem.WriteLine("ARGB-f " + col_f[0].ToString() + " " + col_f[1].ToString() + " " + col_f[2].ToString() + " " + col_f[3].ToString() + " ");
 								break;
 
 							case 2://?
@@ -184,8 +184,8 @@ namespace DC4Ever
 						Gl.glVertex3f(pos[0], pos[1], pos[2] - 100);
 						#endregion
 
-						WriteLine("Vertex Data :" + pos[0].ToString() + ";" + pos[1].ToString() + ";" + pos[2].ToString());
-						WriteLine("Textures not suported");
+						mem.WriteLine("Vertex Data :" + pos[0].ToString() + ";" + pos[1].ToString() + ";" + pos[2].ToString());
+						mem.WriteLine("Textures not suported");
 						
 					}
 
@@ -205,8 +205,8 @@ namespace DC4Ever
 			}
 		}
 
-		static Surface screen = null;
-		static void initOpenGL()
+		public static Surface screen = null;
+		public static void initOpenGL()
 		{
 #if zezuExt
 			return;
