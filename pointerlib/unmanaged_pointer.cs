@@ -1,8 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-// Ok , here is where we get to .net 2.0 (c# 2.0)
-// i realy like the new version .. hehehe mhehehehehe
-using System.Collections.Generic;
+using System.Collections;
 
 namespace pointerlib
 {
@@ -2350,11 +2348,25 @@ namespace pointerlib
     }
     #endregion
 
+	public class List_unmanaged_pointer_: ArrayList 
+	{
+		public int Add(List_unmanaged_pointer_ value)
+		{
+			return base.Add (value);
+		}
+
+		public void Remove(List_unmanaged_pointer_ obj)
+		{
+			base.Remove (obj);
+		}
+
+
+	}
     //A simple class for memory manament
     //it allocates mem and can de allocate it all :)
     public unsafe class MemoryManager
     {
-        public List<unmanaged_pointer> pCollection = new List<unmanaged_pointer>();
+        public List_unmanaged_pointer_ pCollection = new List_unmanaged_pointer_();
         ~MemoryManager()
         {
             FreeAll();
@@ -2371,40 +2383,11 @@ namespace pointerlib
         {
             for (int i = 0; i < pCollection.Count; i++)
             {
-                pCollection[i].free();
+                ((unmanaged_pointer)pCollection[i]).free();
                 pCollection.RemoveAt(i);
             }
-            pCollection.TrimExcess();
+            pCollection.TrimToSize();
             GC.Collect();
         }
     }
-
-	//A simple class for memory manament
-	//it allocates mem and can de allocate it all :)
-	public static unsafe class MemoryManager_s
-	{
-		 static public List<unmanaged_pointer> pCollection = new List<unmanaged_pointer>();
-		//~MemoryManager_s()
-		//{
-		//	FreeAll();
-		//}
-
-		static public void* AllocMem(uint MemSize)
-		{
-			unmanaged_pointer temp = new unmanaged_pointer(MemSize);
-			pCollection.Add(temp);
-			temp.ZeroMemory();
-			return temp.Ptr;
-		}
-		static public void FreeAll()
-		{
-			for (int i = 0; i < pCollection.Count; i++)
-			{
-				pCollection[i].free();
-				pCollection.RemoveAt(i);
-			}
-			pCollection.TrimExcess();
-			GC.Collect();
-		}
-	}
 }
