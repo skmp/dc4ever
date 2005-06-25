@@ -30,7 +30,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>nrt,interpreter</DefineConstants>
+    <DefineConstants>nrt,interpreter,zezuExt</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -44,7 +44,7 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -53,7 +53,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>nrt,interpreter,optimised_b</DefineConstants>
+    <DefineConstants>nrt,interpreter,optimised_b,zezuExt</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
@@ -70,6 +70,10 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CallConvAttribute, Version=1.0.1998.35042, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Deps\CallConvAttribute.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="SdlDotNet, Version=3.1.0.0, Culture=neutral, PublicKeyToken=26ad4f7e10c61408">
@@ -99,7 +103,8 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DC\maple\maple.cs" />
+    <Compile Include="DC\PowerVR2DC\zezu_prv.cs" />
+    <Compile Include="DC\SH4.7091\maple.cs" />
     <Compile Include="DC\PowerVR2DC\Ta.cs" />
     <Compile Include="DC\SH4.7091\CallStackTrace.cs" />
     <Compile Include="DC\SH4.7091\disasm.cs" />
@@ -172,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DC\GDrom\" />
+    <Folder Include="DC\maple\" />
     <Folder Include="Properties\" />
     <Folder Include="Sound\" />
   </ItemGroup>
