@@ -16,7 +16,7 @@ namespace DC4Ever
 	/// MMU is emulated here (Memory managment usint)
 	/// Also some simple adress proc may be done here
 	/// </summary>
-    public static partial  class emu 
+    public class mmu
     {
 		public static uint mmutrans(uint adr,int size)
 		{
@@ -26,15 +26,15 @@ namespace DC4Ever
                     return adr;
                 case 2:
                     if ((adr & 0x1) != 0)
-                        WriteLine("Incorect addres , 2*k not folowed");
+                        mem.WriteLine("Incorect addres , 2*k not folowed");
                     return adr;
 				case 3:
 					if ((adr & 0x1) != 0)
-						WriteLine("Incorect addres , 2*k not folowed");
+						mem.WriteLine("Incorect addres , 2*k not folowed");
 					return adr;
                 case 4:
                     if ((adr&0x3)!=0)
-                        WriteLine("Incorect addres , 4*k not folowed");
+                        mem.WriteLine("Incorect addres , 4*k not folowed");
                     return adr;
             }
             return adr;//no mmu that simple..
