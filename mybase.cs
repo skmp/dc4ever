@@ -30,7 +30,7 @@ namespace DC4Ever
 		public static void run()//run the gui
 		{
 			Console.WriteLine ("Starting");
-            emu.Init();
+            mem.Init();
 			frmMain=new frmmain();
 			frmAbout= new frmabout();
 			dbger = new Debugger();
@@ -38,8 +38,8 @@ namespace DC4Ever
 			dcon=new DebugConsole();
 			Console.WriteLine ("Loaded visual console");
 			dcon.WriteLine("Loading Bios and Flash Ram");
-            emu.loadbiosfile("bios.bin");
-            emu.loadbiosflashfile("bios_flash.bin");
+            bios.loadbiosfile("bios.bin");
+            bios.loadbiosflashfile("bios_flash.bin");
 			//fastint.init();
 			dcon.WriteLine("Running GUI");
 			Console.WriteLine ("Serial output:");
