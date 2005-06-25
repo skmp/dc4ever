@@ -18,7 +18,7 @@ namespace DC4Ever
 		{
 			dc.dcon.WriteLine("Warning Invalid opcode at pc "+System.Convert.ToString(pc,16).ToUpper()+ " with code " +System.Convert.ToString(opcode,16).ToUpper());
 			DoEvents();
-            runsh = false;
+            //runsh = false;
         }
 
         static void iNimp(string info)
@@ -183,15 +183,15 @@ namespace DC4Ever
 
 		//ocbp @<REG_N>                 // no implementation
 		static void i0000_nnnn_1010_0011()
-		{
-            iNimp("ocbp @<REG_N> ");
+		{//nimp killed
+            //iNimp("ocbp @<REG_N> ");
         } 
 
 
 		//ocbwb @<REG_N>                // no implementation
 		static void i0000_nnnn_1011_0011()
-		{
-            iNimp("ocbwb @<REG_N> ");
+		{//inimp killed
+            //iNimp("ocbwb @<REG_N> ");
         } 
 
 
@@ -220,11 +220,18 @@ namespace DC4Ever
 
 				if (Address < 0x11000000)//??
 				{
-
+#if zezuExt
+					//try
+					//{
+						zezu_pvr.PvrCommand(sq, 1);
+					//}
+					//catch (Exception ex) { }
+#else
 					for (uint i = 0; i < 8; i++)
 						write((Address + (i << 2)), sq[i], 4);
 					if (((Address >> 26) & 0x7) == 4)
 						ProccessTaSQWrite(Address);
+#endif
 				}
 
 			}
@@ -271,7 +278,7 @@ namespace DC4Ever
 			uint n = (opcode >> 8) & 0x0F;
 			uint m = (opcode >> 4) & 0x0F;
             //macl = (uint)(((int)r[n] * (int)r[m]) & 0xFFFFFFFF);
-            macl = (uint)((((long)r[n]) * ((long)r[m])) & 0xFFFFFFFF);
+            macl = (uint)((((int)r[n]) * ((int)r[m])));
         }
 
 
@@ -292,7 +299,8 @@ namespace DC4Ever
 		//clrt                          // no implementation
 		static void i0000_0000_0000_1000()
 		{
-            iNimp("clrt");
+            //iNimp("clrt");
+			sr.T = 0;
         } 
 
 
@@ -359,7 +367,14 @@ namespace DC4Ever
             //iNimp("sts FPSCR,<REG_N>");
 			uint n = (opcode >> 8) & 0x0F;
             r[n] = fpscr.reg;
-        } 
+        }
+
+		//stc GBR,<REG_N>             // no implementation
+		static void i0000_nnnn_1111_1010()
+		{
+			uint n = (opcode >> 8) & 0x0F;
+			r[n] = gbr;
+		}
 
 
 		//sts MACH,<REG_N>              // no implementation
@@ -395,7 +410,7 @@ namespace DC4Ever
             //iNimp("rte");
 			sr.reg = ssr;
 			delayslot = spc;
-			cstRemCall(spc);
+			cstRemCall(spc, CallType.Interupt);
 			pc_funct = 2;
         } 
 
@@ -404,7 +419,7 @@ namespace DC4Ever
 		static void i0000_0000_0000_1011()
 		{
             delayslot = pr;
-			cstRemCall(pr);
+			cstRemCall(pr, CallType.Normal);
             pc_funct = 2;
         } 
 
@@ -412,7 +427,21 @@ namespace DC4Ever
 		//sleep                         // no implementation
 		static void i0000_0000_0001_1011()
 		{
-            iNimp("sleep");
+			if (zleeping == true)
+			{
+				//iNimp("sleep");
+				//heh
+				if (awake == false)
+					pc -= 2;
+				else
+					zleeping = false;
+			}
+			else
+			{
+				zleeping = true;
+				awake = false;
+				pc -= 2;
+			}
         } 
 
 
@@ -1021,99 +1050,70 @@ namespace DC4Ever
 			r[n] -= 4;
 			write(r[n],pr,4);
 		}
-		
 
-		//stc R0_BANK,@-<REG_N>         // no implemetation
-		static void i0100_nnnn_1000_0010()
-		{
-            iNimp("stc R0_BANK,@-<REG_N>");
-        }
-		
 
-		//stc R1_BANK,@-<REG_N>         // no implemetation
-		static void i0100_nnnn_1001_0010()
-		{
-            iNimp("stc R1_BANK,@-<REG_N>");
-        }
-		
-
-		//stc R2_BANK,@-<REG_N>         // no implemetation
-		static void i0100_nnnn_1010_0010()
-		{
-            iNimp("stc R2_BANK,@-<REG_N>");
-        }
-		
-
-		//stc R3_BANK,@-<REG_N>         // no implemetation
-		static void i0100_nnnn_1011_0010()
-		{
-            iNimp("stc R3_BANK,@-<REG_N>");
-        }
-		
-
-		//stc R4_BANK,@-<REG_N>         // no implemetation
-		static void i0100_nnnn_1100_0010()
-		{
-            iNimp("stc R4_BANK,@-<REG_N>");
-        }
-		
-
-		//stc R5_BANK,@-<REG_N>         // no implemetation
-		static void i0100_nnnn_1101_0010()
-		{
-            iNimp("stc R5_BANK,@-<REG_N>");
-        }
-		
-
-		//stc R6_BANK,@-<REG_N>         // no implemetation
-		static void i0100_nnnn_1110_0010()
-		{
-            iNimp("stc R6_BANK,@-<REG_N>");
-        }
-		
-
-		//stc R7_BANK,@-<REG_N>         // no implemetation
-		static void i0100_nnnn_1111_0010()
-		{
-            iNimp("stc R7_BANK,@-<REG_N>");
-        }
-		
 
 		//stc.l SR,@-<REG_N>            // no implemetation
 		static void i0100_nnnn_0000_0011()
 		{
-            iNimp("stc.l SR,@-<REG_N>");
-        }
-		
+			//iNimp("stc.l SR,@-<REG_N>");
+			uint n = (opcode >> 8) & 0x0F;
+			r[n] -= 4;
+			write(r[n], sr.reg, 4);
+		}
+
 
 		//stc.l GBR,@-<REG_N>           // no implemetation
 		static void i0100_nnnn_0001_0011()
 		{
-            iNimp("stc.l GBR,@-<REG_N>");
-        }
-		
+			//iNimp("stc.l GBR,@-<REG_N>");
+			uint n = (opcode >> 8) & 0x0F;
+			r[n] -= 4;
+			write(r[n], gbr, 4);
+		}
+
 
 		//stc.l VBR,@-<REG_N>           // no implemetation
 		static void i0100_nnnn_0010_0011()
 		{
-            iNimp("stc.l VBR,@-<REG_N>");
-        }
-		
+			//iNimp("stc.l VBR,@-<REG_N>");
+			uint n = (opcode >> 8) & 0x0F;
+			r[n] -= 4;
+			write(r[n], vbr, 4);
+		}
+
 
 		//stc.l SSR,@-<REG_N>           // no implemetation
 		static void i0100_nnnn_0011_0011()
 		{
-            iNimp("stc.l SSR,@-<REG_N>");
-        }
-		
+			//iNimp("stc.l SSR,@-<REG_N>");
+			uint n = (opcode >> 8) & 0x0F;
+			r[n] -= 4;
+			write(r[n], ssr, 4);
+		}
+
 
 		//stc.l SPC,@-<REG_N>           // no implemetation
 		static void i0100_nnnn_0100_0011()
 		{
-            iNimp("stc.l SPC,@-<REG_N>");
+			//iNimp("stc.l SPC,@-<REG_N>");
+			uint n = (opcode >> 8) & 0x0F;
+			r[n] -= 4;
+			write(r[n], spc, 4);
+		}
+
+		//stc Rm_BANK,@-<REG_N>         // no implemetation
+		static void i0100_nnnn_1mmm_0011()
+		{
+            //iNimp("stc RM_BANK,@-<REG_N>");
+			uint n = (opcode >> 8) & 0x0F;
+			uint m = (opcode >> 4) & 0x07;
+			r[n] -= 4;
+			write(r[n], r_bank[m], 4);
         }
 		
 
+	
 		//lds.l @<REG_N>+,MACH          // no implemetation
 		static void i0100_nnnn_0000_0110()
 		{
@@ -1165,91 +1165,131 @@ namespace DC4Ever
 		//ldc.l @<REG_N>+,SR            // no implemetation
 		static void i0100_nnnn_0000_0111()
 		{
-            iNimp("ldc.l @<REG_N>+,SR");
+            //iNimp("ldc.l @<REG_N>+,SR");
+			uint n = (opcode >> 8) & 0x0F;
+			sr.reg = read(r[n], 4);
+			r[n] += 4;
         }
 		
 
 		//ldc.l @<REG_N>+,GBR           // no implemetation
 		static void i0100_nnnn_0001_0111()
 		{
-            iNimp("ldc.l @<REG_N>+,GBR");
+            //iNimp("ldc.l @<REG_N>+,GBR");
+			uint n = (opcode >> 8) & 0x0F;
+			gbr = read(r[n], 4);
+			r[n] += 4;
         }
 		
 
 		//ldc.l @<REG_N>+,VBR           // no implemetation
 		static void i0100_nnnn_0010_0111()
 		{
-            iNimp("ldc.l @<REG_N>+,VBR");
+            //iNimp("ldc.l @<REG_N>+,VBR");
+			uint n = (opcode >> 8) & 0x0F;
+			vbr = read(r[n], 4);
+			r[n] += 4;
         }
 		
 
 		//ldc.l @<REG_N>+,SSR           // no implemetation
 		static void i0100_nnnn_0011_0111()
 		{
-            iNimp("ldc.l @<REG_N>+,SSR");
+            //iNimp("ldc.l @<REG_N>+,SSR");
+			uint n = (opcode >> 8) & 0x0F;
+			ssr = read(r[n], 4);
+			r[n] += 4;
         }
 		
 
 		//ldc.l @<REG_N>+,SPC           // no implemetation
 		static void i0100_nnnn_0100_0111()
 		{
-            iNimp("ldc.l @<REG_N>+,SPC");
+            //iNimp("ldc.l @<REG_N>+,SPC");
+			uint n = (opcode >> 8) & 0x0F;
+			spc = read(r[n], 4);
+			r[n] += 4;
         }
 		
 
 		//ldc.l @<REG_N>+,R0_BANK       // no implemetation
 		static void i0100_nnnn_1000_0111()
 		{
-            iNimp("ldc.l @<REG_N>+,R0_BANK");
+            //iNimp("ldc.l @<REG_N>+,R0_BANK");
+			uint n = (opcode >> 8) & 0x0F;
+			r_bank[0]= read(r[n], 4);
+			r[n] += 4;
         }
 		
 
 		//ldc.l @<REG_N>+,R1_BANK       // no implemetation
 		static void i0100_nnnn_1001_0111()
 		{
-            iNimp("ldc.l @<REG_N>+,R1_BANK");
+            //iNimp("ldc.l @<REG_N>+,R1_BANK");
+			uint n = (opcode >> 8) & 0x0F;
+			r_bank[1] = read(r[n], 4);
+			r[n] += 4;
         }
 		
 
 		//ldc.l @<REG_N>+,R2_BANK       // no implemetation
 		static void i0100_nnnn_1010_0111()
 		{
-            iNimp("ldc.l @<REG_N>+,R2_BANK");
+            //iNimp("ldc.l @<REG_N>+,R2_BANK");
+			uint n = (opcode >> 8) & 0x0F;
+			r_bank[2] = read(r[n], 4);
+			r[n] += 4;
         }
 		
 
 		//ldc.l @<REG_N>+,R3_BANK       // no implemetation
 		static void i0100_nnnn_1011_0111()
 		{
-            iNimp("ldc.l @<REG_N>+,R3_BANK");
+            //iNimp("ldc.l @<REG_N>+,R3_BANK");
+			uint n = (opcode >> 8) & 0x0F;
+			r_bank[3] = read(r[n], 4);
+			r[n] += 4;
         }
 		
 
 		//ldc.l @<REG_N>+,R4_BANK       // no implemetation
 		static void i0100_nnnn_1100_0111()
 		{
-            iNimp("ldc.l @<REG_N>+,R4_BANK");
+            //iNimp("ldc.l @<REG_N>+,R4_BANK");
+			uint n = (opcode >> 8) & 0x0F;
+			r_bank[4] = read(r[n], 4);
+			r[n] += 4;
         }
 		
 
 		//ldc.l @<REG_N>+,R5_BANK       // no implemetation
 		static void i0100_nnnn_1101_0111()
 		{
-            iNimp("ldc.l @<REG_N>+,R5_BANK ");
+            //iNimp("ldc.l @<REG_N>+,R5_BANK ");
+			uint n = (opcode >> 8) & 0x0F;
+			r_bank[5] = read(r[n], 4);
+			r[n] += 4;
         }
 		
 
 		//ldc.l @<REG_N>+,R6_BANK       // no implemetation
 		static void i0100_nnnn_1110_0111()
 		{
-            iNimp("ldc.l @<REG_N>+,R6_BANK");
+            //iNimp("ldc.l @<REG_N>+,R6_BANK");
+			uint n = (opcode >> 8) & 0x0F;
+			r_bank[6] = read(r[n], 4);
+			r[n] += 4;
         }
 		
 
 		//ldc.l @<REG_N>+,R7_BANK       // no implemetation
 		static void i0100_nnnn_1111_0111()
 		{
-            iNimp("ldc.l @<REG_N>+,R7_BANK");
+            //iNimp("ldc.l @<REG_N>+,R7_BANK");
+			uint n = (opcode >> 8) & 0x0F;
+			r_bank[7] = read(r[n], 4);
+			r[n] += 4;
+			//uint* rt = r;
         }
 		
 
@@ -1289,7 +1329,13 @@ namespace DC4Ever
 			uint n = (opcode >> 8) & 0x0F;
 			fpscr.reg = r[n];
 		}
-		
+
+		//ldc <REG_N>,GBR                // no implemetation
+		static void i0100_nnnn_1111_1010()
+		{
+			uint n = (opcode >> 8) & 0x0F;
+			gbr = r[n];
+		}
 
 		//ldc <REG_N>,SR                // no implemetation
 		static void i0100_nnnn_0000_1110()
@@ -1518,14 +1564,10 @@ namespace DC4Ever
             //iNimp("rotcl <REG_N>");
 			uint n = (opcode >> 8) & 0x0F;
             uint t;
-
+			//return;
             t = sr.T;
 
             sr.T = r[n] >> 31;
-            //if (R(n) & 0x80000000)
-            //    SET_T;
-            //else
-            //    UNSET_T;
 
             r[n] <<= 1;
 
@@ -1541,7 +1583,7 @@ namespace DC4Ever
         {
             //iNimp("rotl <REG_N>");
 			uint n = (opcode >> 8) & 0x0F;
-
+			//return;
             if ((r[n] & 0x80000000)!=0)
                 sr.T=1;
             else
@@ -2168,14 +2210,22 @@ namespace DC4Ever
 		// mov.w R0,@(<disp>,GBR)        // no implemetation
 		static void i1100_0001_iiii_iiii()
 		{
-            iNimp("mov.w R0,@(<disp>,GBR)");
+            //iNimp("mov.w R0,@(<disp>,GBR)");
+			uint disp = opcode & 0xFF;
+			//Write_Word(GBR+(disp<<1),R[0]);
+			write(gbr + (disp << 1), r[0] & 0xFFFF,2);
         }
 		
 
 		// mov.l R0,@(<disp>,GBR)        // no implemetation
 		static void i1100_0010_iiii_iiii()
 		{
-            iNimp("mov.l R0,@(<disp>,GBR)");
+           // iNimp("mov.l R0,@(<disp>,GBR)");
+			uint disp = (opcode & 0x00FF);
+			uint source = (disp << 2) + gbr;
+
+			write(source, r[0],4);
+			//WriteMemoryL(source, &R(0));
         }
 		
 
@@ -2322,7 +2372,7 @@ namespace DC4Ever
     public static unsafe partial class emu 
     {
 		//fadd <FREG_M>,<FREG_N>        no implemetation
-		static void i1111_nnnn_mmmm_0000()
+		public static void i1111_nnnn_mmmm_0000()
 		{//TODO : CHECK THIS PR FP
 			if (fpscr.PR == 0)
 			{
@@ -2334,10 +2384,11 @@ namespace DC4Ever
 			{
 				uint n = (opcode >> 9) & 0x07;
 				uint m = (opcode >> 5) & 0x07;
+				//double t = dr[n] + dr[m];
+				//double t1 = add_d(dr[n] , dr[m]);
 				dr[n] += dr[m];
 			}
 		}
-														   
 
 		//fsub <FREG_M>,<FREG_N>        no implemetation
 		static void i1111_nnnn_mmmm_0001(){
@@ -2392,6 +2443,7 @@ namespace DC4Ever
 				uint n = (opcode >> 9) & 0x07;
 				uint m = (opcode >> 5) & 0x07;
 				dr[n] /= dr[m];
+				//double* t = dr;
 			}
 		}
 																																																					
@@ -2448,7 +2500,7 @@ namespace DC4Ever
 		//fmov.s @(R0,<REG_M>),<FREG_N> no implemetation
 		static void i1111_nnnn_mmmm_0110()
 		{
-			if (fpscr.PR == 0)
+			if (fpscr.SZ == 0)
 			{
 				//iNimp("fmov.s @(R0,<REG_M>),<FREG_N>");
 				uint n = (opcode >> 8) & 0x0F;
@@ -2458,11 +2510,18 @@ namespace DC4Ever
 			}
 			else
 			{
-				uint n = (opcode >> 9) & 0x0F;
+				uint n = (opcode >> 8) & 0x0E;
 				uint m = (opcode >> 4) & 0x0F;
-
-				fr_uint[n] = read(r[m] + r[0] + 4, 4);
-				fr_uint[n + 1] = read(r[m] + r[0], 4);
+				if (((opcode >> 8) & 0x1) == 0)
+				{
+					fr_uint[n] = read(r[m] + r[0], 4);
+					fr_uint[n + 1] = read(r[m] + r[0] + 4, 4);
+				}
+				else
+				{
+					xr_uint[n] = read(r[m] + r[0], 4);
+					xr_uint[n + 1] = read(r[m] + r[0] + 4, 4);
+				}
 			}
         }
 
@@ -2470,7 +2529,7 @@ namespace DC4Ever
 		//fmov.s <FREG_M>,@(R0,<REG_N>) no implemetation
 		static void i1111_nnnn_mmmm_0111()
 		{
-			if (fpscr.PR == 0)
+			if (fpscr.SZ == 0)
 			{
 				//iNimp("fmov.s <FREG_M>,@(R0,<REG_N>)");
 				uint n = (opcode >> 8) & 0x0F;
@@ -2481,7 +2540,18 @@ namespace DC4Ever
 			}
 			else
 			{
-
+				uint n = (opcode >> 8) & 0x0F;
+				uint m = (opcode >> 4) & 0x0E;
+				if (((opcode >> 4) & 0x1) == 0)
+				{
+					write(r[n] + r[0], fr_uint[m], 4);
+					write(r[n] + r[0] + 4, fr_uint[m + 1], 4);
+				}
+				else
+				{
+					write(r[n] + r[0], xr_uint[m], 4);
+					write(r[n] + r[0] + 4, xr_uint[m + 1], 4);
+				}
 			}
         }
 
@@ -2494,14 +2564,23 @@ namespace DC4Ever
 				uint n = (opcode >> 8) & 0x0F;
 				uint m = (opcode >> 4) & 0x0F;
 				fr_uint[n] = read(r[m], 4);
+				//float* t = &fr[n];
 			}
 			else
 			{
 				uint n = (opcode >> 8) & 0x0E;
 				uint m = (opcode >> 4) & 0x0F;
-				fr_uint[n + 1] = read(r[m] + 4, 4);
-				fr_uint[n] = read(r[m], 4);
-				double* t = &dr[n >> 1];
+				if (((opcode >> 8) & 0x1) == 0)
+				{
+					fr_uint[n] = read(r[m], 4);
+					fr_uint[n + 1] = read(r[m] + 4, 4);
+				}
+				else
+				{
+					xr_uint[n] = read(r[m], 4);
+					xr_uint[n + 1] = read(r[m] + 4, 4);
+				}
+				//double* t = &dr[n >> 1];
 			}
 		}
 
@@ -2516,18 +2595,23 @@ namespace DC4Ever
 				uint m = (opcode >> 4) & 0x0F;
 
 				fr_uint[n] = read(r[m], 4);
-
+				//float* t = &fr[n];
 				r[m] += 4;
 			}
 			else {
 				uint n = (opcode >> 8) & 0x0E;
 				uint m = (opcode >> 4) & 0x0F;
-
-				fr_uint[n+1] = read(r[m] + 4, 4);
-				fr_uint[n] = read(r[m], 4);
-
+				if (((opcode >> 8) & 0x1) == 0)
+				{
+					fr_uint[n] = read(r[m], 4);
+					fr_uint[n + 1] = read(r[m] + 4, 4);
+				}
+				else
+				{
+					xr_uint[n] = read(r[m], 4);
+					xr_uint[n + 1] = read(r[m] + 4, 4);
+				}
 				r[m] += 8;
-				//double* t = &dr[n >> 1];
 			}
         }
 
@@ -2535,7 +2619,7 @@ namespace DC4Ever
 		//fmov.s <FREG_M>,@<REG_N>      no implemetation
 		public static unsafe void i1111_nnnn_mmmm_1010()
 		{//	TODO : hadd this
-			if (fpscr.PR == 0)
+			if (fpscr.SZ == 0)
 			{
 				uint n = (opcode >> 8) & 0x0F;
 				uint m = (opcode >> 4) & 0x0F;
@@ -2544,15 +2628,26 @@ namespace DC4Ever
 			else
 			{
 				uint n = (opcode >> 8) & 0x0F;
-				uint m = (opcode >> 4) & 0x0F;
-				write(r[n], fr_uint[m], 4);
+				uint m = (opcode >> 4) & 0x0E;
+
+				if (((opcode >> 4) & 0x1) == 0)
+				{
+					write(r[n], fr_uint[m], 4);
+					write(r[n] + 4, fr_uint[m + 1], 4);
+				}
+				else
+				{
+					write(r[n], xr_uint[m], 4);
+					write(r[n] + 4, xr_uint[m + 1], 4);
+				}
+				
 			}
 		}
 
 		//fmov.s <FREG_M>,@-<REG_N>     no implemetation
 		static void i1111_nnnn_mmmm_1011()
 		{
-			if (fpscr.PR == 0)
+			if (fpscr.SZ == 0)
 			{
 				//iNimp("fmov.s <FREG_M>,@-<REG_N>");
 				uint n = (opcode >> 8) & 0x0F;
@@ -2565,11 +2660,19 @@ namespace DC4Ever
 			else
 			{
 				uint n = (opcode >> 8) & 0x0F;
-				uint m = (opcode >> 4) & 0x0F;
+				uint m = (opcode >> 4) & 0x0E;
 
-				r[n] -= 4;
-
-				write(r[n], fr_uint[m], 4);
+				r[n] -= 8;
+				if (((opcode >> 4) & 0x1) == 0)
+				{
+					write(r[n], fr_uint[m], 4);
+					write(r[n] + 4, fr_uint[m + 1], 4);
+				}
+				else
+				{
+					write(r[n], xr_uint[m], 4);
+					write(r[n] + 4, xr_uint[m + 1], 4);
+				}
 			}
         }
 
@@ -2577,7 +2680,7 @@ namespace DC4Ever
 		//fmov <FREG_M>,<FREG_N>        no implemetation
 		static void i1111_nnnn_mmmm_1100()
 		{//TODO : checkthis
-			if (fpscr.PR == 0)
+			if (fpscr.SZ == 0)
 			{
 				uint n = (opcode >> 8) & 0x0F;
 				uint m = (opcode >> 4) & 0x0F;
@@ -2585,9 +2688,31 @@ namespace DC4Ever
 			}
 			else
 			{
-				uint n = (opcode >> 9) & 0x07;
-				uint m = (opcode >> 5) & 0x07;
-				dr[n] = dr[m];
+				uint n = (opcode >> 8) & 0xE;
+				uint m = (opcode >> 4) & 0xE;
+				switch ((opcode >> 4) & 0x11)
+				{
+					case 0x00:
+						//dr[n] = dr[m];
+						fr_uint[n] = fr_uint[n];
+						fr_uint[n + 1] = fr_uint[n + 1];
+						break;
+					case 0x01:
+						//dr[n] = xf[m];
+						fr_uint[n] = xr_uint[n];
+						fr_uint[n + 1] = xr_uint[n + 1];
+						break;
+					case 0x10:
+						//xf[n] = dr[m];
+						xr_uint[n] = fr_uint[n];
+						xr_uint[n + 1] = fr_uint[n + 1];
+						break;
+					case 0x11:
+						//xf[n] = xf[m];
+						xr_uint[n] = xr_uint[n];
+						xr_uint[n + 1] = xr_uint[n + 1];
+						break;
+				}
 			}
 		}
 
@@ -2601,6 +2726,7 @@ namespace DC4Ever
 			}
 			else
 			{
+				iNimp("fabs <DREG_N>");
 			}
         }
 
@@ -2628,10 +2754,16 @@ namespace DC4Ever
 		//fcnvsd FPUL,<DR_N>            no implemetation
 		static void i1111_nnnn_1010_1101()
 		{
-			iNimp("fcnvsd FPUL,<DR_N>;mode " + fpscr.PR.ToString());
-			uint n = (opcode >> 9) & 0x07;
-			fixed (uint* p = &fpul)
-				dr[n] = (double)*((float*)p);
+			if (fpscr.PR == 1)
+			{
+				uint n = (opcode >> 9) & 0x07;
+				fixed (uint* p = &fpul)
+					dr[n] = (double)*((float*)p);
+			}
+			else
+			{
+				iNimp("fcnvsd FPUL,<DR_N>;mode " + fpscr.PR.ToString());
+			}
         }
 
 		//fipr <FV_M>,<FV_N>            
@@ -2664,7 +2796,7 @@ namespace DC4Ever
             //iNimp("fldi1 <FREG_N>");
 			uint n = (opcode >> 8) & 0x0F;
 
-			fr[n] = (float)1.0;
+			fr[n] = 1.0f;
         }
 
 
@@ -2673,9 +2805,16 @@ namespace DC4Ever
 		{
             //iNimp("flds <FREG_N>,FPUL");
 			//teeesxsttt
-			uint n = (opcode >> 8) & 0x0F;
+			if (fpscr.PR == 0)
+			{
+				uint n = (opcode >> 8) & 0x0F;
 
-			fpul = fr_uint[n];
+				fpul = fr_uint[n];
+			}
+			else
+			{
+				iNimp("flds <DREG_N>,FPUL");
+			}
         }
 
 
@@ -2691,6 +2830,7 @@ namespace DC4Ever
 			{
 				uint n = (opcode >> 9) & 0x07;
 				dr[n] = (double)(int)fpul;
+				//iNimp("float FPUL,<DREG_N>");
 			}
 		}
 
@@ -2707,6 +2847,7 @@ namespace DC4Ever
 			}
 			else
 			{
+				iNimp("fneg <DREG_N>");
 			}
 
         }
@@ -2715,7 +2856,8 @@ namespace DC4Ever
 		//frchg                         no implemetation
 		static void i1111_1011_1111_1101()
 		{
-            iNimp("frchg");
+            //iNimp("frchg");
+			fpscr.FR = 1 - fpscr.FR;
         }
 
 
@@ -2740,7 +2882,10 @@ namespace DC4Ever
 
 				fr[n] = (float)Math.Sqrt(fr[n]);
 			}
-			else { }
+			else
+			{
+				iNimp("fsqrt <DREG_N>");
+			}
         }
 
 
@@ -2763,7 +2908,16 @@ namespace DC4Ever
 		//fsts FPUL,<FREG_N>            no implemetation
 		static void i1111_nnnn_0000_1101()
 		{
-            iNimp("fsts FPUL,<FREG_N>");
+            //iNimp("fsts FPUL,<FREG_N>");
+			if (emu.fpscr.PR == 0)
+			{
+				uint n = (opcode >> 8) & 0x0F;
+				fr_uint[n] = fpul;
+			}
+			else
+			{
+				iNimp("fsts FPUL,<DREG_N>");
+			}
         }
 
 
@@ -2771,7 +2925,7 @@ namespace DC4Ever
 		static void i1111_nnnn_mmmm_1110()
 		{
             //iNimp("fmac <FREG_0>,<FREG_M>,<FREG_N>");
-			if (emu.fpscr.PR_==0)
+			if (emu.fpscr.PR==0)
 			{
 				uint n = (opcode >> 8) & 0x0F;
 				uint m = (opcode >> 4) & 0x0F;
