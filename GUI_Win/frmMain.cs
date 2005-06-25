@@ -105,12 +105,15 @@ namespace DC4Ever
 			// 
 			// screen
 			// 
+			this.screen.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.screen.Location = new System.Drawing.Point(8, 1);
 			this.screen.Name = "screen";
 			this.screen.Size = new System.Drawing.Size(640, 480);
 			this.screen.TabIndex = 0;
 			this.screen.TabStop = false;
-			this.screen.Click += new System.EventHandler(this.screen_Click);
+			this.screen.Resize += new System.EventHandler(this.screen_Resize);
 			// 
 			// label1
 			// 
@@ -136,6 +139,11 @@ namespace DC4Ever
 			this.ResumeLayout(false);
 
         }
+
+		void screen_Resize(object sender, EventArgs e)
+		{
+			zezu_pvr.PvrUpdate(4);
+		}
 
 
 
@@ -252,10 +260,7 @@ namespace DC4Ever
 			//runcpuDyna();
 		}
 
-		private void screen_Click(object sender, EventArgs e)
-		{
 
-		}
 
 
 
