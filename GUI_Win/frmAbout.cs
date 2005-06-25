@@ -1,4 +1,3 @@
-#if nrt
 using System;
 using System.Drawing;
 using System.Collections;
@@ -54,7 +53,6 @@ namespace DC4Ever
 			// 
 			// frmabout
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(5, 13);
 			this.ClientSize = new System.Drawing.Size(292, 266);
 			this.Name = "frmabout";
 			this.Text = "frmAbout";
@@ -70,5 +68,3 @@ namespace DC4Ever
 
 	}
 }
-
-#endif
