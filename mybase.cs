@@ -44,6 +44,7 @@ namespace DC4Ever
 			dcon.WriteLine("Running GUI");
 			Console.WriteLine ("Serial output:");
 			dbger.Show();
+			zezu_pvr.PvrInit();
 			Application.Run(frmMain);
         }
 		//Startup Code
