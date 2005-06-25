@@ -58,13 +58,15 @@ namespace DC4Ever
 			int dwRop);
 		public static BITMAPINFOHEADER bitinfo;
 		#endregion
+		public static bool Is3DOn = false;
         public static uint mw=0;
         public static uint f;
 		public static uint fps;
-		static int clc_pvr_frame = 0;
+		static int clc_pvr_frame = 0, clc_pvr_scanline=0;
+		static uint prv_cur_scanline = 0;
 		public static int clc_pvr_renderdone = 0;
 		//public static byte[] vram= new byte[8*mb];
-        static byte* vram_b = (byte*)dc.mmgr.AllocMem(8 * mb);
+        public static byte* vram_b = (byte*)dc.mmgr.AllocMem(8 * mb);
         static ushort* vram_w = (ushort*)vram_b;
         static uint* vram_dw = (uint*)vram_b;
         static unsafe void writePvr(uint adr,uint data,int len)
@@ -162,14 +164,40 @@ namespace DC4Ever
         static void UpdatePvr(uint cycles)
         {
 			clc_pvr_frame += (int)cycles;    //cycle count  #2
+			
 			if (clc_pvr_frame > (3495253))//60 ~herz = 200 mhz / 60=3495253 cycles per screen refresh
+			{
+//#if !zezuExt
+				//ok .. here , after much effort , we reached a full screen redraw :P
+				//now , we will copy everything onto the screen (meh) and raise a vblank interupt
+				RaiseInterupt(sh4_int.holly_VBLank);//weeeee
+				//zezu_pvr.PvrUpdate(2);
+				if (!Is3DOn)
+					present();
+
+				DoEvents();
+				//zezu_pvr.PvrUpdate(0xFFFFFF);
+				//zezu_pvr.PvrUpdate(zezu_pvr.
+//#else
+//				//zezu_pvr
+//#endif
+				clc_pvr_frame -= 3495253;
+			}
+
+			clc_pvr_scanline += (int)cycles;
+			if (clc_pvr_scanline > (3495253 / 480))//60 ~herz = 200 mhz / 60=3495253 cycles per screen refresh
 			{
 				//ok .. here , after much effort , we reached a full screen redraw :P
 				//now , we will copy everything onto the screen (meh) and raise a vblank interupt
-				RaiseInterupt(sh4_int.VBLank);//weeeee
-				present();
-				DoEvents();
-				clc_pvr_frame -= 3495253;
+				prv_cur_scanline=(prv_cur_scanline+1)%480;
+
+				uint data = *SPG_VBLANK_INT;
+				if ((data & 0x3FFF) == prv_cur_scanline)
+					RaiseInterupt(sh4_int.holly_SCANINT1);
+				else if (((data >> 16) & 0x3FFF) == prv_cur_scanline)
+					RaiseInterupt(sh4_int.holly_SCANINT2);
+				
+				clc_pvr_scanline -= (3495253 / 480);
 			}
 
 			if (clc_pvr_renderdone > 0)
@@ -178,30 +206,39 @@ namespace DC4Ever
 				if (clc_pvr_renderdone <= 0)
 				{
 					//render done interupt :P
-					RaiseInterupt(sh4_int.RENDER_DONE);
 					//I MUST FIX THAT .. SOMEDAY
-					if ((pvr_registered & (1 << 0))!=0)
-						RaiseInterupt(sh4_int.OPAQUE);	// ASIC_EVT_PVR_OPAQUEDONE
-
-					if ((pvr_registered & (1 << 1)) != 0)
-						RaiseInterupt(sh4_int.OPAQUEMOD); 	// ASIC_EVT_PVR_OPAQUEMODDONE
-
-					if ((pvr_registered & (1 << 2)) != 0)
-						RaiseInterupt(sh4_int.TRANS); 	// ASIC_EVT_PVR_TRANSDONE
-
-					if ((pvr_registered & (1 << 3)) != 0)
-						RaiseInterupt(sh4_int.TRANSMOD);	// ASIC_EVT_PVR_TRANSMODDONE
-
-					if ((pvr_registered & (1 << 4)) != 0)
-						RaiseInterupt(sh4_int.PUNCHTHRU); 	// ASIC_EVT_PVR_PTDONE
-
+#if!zezuExt
+					if (curListheader.vertex_count != 0)
+					{
+						curListheader.vertex_count = 0;
+						Gl.glEnd();
+					}
 					Video.GLSwapBuffers();
-					//*ACK_A |= 0x80; // end of rendering
 
 					Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
+
 					DoEvents();
+#endif
 				}
 			}
+			//else
+			//{
+			//	clc_pvr_renderdone =10000000;
+			//}
+		}
+
+		static uint HblankInfo()
+		{
+			return 0;
+		}
+		
+		static uint VblankInfo()
+		{
+			uint data = *SPG_VBLANK_INT;
+			if (((data & 0x3FFF) <= prv_cur_scanline) && (((data >> 16) & 0x3FFF) >= prv_cur_scanline))
+				return 1;
+			else
+				return 0;
 		}
     }
 }
