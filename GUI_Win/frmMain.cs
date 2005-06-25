@@ -1,5 +1,3 @@
-#if nrt
-
 using System;
 using System.Drawing;
 using System.Collections;
@@ -33,9 +31,7 @@ namespace DC4Ever
 			//
 			// 
 			//
-                    #if nrt
 			dx.init(this.screen);
-                #endif
 		}
 
 		/// <summary>
@@ -61,14 +57,14 @@ namespace DC4Ever
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
+			this.mainMenu1 = new System.Windows.Forms.MainMenu();
 			this.menuItem1 = new System.Windows.Forms.MenuItem();
 			this.menuItem2 = new System.Windows.Forms.MenuItem();
 			this.menuItem3 = new System.Windows.Forms.MenuItem();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.screen = new System.Windows.Forms.PictureBox();
 			this.label1 = new System.Windows.Forms.Label();
-			((System.ComponentModel.ISupportInitialize)(this.screen)).BeginInit();
+			
 			this.SuspendLayout();
 			// 
 			// mainMenu1
@@ -135,7 +131,7 @@ namespace DC4Ever
 				" inlining";
 			this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.frmmain_KeyUp);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmmain_KeyDown);
-			((System.ComponentModel.ISupportInitialize)(this.screen)).EndInit();
+			
 			this.ResumeLayout(false);
 
         }
@@ -155,33 +151,33 @@ namespace DC4Ever
 			switch (e.KeyCode)
 			{
 				case Keys.Z:
-					kcode |= emu.key_CONT_A;
+					kcode |= maple.key_CONT_A;
 					break;
 				case Keys.X:
-					kcode |= emu.key_CONT_B;
+					kcode |= maple.key_CONT_B;
 					break;
 				case Keys.C:
-					kcode |= emu.key_CONT_C;
+					kcode |= maple.key_CONT_C;
 					break;
 				case Keys.V:
-					kcode |= emu.key_CONT_D;
+					kcode |= maple.key_CONT_D;
 					break;
 
 				case Keys.ShiftKey:
-					kcode |= emu.key_CONT_START;
+					kcode |= maple.key_CONT_START;
 					break;
 
 				case Keys.Up:
-					kcode |= emu.key_CONT_DPAD_UP;
+					kcode |= maple.key_CONT_DPAD_UP;
 					break;
 				case Keys.Down:
-					kcode |= emu.key_CONT_DPAD_DOWN;
+					kcode |= maple.key_CONT_DPAD_DOWN;
 					break;
 				case Keys.Left:
-					kcode |= emu.key_CONT_DPAD_LEFT;
+					kcode |= maple.key_CONT_DPAD_LEFT;
 					break;
 				case Keys.Right:
-					kcode |= emu.key_CONT_DPAD_RIGHT;
+					kcode |= maple.key_CONT_DPAD_RIGHT;
 					break;
 			}
 		}
@@ -191,33 +187,33 @@ namespace DC4Ever
 			switch (e.KeyCode)
 			{
 				case Keys.Z:
-					kcode &= 0xFFFF - emu.key_CONT_A;
+					kcode &= 0xFFFF - maple.key_CONT_A;
 					break;
 				case Keys.X:
-					kcode &= 0xFFFF - emu.key_CONT_B;
+					kcode &= 0xFFFF - maple.key_CONT_B;
 					break;
 				case Keys.C:
-					kcode &= 0xFFFF - emu.key_CONT_C;
+					kcode &= 0xFFFF - maple.key_CONT_C;
 					break;
 				case Keys.V:
-					kcode &= 0xFFFF - emu.key_CONT_D;
+					kcode &= 0xFFFF - maple.key_CONT_D;
 					break;
 
 				case Keys.ShiftKey:
-					kcode &= 0xFFFF - emu.key_CONT_START;
+					kcode &= 0xFFFF - maple.key_CONT_START;
 					break;
 
 				case Keys.Up:
-					kcode &= 0xFFFF - emu.key_CONT_DPAD_UP;
+					kcode &= 0xFFFF - maple.key_CONT_DPAD_UP;
 					break;
 				case Keys.Down:
-					kcode &= 0xFFFF - emu.key_CONT_DPAD_DOWN;
+					kcode &= 0xFFFF - maple.key_CONT_DPAD_DOWN;
 					break;
 				case Keys.Left:
-					kcode &= 0xFFFF - emu.key_CONT_DPAD_LEFT;
+					kcode &= 0xFFFF - maple.key_CONT_DPAD_LEFT;
 					break;
 				case Keys.Right:
-					kcode &= 0xFFFF - emu.key_CONT_DPAD_RIGHT;
+					kcode &= 0xFFFF - maple.key_CONT_DPAD_RIGHT;
 					break;
 			}
 		}
@@ -228,24 +224,24 @@ namespace DC4Ever
 		}
 
         
-        //System.Threading.Thread thr = new System.Threading.Thread(new System.Threading.ThreadStart(emu.runcpu));
+        System.Threading.Thread thr = new System.Threading.Thread(new System.Threading.ThreadStart(sh4.runcpu));
         private void menuItem2_Click(object sender, System.EventArgs e)
 		{
 			dc.dcon.WriteLine("Loading ip.bin and Resetting sh4");
-            emu.loadipbin("ip.bin");
-            emu.resetsh4();
+            bios.loadipbin("ip.bin");
+            sh4.resetsh4();
             dc.dcon.WriteLine("runcpu");
-            //if (!thr.IsAlive)
-            //    thr.Start();
-            emu.runcpu();
+            if (!thr.IsAlive)
+                thr.Start();
+            //sh4.runcpu();
         }
 
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            this.label1.Text = "Running at " + System.Convert.ToString(((double)emu.clcount / 1024 / 1024) / ((double)(System.DateTime.Now.Ticks - told) / 10000000)) + " MHz , " + emu.fps + " fps(not real, just screen refresh) ;vram:" + (emu.mw).ToString() + " b;pc=" + Convert.ToString(emu.pc, 16); ;// + ((float)emu.mw / 1024 / 1204).ToString() + " megabyte vram writes per sec " + emu.ch.ToString() + ",cache hits " + emu.cm.ToString() + ",cache misses " + ((emu.ch + 1) / (emu.cm + 1)).ToString() + ":1 cache hit ratio " + ;
+            this.label1.Text = "Running at " + System.Convert.ToString(((double)sh4.clcount / 1024 / 1024) / ((double)(System.DateTime.Now.Ticks - told) / 10000000)) + " MHz , " + pvr.fps + " fps(not real, just screen refresh) ;vram:" + (pvr.mw).ToString() + " b;pc=" + Convert.ToString(sh4.pc, 16); ;// + ((float)emu.mw / 1024 / 1204).ToString() + " megabyte vram writes per sec " + emu.ch.ToString() + ",cache hits " + emu.cm.ToString() + ",cache misses " + ((emu.ch + 1) / (emu.cm + 1)).ToString() + ":1 cache hit ratio " + ;
             //dc.dcon.WriteLine(emu.pc);
-            emu.clcount = 0;
-            emu.fps = 0;
+            sh4.clcount = 0;
+            pvr.fps = 0;
             //emu.mw = 0;
             told = System.DateTime.Now.Ticks;
             //if (runsh) fastint.showstats();
@@ -254,8 +250,8 @@ namespace DC4Ever
         private void menuItem3_Click(object sender, System.EventArgs e)
 		{
 			dc.dcon.WriteLine("Loading ip.bin and Resetting sh4");
-            emu.loadipbin("ip.bin");
-            emu.resetsh4();
+            bios.loadipbin("ip.bin");
+            sh4.resetsh4();
             dc.dcon.WriteLine("runcpu");
 			//runcpuDyna();
 		}
@@ -267,4 +263,4 @@ namespace DC4Ever
     }
 }
 
-#endif
+
