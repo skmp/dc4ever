@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 
 namespace DC4Ever
@@ -23,7 +23,7 @@ namespace DC4Ever
 		{
 			get
 			{
-				return Name_ == null ? (Name_ = emu.GetProcedureNameFromAddr(startadr)) : Name_;
+				return Name_ == null ? (Name_ = sh4_disasm.GetProcedureNameFromAddr(startadr)) : Name_;
 			}
 		}
 
@@ -44,22 +44,44 @@ namespace DC4Ever
 		}
 	}
 
-	public static unsafe partial class emu
+	public class Stack_callstack_frame_ : Stack
+	{
+		public new callstack_frame Peek()
+		{
+			return (callstack_frame)base.Peek ();
+		}
+		public void Push(callstack_frame obj)
+		{
+			base.Push (obj);
+		}
+
+		public new callstack_frame Pop()
+		{
+			return (callstack_frame)base.Pop ();
+		}
+
+
+
+	}
+	public unsafe class CallStackTrace
 	{
 		
-		public static Stack<callstack_frame> cstCallStack = new Stack<callstack_frame>();
+		public static Stack_callstack_frame_ cstCallStack = new Stack_callstack_frame_();
 
-		static void cstAddCall(uint from, uint ret, uint calladdr,CallType calltype)
+		public static void cstAddCall(uint from, uint ret, uint calladdr,CallType calltype)
 		{
 #if !optimised_b
 			if (cstCallStack.Count!=0)
-				cstCallStack.Push(new callstack_frame(cstCallStack.Peek().calladr ,from, ret, calladdr, calltype, gl_cop_cnt));
+				cstCallStack.Push(new callstack_frame(cstCallStack.Peek().calladr ,from, ret, calladdr, calltype, sh4.gl_cop_cnt));
 			else
-				cstCallStack.Push(new callstack_frame(dc_boot_vec, from, ret, calladdr, calltype, gl_cop_cnt));
+				cstCallStack.Push(new callstack_frame(sh4.dc_boot_vec, from, ret, calladdr, calltype, sh4.gl_cop_cnt));
 #endif
 		}
-
-		static void cstRemCall(uint ret,CallType rettype)
+		public static string UintToHex(uint val)
+		{
+			return "0x"+Convert.ToString(val, 16).ToUpper();
+		}
+		public static void cstRemCall(uint ret,CallType rettype)
 		{
 #if !optimised_b
 			if (cstCallStack.Count > 0)
@@ -67,21 +89,22 @@ namespace DC4Ever
 				callstack_frame t = cstCallStack.Pop();
 				if (t.retadr != ret)
 				{
-					WriteLine("Call stack wrong Ret address;" + UintToHex(ret) + "!=" + UintToHex(t.retadr) + " sub start : " + UintToHex(t.startadr));
-					//dc.dbger.mode = 1;
+					mem.WriteLine("Call stack wrong Ret address;" +  sh4_disasm.UintToHex(ret) + "!=" + sh4_disasm.UintToHex(t.retadr) + " sub start : " + sh4_disasm.UintToHex(t.startadr));
+					dc.dbger.mode = 1;
 				}
 				if (t.calltype != rettype)
 				{
-					WriteLine("Call stack wrong TYPE address;" + t.calltype.ToString() + "!=" + rettype.ToString() + " sub start : " + UintToHex(t.startadr));
+					mem.WriteLine("Call stack wrong TYPE address;" + t.calltype.ToString() + "!=" + rettype.ToString() + " sub start : " + sh4_disasm.UintToHex(t.startadr));
 					//cstCallStack.Push(t);
 					//dc.dbger.SetBP(t.startadr);
-					//dc.dbger.mode = 1;
-					pc = t.retadr;
+					dc.dbger.mode = 1;
+					//sh4.pc = t.retadr;
 				}
 			}
 			else
-				WriteLine("Call stack unexpected ret" );
+				mem.WriteLine("Call stack unexpected ret" );
 #endif
 		}
 	}
 }
+
