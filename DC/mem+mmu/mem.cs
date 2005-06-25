@@ -16,215 +16,219 @@ namespace DC4Ever
 	/// <summary>
 	/// Manages the mem Reads/Writes and the 
 	/// </summary>
-    public unsafe partial class emu
+    public unsafe class mem
     {
         public const int kb = 1024;
         public const int mb = kb * 1024;
         //public static byte[] ram = new byte[16* dc.mb];//16 megs ram
-		static byte* ram_b = (byte*)dc.mmgr.AllocMem(16 * mb);//= new byte[16* dc.mb];//16 megs ram
-        static ushort* ram_w =(ushort*)ram_b;//in words
-        static uint* ram_dw = (uint*)ram_b;//in dwords
-		static uint* regmem_dw = (uint*)dc.mmgr.AllocMem(16 * mb);
-        static ushort* regmem_w = (ushort*)regmem_dw;
-        static byte* regmem_b = (byte*)regmem_dw;
+		public static byte* ram_b = (byte*)dc.mmgr.AllocMem(16 * mb);//= new byte[16* dc.mb];//16 megs ram
+        public static ushort* ram_w =(ushort*)ram_b;//in words
+        public static uint* ram_dw = (uint*)ram_b;//in dwords
+		public static uint* regmem_dw = (uint*)dc.mmgr.AllocMem(16 * mb);
+        public static ushort* regmem_w = (ushort*)regmem_dw;
+        public static byte* regmem_b = (byte*)regmem_dw;
 
-		static uint* biosmem_bw = (uint*)dc.mmgr.AllocMem(16 * mb);
-        static ushort* biosmem_w = (ushort*)biosmem_bw;
-        static byte* biosmem_b = (byte*)biosmem_bw;
+		public static uint* biosmem_bw = (uint*)dc.mmgr.AllocMem(16 * mb);
+        public static ushort* biosmem_w = (ushort*)biosmem_bw;
+        public static byte* biosmem_b = (byte*)biosmem_bw;
 
-		static uint* sq0_dw = (uint*)dc.mmgr.AllocMem(8 * 4);
+		public static uint* sq0_dw = (uint*)dc.mmgr.AllocMem(8 * 4);
 
-		static uint* sq1_dw = (uint*)dc.mmgr.AllocMem(8 * 4);
+		public static uint* sq1_dw = (uint*)dc.mmgr.AllocMem(8 * 4);
 
 
         #region mmrs- ptr's
 
         #region memregs-1
-        static uint* PTEL;
-        static uint* CCR;
-        static uint* EXPEVT;
-        static uint* INTEVT;
-        static uint* TRA;
-        static uint* QACR0;
-        static uint* QACR1;
+        public static uint* PTEL;
+        public static uint* CCR;
+        public static uint* EXPEVT;
+        public static uint* INTEVT;
+        public static uint* TRA;
+        public static uint* QACR0;
+        public static uint* QACR1;
 
-        static uint* PCTRA;
-        static ushort* PDTRA;
-        static uint* PCTRB;
-        static ushort* PDTRB;
+        public static uint* PCTRA;
+        public static ushort* PDTRA;
+        public static uint* PCTRB;
+        public static ushort* PDTRB;
 
         #region DMA
-        static uint* SAR0;
-        static uint* DAR0;
-        static uint* DMATCR0;
-        static uint* CHCR0;
+        public static uint* SAR0;
+        public static uint* DAR0;
+        public static uint* DMATCR0;
+        public static uint* CHCR0;
 
-        static uint* SAR1;
-        static uint* DAR1;
-        static uint* DMATCR1;
-        static uint* CHCR1;
+       public  static uint* SAR1;
+        public static uint* DAR1;
+        public static uint* DMATCR1;
+        public static uint* CHCR1;
 
-        static uint* SAR2;
-        static uint* DAR2;
-        static uint* DMATCR2;
-        static uint* CHCR2;
+        public static uint* SAR2;
+        public static uint* DAR2;
+        public static uint* DMATCR2;
+        public static uint* CHCR2;
 
-        static uint* SAR3;
-        static uint* DAR3;
-        static uint* DMATCR3;
-        static uint* CHCR3;
+        public static uint* SAR3;
+        public static uint* DAR3;
+        public static uint* DMATCR3;
+        public static uint* CHCR3;
 
-        static uint* DMAOR;
+        public static uint* DMAOR;
         #endregion
 
-        static ushort* ICR;
-        static ushort* IPRA;
-        static ushort* IPRB;
-        static ushort* IPRC;
+        public static ushort* ICR;
+        public static ushort* IPRA;
+        public static ushort* IPRB;
+        public static ushort* IPRC;
 
         #region TMU Registers
-        static byte* TOCR;
-        static byte* TSTR;
-        static uint* TCOR0;
-        static uint* TCNT0;
-        static ushort* TCR0;
-        static uint* TCOR1;
-        static uint* TCNT1;
-        static ushort* TCR1;
-        static uint* TCOR2;
-        static uint* TCNT2;
-        static ushort* TCR2;
-        static uint* TCPR2;
+       public  static byte* TOCR;
+        public static byte* TSTR;
+        public static uint* TCOR0;
+        public static uint* TCNT0;
+        public static ushort* TCR0;
+        public static uint* TCOR1;
+        public static uint* TCNT1;
+        public static ushort* TCR1;
+        public static uint* TCOR2;
+        public static uint* TCNT2;
+        public static ushort* TCR2;
+        public static uint* TCPR2;
         #endregion
 
-        static ushort* SCSMR2;
-        static byte* SCBRR2;
-        static ushort* SCSCR2;
-        static byte* SCFTDR2;
-        static ushort* SCFSR2;
-        static ushort* SCFCR2;
-        static ushort* SCSPTR2;
-        static ushort* SCLSR2;
+        public static ushort* SCSMR2;
+        public static byte* SCBRR2;
+        public static ushort* SCSCR2;
+        public static byte* SCFTDR2;
+        public static ushort* SCFSR2;
+        public static ushort* SCFCR2;
+        public static ushort* SCSPTR2;
+        public static ushort* SCLSR2;
         #endregion
 
         #region biosmem [mmr's on bios / flash area] pointer setup
 
-        static uint* snd_dbg;
-        static uint* g2_fifo;
+        public static uint* snd_dbg;
+        public static uint* g2_fifo;
         
         #region interups
-		static uint* ACK_A = (uint*)(biosmem_b + 0x5F6900); // Pending Interrupts 1
-		static uint* ACK_B = (uint*)(biosmem_b + 0x5f6904); // Pending Interrupts 2
-		static uint* ACK_C = (uint*)(biosmem_b + 0x5f6908); // Pending Interrupts 3
-        static uint* IRQD_A = (uint*)(biosmem_b + 0x5f6910); // Enabled Interrupts IRQD_A
-        static uint* IRQD_B = (uint*)(biosmem_b + 0x5f6914); // Enabled Interrupts IRQD_B
-        static uint* IRQD_C = (uint*)(biosmem_b + 0x5f6918); // Enabled Interrupts IRQD_C
-        static uint* IRQB_A = (uint*)(biosmem_b + 0x5f6920); // Enabled Interrupts IRQB_A
-        static uint* IRQB_B = (uint*)(biosmem_b + 0x5f6924); // Enabled Interrupts IRQB_B
-        static uint* IRQB_C = (uint*)(biosmem_b + 0x5f6928); // Enabled Interrupts IRQB_C
-        static uint* IRQ9_A = (uint*)(biosmem_b + 0x5f6930); // Enabled Interrupts IRQ9_A
-        static uint* IRQ9_B = (uint*)(biosmem_b + 0x5f6934); // Enabled Interrupts IRQ9_B
-        static uint* IRQ9_C = (uint*)(biosmem_b + 0x5f6938); // Enabled Interrupts IRQ9_C
-        static uint* SB_PDTNRM = (uint*)(biosmem_b + 0x5f6940); // SB_PDTNRM	PVR-DMA trigger select from normal interrupt
-        static uint* SB_PDTEXT = (uint*)(biosmem_b + 0x5f6944); // SB_PDTEXT	PVR-DMA trigger select from external interrupt
+		public static uint* ISTNRM = (uint*)(biosmem_b + 0x5F6900); // Pending Interrupts 1
+		public static uint* ISTEXT = (uint*)(biosmem_b + 0x5f6904); // Pending Interrupts 2
+		public static uint* ISTERR = (uint*)(biosmem_b + 0x5f6908); // Pending Interrupts 3
+		
+		public static uint* IML2NRM = (uint*)(biosmem_b + 0x5f6910); // Enabled Interrupts IML2NRM
+		public static uint* IML2EXT = (uint*)(biosmem_b + 0x5f6914); // Enabled Interrupts IML2EXT
+		public static uint* IML2ERR = (uint*)(biosmem_b + 0x5f6918); // Enabled Interrupts IML2ERR
+
+		public static uint* IML4NRM = (uint*)(biosmem_b + 0x5f6920); // Enabled Interrupts IML4NRM
+		public static uint* IML4EXT = (uint*)(biosmem_b + 0x5f6924); // Enabled Interrupts IML4EXT
+		public static uint* IML4ERR = (uint*)(biosmem_b + 0x5f6928); // Enabled Interrupts IML4ERR
+
+		public static uint* IML6NRM = (uint*)(biosmem_b + 0x5f6930); // Enabled Interrupts IML6NRM
+		public static uint* IML6EXT = (uint*)(biosmem_b + 0x5f6934); // Enabled Interrupts IML6EXT
+		public static uint* IML6ERR = (uint*)(biosmem_b + 0x5f6938); // Enabled Interrupts IML6ERR
+
+        public static uint* SB_PDTNRM = (uint*)(biosmem_b + 0x5f6940); // SB_PDTNRM	PVR-DMA trigger select from normal interrupt
+        public static uint* SB_PDTEXT = (uint*)(biosmem_b + 0x5f6944); // SB_PDTEXT	PVR-DMA trigger select from external interrupt
         #endregion
 
         #region mapple
-        static uint* MAPLE_DMAADDR = (uint*)(biosmem_b + 0x5f6c04); // MAPLE_DMAADDR
-        static uint* MAPLE_RESET2 = (uint*)(biosmem_b + 0x5f6c10); // MAPLE_RESET2
-        static uint* MAPLE_ENABLE = (uint*)(biosmem_b + 0x5f6c14); // MAPLE_ENABLE
-        static uint* MAPLE_STATE = (uint*)(biosmem_b + 0x5f6c18); // MAPLE_STATE
-        static uint* MAPLE_SPEED = (uint*)(biosmem_b + 0x5f6c80); // MAPLE_SPEED
-        static uint* MAPLE_RESET1 = (uint*)(biosmem_b + 0x5f6c8c); // MAPLE_RESET1
+        public static uint* MAPLE_DMAADDR = (uint*)(biosmem_b + 0x5f6c04); // MAPLE_DMAADDR
+        public static uint* MAPLE_RESET2 = (uint*)(biosmem_b + 0x5f6c10); // MAPLE_RESET2
+        public static uint* MAPLE_ENABLE = (uint*)(biosmem_b + 0x5f6c14); // MAPLE_ENABLE
+        public static uint* MAPLE_STATE = (uint*)(biosmem_b + 0x5f6c18); // MAPLE_STATE
+        public static uint* MAPLE_SPEED = (uint*)(biosmem_b + 0x5f6c80); // MAPLE_SPEED
+        public static uint* MAPLE_RESET1 = (uint*)(biosmem_b + 0x5f6c8c); // MAPLE_RESET1
         #endregion 
 
         #region  PVR Registers
         // PVR Registers
 
-        static uint* COREID = (uint*)(biosmem_b + 0x5f8000 + 0x00 * 4);// COREID [ID] (PVR2 Core ID)
-        static uint* CORETYPE = (uint*)(biosmem_b + 0x5f8000 + 0x01 * 4);// CORETYPE [REV] (PVR2 Core version)
-        static uint* COREDISABLE = (uint*)(biosmem_b + 0x5f8000 + 0x02 * 4);//COREDISABLE [CORERESET] (PVR2) (Enable/disable the submodules of the PVR2 Core)
-        static uint* RENDERFORMAT = (uint*)(biosmem_b + 0x5f8000 + 0x03 * 4); // RENDERFORMAT, "alpha config"
-        static uint* RENDERSTART = (uint*)(biosmem_b + 0x5f8000 + 0x05 * 4);//RENDERSTART (3D) (Start render strobe)
-        static uint* TESTSELECT = (uint*)(biosmem_b + 0x5f8000 + 0x06 * 4);// [TESTSELECT]
-        //=(uint*)(biosmem_b+ 0x5f8000 + 0x07 * 4);// Unknown
-        static uint* PARAM_BASE = (uint*)(biosmem_b + 0x5f8000 + 0x08 * 4);// PRIMALLOCBASE [PARAM_BASE] (3D) (Primitive allocation base)
-        static uint* SPANSORTCFG = (uint*)(biosmem_b + 0x5f8000 + 0x09 * 4);// [SPANSORTCFG]
-        //=(uint*)(biosmem_b+ 0x5f8000 + 0x0a * 4);// ??
-        static uint* TILEARRAY = (uint*)(biosmem_b + 0x5f8000 + 0x0b * 4);// TILEARRAY (Tile Array base address) [REGION_BASE]
-        //=(uint*)(biosmem_b+ 0x5f8000 + 0x0c * 4);// Unknown
-        //=(uint*)(biosmem_b+ 0x5f8000 + 0x0d * 4);// Unknown
-        //=(uint*)(biosmem_b+ 0x5f8000 + 0x0e * 4);// Unknown
-        //=(uint*)(biosmem_b+ 0x5f8000 + 0x0f * 4);// Unknown
-        static uint* BORDERCOLOR = (uint*)(biosmem_b + 0x5f8000 + 0x10 * 4);// BORDERCOLOR (2D) (Border colour)
-        static uint* BITMAPTYPE = (uint*)(biosmem_b + 0x5f8000 + 0x11 * 4);		// BITMAPTYPE (bitmap display settings)
-        static uint* FB_W_CTRL = (uint*)(biosmem_b + 0x5f8000 + 0x12 * 4);		// RENDERFORMAT [FB_W_CTRL] (3D) (Render output format)
-        static uint* FB_W_LINESTRIDE = (uint*)(biosmem_b + 0x5f8000 + 0x13 * 4);		// RENDERPITCH [FB_W_LINESTRIDE] (3D) (Render target pitch)
-        static uint* FB_R_SOF1 = (uint*)(biosmem_b + 0x5f8000 + 0x14 * 4);		// FRAMEBUF [FB_R_SOF1] (2D) (Framebuffer address)
-        static uint* FB_R_SOF2 = (uint*)(biosmem_b + 0x5f8000 + 0x15 * 4);		// FRAMEBUF [FB_R_SOF2] (2D) (Framebuffer address, short field)
-        //=(uint*)(biosmem_b+ 0x5f8000 + 0x16 * 4);		// Unknown
-        static uint* DIWSIZE = (uint*)(biosmem_b + 0x5f8000 + 0x17 * 4);		// DIWSIZE (2D) (Display window size)
-        static uint* FB_W_SOF1 = (uint*)(biosmem_b + 0x5f8000 + 0x18 * 4);		//RENDERBASE [FB_W_SOF1](3D) (Render target base address)
-        static uint* FB_W_SOF2 = (uint*)(biosmem_b + 0x5f8000 + 0x19 * 4);		//[FB_W_SOF2]
-        static uint* FB_X_CLIP = (uint*)(biosmem_b + 0x5f8000 + 0x1a * 4);		//RENDERWINDOWX [FB_X_CLIP] (3D) (Render output window X-start and X-stop)
-        static uint* FB_Y_CLIP = (uint*)(biosmem_b + 0x5f8000 + 0x1b * 4);		//RENDERWINDOWY [FB_Y_CLIP] (3D) (Render output window Y-start and Y-stop)
-        //=(uint*)(biosmem_b+ 0x5f8000 + 0x1c * 4);		//Unknown
-        static uint* FPU_SHAD_SCALE = (uint*)(biosmem_b + 0x5f8000 + 0x1d * 4);		//CHEAPSHADOWS [FPU_SHAD_SCALE] (3D) (Cheap shadow enable + strength)
-        static uint* FPU_CULL_VAL = (uint*)(biosmem_b + 0x5f8000 + 0x1e * 4);		//CULLINGVALUE [FPU_CULL_VAL] (3D) (Minimum allowed polygon area)
-        static uint* FPU_PARAM_CFG = (uint*)(biosmem_b + 0x5f8000 + 0x1f * 4);		//[FPU_PARAM_CFG] (3D) (Something to do with rendering)
-        static uint* HALF_OFFSET = (uint*)(biosmem_b + 0x5f8000 + 0x20 * 4);		//[HALF_OFFSET]
-        static uint* FPU_PERP_VAL = (uint*)(biosmem_b + 0x5f8000 + 0x21 * 4);		//[FPU_PERP_VAL] (3D) (Something to do with rendering)
-        static uint* ISP_BACKGND_D = (uint*)(biosmem_b + 0x5f8000 + 0x22 * 4);		//[ISP_BACKGND_D]
-        static uint* ISP_BACKGND_T = (uint*)(biosmem_b + 0x5f8000 + 0x23 * 4);		//BGPLANE [ISP_BACKGND_T] (3D) (Background plane location)   
-        //=(uint*)(biosmem_b+ 0x5f8000 + 0x24 * 4);		// Unknown
-        //=(uint*)(biosmem_b+ 0x5f8000 + 0x25 * 4);     // Unknown
-        static uint* ISP_FEED_CFG = (uint*)(biosmem_b + 0x5f8000 + 0x26 * 4);     // [ISP_FEED_CFG]
-        //=(uint*)(biosmem_b+ 0x5f8000 + 0x27 * 4);     // Unknown
-        static uint* SDRAM_REFRESH = (uint*)(biosmem_b + 0x5f8000 + 0x28 * 4);		// [SDRAM_REFRESH]
-        static uint* SDRAM_ARB_CFG = (uint*)(biosmem_b + 0x5f8000 + 0x29 * 4);		// [SDRAM_ARB_CFG]
-        static uint* SDRAM_CFG = (uint*)(biosmem_b + 0x5f8000 + 0x2a * 4);		// SDRAM_CFG (PVR) (Graphics memory control)
+        public static uint* COREID = (uint*)(biosmem_b + 0x5f8000 + 0x00 * 4);// COREID [ID] (PVR2 Core ID)
+        public static uint* CORETYPE = (uint*)(biosmem_b + 0x5f8000 + 0x01 * 4);// CORETYPE [REV] (PVR2 Core version)
+        public static uint* COREDISABLE = (uint*)(biosmem_b + 0x5f8000 + 0x02 * 4);//COREDISABLE [CORERESET] (PVR2) (Enable/disable the submodules of the PVR2 Core)
+        public static uint* RENDERFORMAT = (uint*)(biosmem_b + 0x5f8000 + 0x03 * 4); // RENDERFORMAT, "alpha config"
+        public static uint* RENDERSTART = (uint*)(biosmem_b + 0x5f8000 + 0x05 * 4);//RENDERSTART (3D) (Start render strobe)
+        public static uint* TESTSELECT = (uint*)(biosmem_b + 0x5f8000 + 0x06 * 4);// [TESTSELECT]
+        //public =(uint*)(biosmem_b+ 0x5f8000 + 0x07 * 4);// Unknown
+        public static uint* PARAM_BASE = (uint*)(biosmem_b + 0x5f8000 + 0x08 * 4);// PRIMALLOCBASE [PARAM_BASE] (3D) (Primitive allocation base)
+        public static uint* SPANSORTCFG = (uint*)(biosmem_b + 0x5f8000 + 0x09 * 4);// [SPANSORTCFG]
+        //public =(uint*)(biosmem_b+ 0x5f8000 + 0x0a * 4);// ??
+        public static uint* TILEARRAY = (uint*)(biosmem_b + 0x5f8000 + 0x0b * 4);// TILEARRAY (Tile Array base address) [REGION_BASE]
+        //public =(uint*)(biosmem_b+ 0x5f8000 + 0x0c * 4);// Unknown
+        //public =(uint*)(biosmem_b+ 0x5f8000 + 0x0d * 4);// Unknown
+        //public =(uint*)(biosmem_b+ 0x5f8000 + 0x0e * 4);// Unknown
+        //public =(uint*)(biosmem_b+ 0x5f8000 + 0x0f * 4);// Unknown
+        public static uint* BORDERCOLOR = (uint*)(biosmem_b + 0x5f8000 + 0x10 * 4);// BORDERCOLOR (2D) (Border colour)
+        public static uint* BITMAPTYPE = (uint*)(biosmem_b + 0x5f8000 + 0x11 * 4);		// BITMAPTYPE (bitmap display settings)
+        public static uint* FB_W_CTRL = (uint*)(biosmem_b + 0x5f8000 + 0x12 * 4);		// RENDERFORMAT [FB_W_CTRL] (3D) (Render output format)
+        public static uint* FB_W_LINESTRIDE = (uint*)(biosmem_b + 0x5f8000 + 0x13 * 4);		// RENDERPITCH [FB_W_LINESTRIDE] (3D) (Render target pitch)
+        public static uint* FB_R_SOF1 = (uint*)(biosmem_b + 0x5f8000 + 0x14 * 4);		// FRAMEBUF [FB_R_SOF1] (2D) (Framebuffer address)
+        public static uint* FB_R_SOF2 = (uint*)(biosmem_b + 0x5f8000 + 0x15 * 4);		// FRAMEBUF [FB_R_SOF2] (2D) (Framebuffer address, short field)
+        //public =(uint*)(biosmem_b+ 0x5f8000 + 0x16 * 4);		// Unknown
+        public static uint* DIWSIZE = (uint*)(biosmem_b + 0x5f8000 + 0x17 * 4);		// DIWSIZE (2D) (Display window size)
+        public static uint* FB_W_SOF1 = (uint*)(biosmem_b + 0x5f8000 + 0x18 * 4);		//RENDERBASE [FB_W_SOF1](3D) (Render target base address)
+        public static uint* FB_W_SOF2 = (uint*)(biosmem_b + 0x5f8000 + 0x19 * 4);		//[FB_W_SOF2]
+        public static uint* FB_X_CLIP = (uint*)(biosmem_b + 0x5f8000 + 0x1a * 4);		//RENDERWINDOWX [FB_X_CLIP] (3D) (Render output window X-start and X-stop)
+        public static uint* FB_Y_CLIP = (uint*)(biosmem_b + 0x5f8000 + 0x1b * 4);		//RENDERWINDOWY [FB_Y_CLIP] (3D) (Render output window Y-start and Y-stop)
+        //public =(uint*)(biosmem_b+ 0x5f8000 + 0x1c * 4);		//Unknown
+        public static uint* FPU_SHAD_SCALE = (uint*)(biosmem_b + 0x5f8000 + 0x1d * 4);		//CHEAPSHADOWS [FPU_SHAD_SCALE] (3D) (Cheap shadow enable + strength)
+        public static uint* FPU_CULL_VAL = (uint*)(biosmem_b + 0x5f8000 + 0x1e * 4);		//CULLINGVALUE [FPU_CULL_VAL] (3D) (Minimum allowed polygon area)
+        public static uint* FPU_PARAM_CFG = (uint*)(biosmem_b + 0x5f8000 + 0x1f * 4);		//[FPU_PARAM_CFG] (3D) (Something to do with rendering)
+        public static uint* HALF_OFFSET = (uint*)(biosmem_b + 0x5f8000 + 0x20 * 4);		//[HALF_OFFSET]
+        public static uint* FPU_PERP_VAL = (uint*)(biosmem_b + 0x5f8000 + 0x21 * 4);		//[FPU_PERP_VAL] (3D) (Something to do with rendering)
+        public static uint* ISP_BACKGND_D = (uint*)(biosmem_b + 0x5f8000 + 0x22 * 4);		//[ISP_BACKGND_D]
+        public static uint* ISP_BACKGND_T = (uint*)(biosmem_b + 0x5f8000 + 0x23 * 4);		//BGPLANE [ISP_BACKGND_T] (3D) (Background plane location)   
+        //public =(uint*)(biosmem_b+ 0x5f8000 + 0x24 * 4);		// Unknown
+        //public =(uint*)(biosmem_b+ 0x5f8000 + 0x25 * 4);     // Unknown
+        public static uint* ISP_FEED_CFG = (uint*)(biosmem_b + 0x5f8000 + 0x26 * 4);     // [ISP_FEED_CFG]
+        //public =(uint*)(biosmem_b+ 0x5f8000 + 0x27 * 4);     // Unknown
+        public static uint* SDRAM_REFRESH = (uint*)(biosmem_b + 0x5f8000 + 0x28 * 4);		// [SDRAM_REFRESH]
+        public static uint* SDRAM_ARB_CFG = (uint*)(biosmem_b + 0x5f8000 + 0x29 * 4);		// [SDRAM_ARB_CFG]
+        public static uint* SDRAM_CFG = (uint*)(biosmem_b + 0x5f8000 + 0x2a * 4);		// SDRAM_CFG (PVR) (Graphics memory control)
         //=(uint*)(biosmem_b+ 0x5f8000 + 0x2b * 4);		// Unknown
-        static uint* FOG_COL_RAM = (uint*)(biosmem_b + 0x5f8000 + 0x2c * 4);		// FOGTABLECOLOR [FOG_COL_RAM] (3D) (Fogging colour when using table fog)
-        static uint* FOG_COL_VERT = (uint*)(biosmem_b + 0x5f8000 + 0x2d * 4);		// [FOG_COL_VERT]
-        static uint* FOG_DENSITY = (uint*)(biosmem_b + 0x5f8000 + 0x2e * 4);		// [FOG_DENSITY]
-        static uint* FOG_CLAMP_MAX = (uint*)(biosmem_b + 0x5f8000 + 0x2f * 4);		//[FOG_CLAMP_MAX]
-        static uint* FOG_CLAMP_MIN = (uint*)(biosmem_b + 0x5f8000 + 0x30 * 4);		// [FOG_CLAMP_MIN]
-        static uint* SPG_TRIGGER_POS = (uint*)(biosmem_b + 0x5f8000 + 0x31 * 4);		// [SPG_TRIGGER_POS]
-        static uint* SPG_HBLANK_INT = (uint*)(biosmem_b + (0xa05f8000 + 0x32 * 4)); // 0xa05f80c8, SPG_HBLANK_INT
-        static uint* SPG_VBLANK_INT = (uint*)(biosmem_b + (0xa05f8000 + 0x33 * 4)); // 0xa05f80cc, SPG_VBLANK_INT
-        static uint* SPG_CONTROL = (uint*)(biosmem_b + (0xa05f8000 + 0x34 * 4)); // 0xa05f80d0, SPG_CONTROL
-        static uint* SPG_HBLANK = (uint*)(biosmem_b + 0x5f8000 + 0x35 * 4); // 0xa05f80d4, SPG_HBLANK
-        static uint* SPG_LOAD = (uint*)(biosmem_b + 0x5f8000 + 0x36 * 4); // 0xa05f80d8, SPG_LOAD
-        static uint* SPG_WIDTH = (uint*)(biosmem_b + 0x5f8000 + 0x39 * 4); // TEXTURESTRIDE [SPG_WIDTH] (3D) (Width of rectangular texture)
-        static uint* TEXT_CONTROL = (uint*)(biosmem_b + 0x5f8000 + 0x3a * 4); // [TEXT_CONTROL]
-        static uint* VO_CONTROL = (uint*)(biosmem_b + 0x5f8000 + 0x3b * 4); // [VO_CONTROL]
-        static uint* VO_STARTX = (uint*)(biosmem_b + 0x5f8000 + 0x3c * 4); // [VO_STARTX]
-        static uint* VO_STARTY = (uint*)(biosmem_b + 0x5f8000 + 0x3d * 4); // [VO_STARTY]
-        static uint* SCALER_CTL = (uint*)(biosmem_b + 0x5f8000 + 0x3e * 4); // [SCALER_CTL]
-        static uint* PAL_RAM_CTRL = (uint*)(biosmem_b + 0x5f8000 + 0x42 * 4); // [PAL_RAM_CTRL]
-        static uint* SYNC_STAT = (uint*)(biosmem_b + 0x5f8000 + 0x43 * 4); // [SYNC_STAT]
-        static uint* FB_BURSTCTRL = (uint*)(biosmem_b + 0x5f8000 + 0x44 * 4); // [FB_BURSTCTRL]
-        static uint* FB_C_SOF = (uint*)(biosmem_b + 0x5f8000 + 0x45 * 4); // [FB_C_SOF]
-        static uint* Y_COEFF = (uint*)(biosmem_b + 0x5f8000 + 0x46 * 4); // [Y_COEFF]
-        static uint*PT_ALPHA_REF=(uint*)(biosmem_b+ 0x5f8000 + 0x47 * 4); //[PT_ALPHA_REF]
-        static uint* TA_OL_BASE = (uint*)(biosmem_b + 0x5f8000 + 0x49 * 4); // PPMATRIXBASE [TA_OL_BASE] (TA) (Root PP-block matrices base address)
-        static uint* TA_ISP_BASE = (uint*)(biosmem_b + 0x5f8000 + 0x4a * 4); // PRIMALLOCSTART [TA_ISP_BASE] (TA) (Primitive allocation area start)
-        static uint* TA_OL_LIMIT = (uint*)(biosmem_b + 0x5f8000 + 0x4b * 4); // PPALLOCSTART [TA_OL_LIMIT] (TA) (PP-block allocation area start)
-        static uint* TA_ISP_LIMIT = (uint*)(biosmem_b + 0x5f8000 + 0x4c * 4); // PRIMALLOCEND [TA_ISP_LIMIT] (TA) (Primitive allocation area end)
-        static uint* TA_NEXT_OPB = (uint*)(biosmem_b + 0x5f8000 + 0x4d * 4); // PPALLOCPOS [TA_NEXT_OPB] (TA) (Current PP-block allocation position)
-        static uint* TA_ITP_CURRENT = (uint*)(biosmem_b + 0x5f8000 + 0x4e * 4); // PRIMALLOCPOS [TA_ITP_CURRENT] (TA) (Current primitive allocation position)
-        static uint* TA_GLOB_TILE_CLIP = (uint*)(biosmem_b + 0x5f8000 + 0x4f * 4); // TILEARRAYSIZE [TA_GLOB_TILE_CLIP] (TA) (Tile Array dimensions)
-        static uint* TA_ALLOC_CTRL = (uint*)(biosmem_b + 0x5f8000 + 0x50 * 4); // PPBLOCKSIZE [TA_ALLOC_CTRL] (TA) (PP-block sizes)
-        static uint* TA_LIST_INIT = (uint*)(biosmem_b + 0x5f8000 + 0x51 * 4); // TASTART [TA_LIST_INIT] (TA) (Start vertex enqueueing strobe)
-        static uint* TA_YUV_TEX_BASE = (uint*)(biosmem_b + 0x5f8000 + 0x52 * 4); // [TA_YUV_TEX_BASE]
-        static uint* TA_YUV_TEX_CTRL = (uint*)(biosmem_b + 0x5f8000 + 0x53 * 4); // [TA_YUV_TEX_CTRL]
-        static uint* TA_YUV_TEX_CNT = (uint*)(biosmem_b + 0x5f8000 + 0x54 * 4); // [TA_YUV_TEX_CNT]
-        static uint* TA_LIST_CONT = (uint*)(biosmem_b + 0x5f8000 + 0x58 * 4); // [TA_LIST_CONT]
-        static uint* TA_NEXT_OPB_INIT = (uint*)(biosmem_b + 0x5f8000 + 0x59 * 4); // PPALLOCEND [TA_NEXT_OPB_INIT] (TA) (PP-block allocation area end)
+        public static uint* FOG_COL_RAM = (uint*)(biosmem_b + 0x5f8000 + 0x2c * 4);		// FOGTABLECOLOR [FOG_COL_RAM] (3D) (Fogging colour when using table fog)
+        public static uint* FOG_COL_VERT = (uint*)(biosmem_b + 0x5f8000 + 0x2d * 4);		// [FOG_COL_VERT]
+        public static uint* FOG_DENSITY = (uint*)(biosmem_b + 0x5f8000 + 0x2e * 4);		// [FOG_DENSITY]
+        public static uint* FOG_CLAMP_MAX = (uint*)(biosmem_b + 0x5f8000 + 0x2f * 4);		//[FOG_CLAMP_MAX]
+        public static uint* FOG_CLAMP_MIN = (uint*)(biosmem_b + 0x5f8000 + 0x30 * 4);		// [FOG_CLAMP_MIN]
+        public static uint* SPG_TRIGGER_POS = (uint*)(biosmem_b + 0x5f8000 + 0x31 * 4);		// [SPG_TRIGGER_POS]
+        public static uint* SPG_HBLANK_INT = (uint*)(biosmem_b + (0xa05f8000 + 0x32 * 4)); // 0xa05f80c8, SPG_HBLANK_INT
+        public static uint* SPG_VBLANK_INT = (uint*)(biosmem_b + (0xa05f8000 + 0x33 * 4)); // 0xa05f80cc, SPG_VBLANK_INT
+        public static uint* SPG_CONTROL = (uint*)(biosmem_b + (0xa05f8000 + 0x34 * 4)); // 0xa05f80d0, SPG_CONTROL
+        public static uint* SPG_HBLANK = (uint*)(biosmem_b + 0x5f8000 + 0x35 * 4); // 0xa05f80d4, SPG_HBLANK
+        public static uint* SPG_LOAD = (uint*)(biosmem_b + 0x5f8000 + 0x36 * 4); // 0xa05f80d8, SPG_LOAD
+        public static uint* SPG_WIDTH = (uint*)(biosmem_b + 0x5f8000 + 0x39 * 4); // TEXTURESTRIDE [SPG_WIDTH] (3D) (Width of rectangular texture)
+        public static uint* TEXT_CONTROL = (uint*)(biosmem_b + 0x5f8000 + 0x3a * 4); // [TEXT_CONTROL]
+        public static uint* VO_CONTROL = (uint*)(biosmem_b + 0x5f8000 + 0x3b * 4); // [VO_CONTROL]
+        public static uint* VO_STARTX = (uint*)(biosmem_b + 0x5f8000 + 0x3c * 4); // [VO_STARTX]
+        public static uint* VO_STARTY = (uint*)(biosmem_b + 0x5f8000 + 0x3d * 4); // [VO_STARTY]
+        public static uint* SCALER_CTL = (uint*)(biosmem_b + 0x5f8000 + 0x3e * 4); // [SCALER_CTL]
+        public static uint* PAL_RAM_CTRL = (uint*)(biosmem_b + 0x5f8000 + 0x42 * 4); // [PAL_RAM_CTRL]
+        public static uint* SYNC_STAT = (uint*)(biosmem_b + 0x5f8000 + 0x43 * 4); // [SYNC_STAT]
+        public static uint* FB_BURSTCTRL = (uint*)(biosmem_b + 0x5f8000 + 0x44 * 4); // [FB_BURSTCTRL]
+        public static uint* FB_C_SOF = (uint*)(biosmem_b + 0x5f8000 + 0x45 * 4); // [FB_C_SOF]
+        public static uint* Y_COEFF = (uint*)(biosmem_b + 0x5f8000 + 0x46 * 4); // [Y_COEFF]
+        public static uint*PT_ALPHA_REF=(uint*)(biosmem_b+ 0x5f8000 + 0x47 * 4); //[PT_ALPHA_REF]
+        public static uint* TA_OL_BASE = (uint*)(biosmem_b + 0x5f8000 + 0x49 * 4); // PPMATRIXBASE [TA_OL_BASE] (TA) (Root PP-block matrices base address)
+        public static uint* TA_ISP_BASE = (uint*)(biosmem_b + 0x5f8000 + 0x4a * 4); // PRIMALLOCSTART [TA_ISP_BASE] (TA) (Primitive allocation area start)
+        public static uint* TA_OL_LIMIT = (uint*)(biosmem_b + 0x5f8000 + 0x4b * 4); // PPALLOCSTART [TA_OL_LIMIT] (TA) (PP-block allocation area start)
+        public static uint* TA_ISP_LIMIT = (uint*)(biosmem_b + 0x5f8000 + 0x4c * 4); // PRIMALLOCEND [TA_ISP_LIMIT] (TA) (Primitive allocation area end)
+        public static uint* TA_NEXT_OPB = (uint*)(biosmem_b + 0x5f8000 + 0x4d * 4); // PPALLOCPOS [TA_NEXT_OPB] (TA) (Current PP-block allocation position)
+        public static uint* TA_ITP_CURRENT = (uint*)(biosmem_b + 0x5f8000 + 0x4e * 4); // PRIMALLOCPOS [TA_ITP_CURRENT] (TA) (Current primitive allocation position)
+        public static uint* TA_GLOB_TILE_CLIP = (uint*)(biosmem_b + 0x5f8000 + 0x4f * 4); // TILEARRAYSIZE [TA_GLOB_TILE_CLIP] (TA) (Tile Array dimensions)
+        public static uint* TA_ALLOC_CTRL = (uint*)(biosmem_b + 0x5f8000 + 0x50 * 4); // PPBLOCKSIZE [TA_ALLOC_CTRL] (TA) (PP-block sizes)
+        public static uint* TA_LIST_INIT = (uint*)(biosmem_b + 0x5f8000 + 0x51 * 4); // TASTART [TA_LIST_INIT] (TA) (Start vertex enqueueing strobe)
+        public static uint* TA_YUV_TEX_BASE = (uint*)(biosmem_b + 0x5f8000 + 0x52 * 4); // [TA_YUV_TEX_BASE]
+        public static uint* TA_YUV_TEX_CTRL = (uint*)(biosmem_b + 0x5f8000 + 0x53 * 4); // [TA_YUV_TEX_CTRL]
+        public static uint* TA_YUV_TEX_CNT = (uint*)(biosmem_b + 0x5f8000 + 0x54 * 4); // [TA_YUV_TEX_CNT]
+        public static uint* TA_LIST_CONT = (uint*)(biosmem_b + 0x5f8000 + 0x58 * 4); // [TA_LIST_CONT]
+        public static uint* TA_NEXT_OPB_INIT = (uint*)(biosmem_b + 0x5f8000 + 0x59 * 4); // PPALLOCEND [TA_NEXT_OPB_INIT] (TA) (PP-block allocation area end)
         #endregion
 
-        static uint* dc_rtc1 = (uint*)(biosmem_b + 0x710000); // Dreamcast RTC, reg 1
-        static uint* dc_rtc2 = (uint*)(biosmem_b + 0x710004); // Dreamcast RTC, reg 2
+        public static uint* dc_rtc1 = (uint*)(biosmem_b + 0x710000); // Dreamcast RTC, reg 1
+        public static uint* dc_rtc2 = (uint*)(biosmem_b + 0x710004); // Dreamcast RTC, reg 2
 
         #endregion
 
@@ -234,20 +238,22 @@ namespace DC4Ever
 		{
 			//Emulate properly the P,ALT and NC bits- this will prob be done on
 			//the MMUtranslate , also n*k
-			adr=mmutrans(adr,len);//translate using mmu
+			adr=mmu.mmutrans(adr,len);//translate using mmu
 			uint padr= adr & 0x1FFFFFFF;//get the phisical adress(discard p,alt,nc)
 			uint offset=adr&0x3FFFFFF;
+			//if (padr == 0x0c07a874)
+			//	return 0;
 			switch (padr>>26)//get the area (upper 3 bits)
 			{
 				case 0://bios/flashrom/hardaware regs
 					#region Bios/Flash/HardWare Registers
 					if (offset<0x200000)//bios read
 					{            
-						return readBios(offset,len);
+						return bios.readBios(offset,len);
 					}
 					else if (offset < 0x240000)//flash ram read
 					{
-						return readBios_falsh(offset-0x200000,len);
+						return bios.readBios_falsh(offset-0x200000,len);
 					}
 					else//register read
 					{
@@ -255,7 +261,7 @@ namespace DC4Ever
 					}
 					#endregion
 				case 1://Video ram
-					return readPvr(offset, len);// redirect to  readmem
+					return pvr.readPvr(offset, len);// redirect to  readmem
 				case 2://???? nothing???? olny mmu???
 					WriteLine("Area2 read  adr:" + Convert.ToString(adr,16) + " padr:" + Convert.ToString(padr,16));
 					return 0;
@@ -282,7 +288,7 @@ namespace DC4Ever
 					return 0;
 				case 4://Tile acceletator coomand input
                     //WriteLine("TA Area4 read adr:" + Convert.ToString(adr, 16) + " padr:" + Convert.ToString(padr, 16));
-					return TaRead(offset, len); ;//nothing yet
+					return 0;// TaRead(offset, len); ;//nothing yet
 				case 5://Expansion (modem) port
                     WriteLine("Area5 read adr:" + Convert.ToString(adr, 16) + " padr:" + Convert.ToString(padr, 16));
                     return 0;//nothing yet
@@ -299,12 +305,14 @@ namespace DC4Ever
 
 			//Emulate properly the P,ALT and NC bits- this will prob be done on
 			//the MMUtranslate ,also n*k access test
-			adr=mmutrans(adr,len);//translate using mmu
+			adr=mmu.mmutrans(adr,len);//translate using mmu
 			uint padr= adr & 0x1FFFFFFF;//get the phisical adress(discard p,alt,nc)
 			uint offset=adr&0x3FFFFFF;//get the area offset
 
 			//if ((adr & 0x1FFFFFFF) == (0xa081fffc & 0x1FFFFFFF))
 				//return;
+			//if (padr == 0x0c064874)
+			//	return;
 
 			if (((adr >> 24) & 0xF8) == 0xE0)
 			{
@@ -337,7 +345,7 @@ namespace DC4Ever
 					}					
 					else if (offset < 0x240000)//flash ram write
 					{
-						writeBios_flash(offset-0x200000,data,len);
+						bios.writeBios_flash(offset-0x200000,data,len);
 						return;
 					}
 					else//register write
@@ -347,7 +355,7 @@ namespace DC4Ever
 					}
 					#endregion
 				case 1://Video ram
-					writePvr(offset, data, len);
+					pvr.writePvr(offset, data, len);
 					return;// redirect to  writemem
 				case 2://???? nothing???? olny mmu???
                     WriteLine("Area2 write adr:" + Convert.ToString(adr, 16) + " padr:" + Convert.ToString(padr, 16));
@@ -382,7 +390,7 @@ namespace DC4Ever
 					return;
 				case 4://Tile acceletator coomand input
                     //WriteLine("TA Area4 write adr:" + Convert.ToString(adr, 16) + " padr:" + Convert.ToString(padr, 16));
-					TaWrite(offset, data, len);
+					ta.TaWrite(offset, data, len);
                     return;//nothing yet
 				case 5://Expansion (modem) port
                     WriteLine("Area5 write adr:" + Convert.ToString(adr, 16) + " padr:" + Convert.ToString(padr, 16));
@@ -397,7 +405,7 @@ namespace DC4Ever
 
 		}
         
-        static void UpdateMem(uint cycles) { }
+        public static void UpdateMem(uint cycles) { }
 
         //read/write Internal CPU regs (area 7 ,region p4)
 		static uint readInternalmmr(uint adr,int len)
@@ -408,7 +416,7 @@ namespace DC4Ever
 				switch (adr)
 				{
 					#region old
-#if !optimised_b
+//#if !optimised_b
 					case 0://ccn.PTEH/32
 						break;
 					case 4://ccn.PTEL/32
@@ -441,7 +449,7 @@ namespace DC4Ever
 						break;
 					case 0x20004://UBC.BAMRA/8
 						break;
-#endif
+//#endif
 					case 0xe80010:// SCFSR2/16, Serial Status Register
 						return *SCFSR2;
 					#endregion
@@ -617,11 +625,11 @@ namespace DC4Ever
 						SCLSR2 = (ushort*)&regmem_b[0xE80024]; *SCLSR2 = 0;
 						break;
 */
-#if !optimised_b
+//#if !optimised_b
 					default:
 						//WriteLine("P4:Interlal I.O. registers read adr:" + Convert.ToString(adr, 16));
 						break;
-#endif
+//#endif
 				}
                 switch(len)
                 {
@@ -653,7 +661,7 @@ namespace DC4Ever
                 adr &= 0xFFFFFF;//get register offset
                 switch (adr)
                 {
-	#if !optimised_b
+	//#if !optimised_b
                     case 0://ccn.PTEH/32
                         WriteLine("ccn.PTEH/32 write ; size=" + len.ToString());
                         break;
@@ -702,7 +710,7 @@ namespace DC4Ever
                     case 0x20004://UBC.BAMRA/8
                         WriteLine("UBC.BAMRA/8 write ; size=" + len.ToString());
                         break;
-#endif
+//#endif
                     case 0xe8000c:// SCFTDR2, Transmit FIFO Data Register
                         Console.Write((char)(byte)(data));
 						if (((char)(byte)(data)) == '*')
@@ -766,7 +774,6 @@ namespace DC4Ever
 					//return 0;
 					//return 1;//hack
                     break;
-#if !optimised_b
                 #region interups control registers
                 case 0x5f6900: // Pending Interrupts 1
                     WriteLinehw("HW Read Pending Interrupts 1 :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
@@ -780,40 +787,40 @@ namespace DC4Ever
                     WriteLinehw("HW Read Pending Interrupts 3 :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6910: // Enabled Interrupts IRQD_A
-                    WriteLinehw("HW Read Enabled Interrupts IRQD_A :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6910: // Enabled Interrupts IML2NRM
+                    WriteLinehw("HW Read Enabled Interrupts IML2NRM :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6914: // Enabled Interrupts IRQD_B
-                    WriteLinehw("HW Read Enabled Interrupts IRQD_B :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6914: // Enabled Interrupts IML2EXT
+                    WriteLinehw("HW Read Enabled Interrupts IML2EXT :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6918: // Enabled Interrupts IRQD_C
-                    WriteLinehw("HW Read Enabled Interrupts IRQD_C :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6918: // Enabled Interrupts IML2ERR
+                    WriteLinehw("HW Read Enabled Interrupts IML2ERR :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6920: // Enabled Interrupts IRQB_A
-                    WriteLinehw("HW Read Enabled Interrupts IRQB_A :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6920: // Enabled Interrupts IML4NRM
+                    WriteLinehw("HW Read Enabled Interrupts IML4NRM :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6924: // Enabled Interrupts IRQB_B
-                    WriteLinehw("HW Read Enabled Interrupts IRQB_B :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6924: // Enabled Interrupts IML4EXT
+                    WriteLinehw("HW Read Enabled Interrupts IML4EXT :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6928: // Enabled Interrupts IRQB_C
-                    WriteLinehw("HW Read Enabled Interrupts IRQB_C :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6928: // Enabled Interrupts IML4ERR
+                    WriteLinehw("HW Read Enabled Interrupts IML4ERR :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6930: // Enabled Interrupts IRQ9_A
-                    WriteLinehw("HW Read Enabled Interrupts IRQ9_A :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6930: // Enabled Interrupts IML6NRM
+                    WriteLinehw("HW Read Enabled Interrupts IML6NRM :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6934: // Enabled Interrupts IRQ9_B
-                    WriteLinehw("HW Read Enabled Interrupts IRQ9_B :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6934: // Enabled Interrupts IML6EXT
+                    WriteLinehw("HW Read Enabled Interrupts IML6EXT :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6938: // Enabled Interrupts IRQ9_C
-                    WriteLinehw("HW Read Enabled Interrupts IRQ9_C :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6938: // Enabled Interrupts IML6ERR
+                    WriteLinehw("HW Read Enabled Interrupts IML6ERR :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
                 case 0x5f6940: // SB_PDTNRM	PVR-DMA trigger select from normal interrupt
@@ -850,8 +857,8 @@ namespace DC4Ever
                     WriteLinehw("HW Read MAPLE_RESET1 :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
                 #endregion
-
-                #region PVR Registers
+//#if !zezuExt
+				#region PVR Registers
 
                 case 0x5f8012: // RENDERFORMAT, "alpha config"
                     WriteLinehw("HW Read RENDERFORMAT, alpha config :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
@@ -1051,15 +1058,15 @@ namespace DC4Ever
                     WriteLinehw("HW Read SPG_TRIGGER_POS :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case (0xa05f8000 + 0x32 * 4): // 0xa05f80c8, SPG_HBLANK_INT
+                case (0x5f8000 + 0x32 * 4): // 0xa05f80c8, SPG_HBLANK_INT
                     WriteLinehw("HW Read  0xa05f80c8, SPG_HBLANK_INT :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case (0xa05f8000 + 0x33 * 4): // 0xa05f80cc, SPG_VBLANK_INT
+                case (0x5f8000 + 0x33 * 4): // 0xa05f80cc, SPG_VBLANK_INT
                     WriteLinehw("HW Read 0xa05f80cc, SPG_VBLANK_INT :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case (0xa05f8000 + 0x34 * 4): // 0xa05f80d0, SPG_CONTROL
+                case (0x5f8000 + 0x34 * 4): // 0xa05f80d0, SPG_CONTROL
                     WriteLinehw("HW Read  0xa05f80d0, SPG_CONTROL :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
@@ -1101,7 +1108,7 @@ namespace DC4Ever
 
                 case 0x5f8000 + 0x43 * 4: // [SYNC_STAT]
                     //WriteLinehw("HW Read SYNC_STAT :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
-					return  (uint)((emu.gl_cop_cnt / 10) % 0x1FF);
+					return (uint)((pvr.VblankInfo()) << 13) | ((pvr.HblankInfo()) << 12) | ((0) << 10) | pvr.prv_cur_scanline;
                     //break;
 
                 case 0x5f8000 + 0x44 * 4: // [FB_BURSTCTRL]
@@ -1176,9 +1183,9 @@ namespace DC4Ever
                     WriteLinehw("HW Read PPALLOCEND [TA_NEXT_OPB_INIT] (TA) (PP-block allocation area end) :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                #endregion
-
-                case 0x710000: // Dreamcast RTC, reg 1
+				#endregion
+//#endif
+				case 0x710000: // Dreamcast RTC, reg 1
                     WriteLinehw("HW Read Dreamcast RTC, reg 1 :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
@@ -1189,7 +1196,7 @@ namespace DC4Ever
                 default:
                     //WriteLine("WH I.O. registers Read adr:" + Convert.ToString(adr, 16) + " size :" + len.ToString() + " value " + Convert.ToString(data, 16));
                     break;
-#endif
+//#endif
             }
             switch (len)
             {
@@ -1214,54 +1221,57 @@ namespace DC4Ever
                 case 0x5F688C: // G2 FIFO
                     WriteLinehw("HW Write  G2 FIFO :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
-
+#endif
                 #region interups control registers
                 case 0x5f6900: // Pending Interrupts 1
-                    WriteLinehw("HW Write Pending Interrupts 1 :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
-                    break;
+                    //WriteLinehw("HW Write Pending Interrupts 1 :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+					*ISTNRM &= ~data;
+                    return;
 
                 case 0x5f6904: // Pending Interrupts 2
-                    WriteLinehw("HW Write  Pending Interrupts 2 :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
-                    break;
+                    //WriteLinehw("HW Write  Pending Interrupts 2 :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+					*ISTEXT &= ~data;
+                    return;
 
                 case 0x5f6908: // Pending Interrupts 3
-                    WriteLinehw("HW Write Pending Interrupts 3 :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                    //WriteLinehw("HW Write Pending Interrupts 3 :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+					*ISTERR &= ~data;
+                    return;
+#if !optimised_b
+                case 0x5f6910: // Enabled Interrupts IML2NRM
+                    WriteLinehw("HW Write Enabled Interrupts IML2NRM :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6910: // Enabled Interrupts IRQD_A
-                    WriteLinehw("HW Write Enabled Interrupts IRQD_A :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6914: // Enabled Interrupts IML2EXT
+                    WriteLinehw("HW Write Enabled Interrupts IML2EXT :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6914: // Enabled Interrupts IRQD_B
-                    WriteLinehw("HW Write Enabled Interrupts IRQD_B :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6918: // Enabled Interrupts IML2ERR
+                    WriteLinehw("HW Write Enabled Interrupts IML2ERR :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6918: // Enabled Interrupts IRQD_C
-                    WriteLinehw("HW Write Enabled Interrupts IRQD_C :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6920: // Enabled Interrupts IML4NRM
+                    WriteLinehw("HW Write Enabled Interrupts IML4NRM :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6920: // Enabled Interrupts IRQB_A
-                    WriteLinehw("HW Write Enabled Interrupts IRQB_A :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6924: // Enabled Interrupts IML4EXT
+                    WriteLinehw("HW Write Enabled Interrupts IML4EXT :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6924: // Enabled Interrupts IRQB_B
-                    WriteLinehw("HW Write Enabled Interrupts IRQB_B :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6928: // Enabled Interrupts IML4ERR
+                    WriteLinehw("HW Write Enabled Interrupts IML4ERR :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6928: // Enabled Interrupts IRQB_C
-                    WriteLinehw("HW Write Enabled Interrupts IRQB_C :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6930: // Enabled Interrupts IML6NRM
+                    WriteLinehw("HW Write Enabled Interrupts IML6NRM :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6930: // Enabled Interrupts IRQ9_A
-                    WriteLinehw("HW Write Enabled Interrupts IRQ9_A :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6934: // Enabled Interrupts IML6EXT
+                    WriteLinehw("HW Write Enabled Interrupts IML6EXT :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
-                case 0x5f6934: // Enabled Interrupts IRQ9_B
-                    WriteLinehw("HW Write Enabled Interrupts IRQ9_B :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
-                    break;
-
-                case 0x5f6938: // Enabled Interrupts IRQ9_C
-                    WriteLinehw("HW Write Enabled Interrupts IRQ9_C :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+                case 0x5f6938: // Enabled Interrupts IML6ERR
+                    WriteLinehw("HW Write Enabled Interrupts IML6ERR :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
                 case 0x5f6940: // SB_PDTNRM	PVR-DMA trigger select from normal interrupt
@@ -1270,46 +1280,47 @@ namespace DC4Ever
 
                 case 0x5f6944: // SB_PDTEXT	PVR-DMA trigger select from external interrupt
                     WriteLinehw("HW Write SB_PDTEXT	PVR-DMA trigger select from external interrupt :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
-                    break;
-                #endregion
+					break;
 #endif
-                #region MAPLE
+				#endregion
+
+				#region MAPLE
 #if !optimised_b
-                case 0x5f6c04: // MAPLE_DMAADDR
+				case 0x5f6c04: // MAPLE_DMAADDR
                     //WriteLinehw("HW Write MAPLE_DMAADDR :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 #endif
                 case 0x5f6c10: // MAPLE_RESET2
                     //WriteLinehw("HW Write MAPLE_RESET2 :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
-					MapleReset2(data);
+					maple.MapleReset2(data);
                     break;
 
                 case 0x5f6c14: // MAPLE_ENABLE
                     //WriteLinehw("HW Write MAPLE_ENABLE :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
-					MapleEnable(data);
+					maple.MapleEnable(data);
 					return;    
 					//break;
 					
                 case 0x5f6c18: // MAPLE_STATE
                     //WriteLinehw("HW Write MAPLE_STATE :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
-					MapleDMAState(data);
+					maple.MapleDMAState(data);
 					return;    
                     //break;
 
                 case 0x5f6c80: // MAPLE_SPEED
                     //WriteLinehw("HW Write MAPLE_SPEED :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
-					MapleSpeed(data);
+					maple.MapleSpeed(data);
 					return;
                     //break;
 
                 case 0x5f6c8c: // MAPLE_RESET1
                     //WriteLinehw("HW Write MAPLE_RESET1 :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
-					MapleReset1(data);
+					maple.MapleReset1(data);
 					return;
                     //break;
                 #endregion
 
-                #region PVR Registers
+					#region PVR Registers
 #if !optimised_b
                 case 0x5f8012: // RENDERFORMAT, "alpha config"
                     WriteLinehw("HW Write RENDERFORMAT, alpha config :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
@@ -1328,8 +1339,8 @@ namespace DC4Ever
                     break;
 #endif
                 case 0x5f8000 + 0x05 * 4://RENDERSTART (3D) (Start render strobe)
-                    //WriteLinehw("HW Write RENDERSTART (3D) (Start render strobe) :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
-					RenderStart();
+                    WriteLinehw("HW Write RENDERSTART (3D) (Start render strobe) :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+					//RenderStart();
                     break;
 #if !optimised_b
                 case 0x5f8000 + 0x06 * 4:// [TESTSELECT]
@@ -1386,32 +1397,32 @@ namespace DC4Ever
 					{
 						case 0x00:
 							WriteLinehw("ARGB1555");
-							bitinfo.biBitCount = 16;
+							pvr.bitinfo.biBitCount = 16;
 							//screenbits = 16;
 							break;
 
 						case 0x01:
 							WriteLinehw("RGB565");
-							bitinfo.biBitCount = 16;
+							pvr.bitinfo.biBitCount = 16;
 							//screenbits = 16;
 							break;
 
 						case 0x02:
 							WriteLinehw("RGB888");
-							bitinfo.biBitCount = 24;
+							pvr.bitinfo.biBitCount = 24;
 							//screenbits = 24;
 							break;
 
 						case 0x03:
 							WriteLinehw("ARGB8888");
-							bitinfo.biBitCount = 32;
+							pvr.bitinfo.biBitCount = 32;
 							//screenbits = 32;
 							break;
 					}
 					if ((data & 0x00800000)!=0)
 						WriteLinehw("pixel clock double enable");
                     break;
-#if !optimised_b
+//#if !optimised_b
                 case 0x5f8000 + 0x12 * 4:		// RENDERFORMAT [FB_W_CTRL] (3D) (Render output format)
                     WriteLinehw("HW Write RENDERFORMAT [FB_W_CTRL] (3D) (Render output format) :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
@@ -1635,11 +1646,11 @@ namespace DC4Ever
                 case 0x5f8000 + 0x4f * 4: // TILEARRAYSIZE [TA_GLOB_TILE_CLIP] (TA) (Tile Array dimensions)
                     WriteLinehw("HW Write TILEARRAYSIZE [TA_GLOB_TILE_CLIP] (TA) (Tile Array dimensions) :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
-#endif
+//#endif
 				case 0x5f8000 + 0x50 * 4: // PPBLOCKSIZE [TA_ALLOC_CTRL] (TA) (PP-block sizes) /ta_opb_cfg
 					//WriteLinehw("HW Write PPBLOCKSIZE [TA_ALLOC_CTRL] (TA) (PP-block sizes) :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
-					{
-						uint punch_through = (data >> 16) & 0x3;
+					//{
+						/*uint punch_through = (data >> 16) & 0x3;
 						uint transmod = (data >> 12) & 0x3;
 						uint transpoly = (data >> 8) & 0x3;
 						uint opaquemod = (data >> 4) & 0x3;
@@ -1661,14 +1672,16 @@ namespace DC4Ever
 
 						if (opaquepoly > 0)
 							pvr_registered |= 1 << 0;
-					}
+					}*/
 					break;
-#if !optimised_b
+
                 case 0x5f8000 + 0x51 * 4: // TASTART [TA_LIST_INIT] (TA) (Start vertex enqueueing strobe)
                     WriteLinehw("HW Write TASTART [TA_LIST_INIT] (TA) (Start vertex enqueueing strobe) :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
+					//TAStart(adr,data);
                     break;
 
-                case 0x5f8000 + 0x52 * 4: // [TA_YUV_TEX_BASE]
+//#if !optimised_b
+				case 0x5f8000 + 0x52 * 4: // [TA_YUV_TEX_BASE]
                     WriteLinehw("HW Write TA_YUV_TEX_BASE :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
@@ -1687,10 +1700,12 @@ namespace DC4Ever
                 case 0x5f8000 + 0x59 * 4: // PPALLOCEND [TA_NEXT_OPB_INIT] (TA) (PP-block allocation area end)
                     WriteLinehw("HW Write PPALLOCEND [TA_NEXT_OPB_INIT] (TA) (PP-block allocation area end) :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
-#endif
-                #endregion
-#if !optimised_b
-                case 0x710000: // Dreamcast RTC, reg 1
+//#endif
+				#endregion
+					
+
+//#if !optimised_b
+				case 0x710000: // Dreamcast RTC, reg 1
                     WriteLinehw("HW Write Dreamcast RTC, reg 1 :" + Convert.ToString(data, 16) + " ;size :" + len.ToString());
                     break;
 
@@ -1701,8 +1716,16 @@ namespace DC4Ever
                 default :
                     //WriteLine("WH I.O. registers write adr:" + Convert.ToString(adr, 16) + " size :" + len.ToString() + " value " + Convert.ToString(data, 16));
                     break;
-#endif
+//#endif
             }
+
+			if ((adr > 0x5f8000) && (adr <0x5fc000))
+				//try
+				//{
+					zezu_pvr.PvrWrite32(0xA0000000 | adr, ref data);
+				//}
+				//catch { }
+
             switch (len)
             {
                 case 1:
@@ -1719,6 +1742,7 @@ namespace DC4Ever
 
         public static void Init()
         {
+		
             /*malloc_lib.mallocClass c=new malloc_lib.mallocClass();
             mal = c.isMalloc();
             c = null;
@@ -1745,7 +1769,7 @@ namespace DC4Ever
             vram_w = null;
             vram_dw = null;*/
         }
-        static void ResetMem()
+        public static void ResetMem()
         {
 
             #region regmem [internal registers] pointers setup ;)
@@ -1824,18 +1848,18 @@ namespace DC4Ever
                 g2_fifo=(uint*)(biosmem_b+ 0x5F688C); // G2 FIFO
                 
                 #region interups
-				ACK_A = (uint*)(biosmem_b + 0x5F6900); // Pending Interrupts 1
-				ACK_B= (uint*)(biosmem_b + 0x5f6904); // Pending Interrupts 2
-				ACK_C = (uint*)(biosmem_b + 0x5f6908); // Pending Interrupts 3
-                IRQD_A=(uint*)(biosmem_b+ 0x5f6910); // Enabled Interrupts IRQD_A
-                IRQD_B=(uint*)(biosmem_b+ 0x5f6914); // Enabled Interrupts IRQD_B
-                IRQD_C=(uint*)(biosmem_b+ 0x5f6918); // Enabled Interrupts IRQD_C
-                IRQB_A=(uint*)(biosmem_b+ 0x5f6920); // Enabled Interrupts IRQB_A
-                IRQB_B=(uint*)(biosmem_b+ 0x5f6924); // Enabled Interrupts IRQB_B
-                IRQB_C=(uint*)(biosmem_b+ 0x5f6928); // Enabled Interrupts IRQB_C
-                IRQ9_A=(uint*)(biosmem_b+ 0x5f6930); // Enabled Interrupts IRQ9_A
-                IRQ9_B=(uint*)(biosmem_b+ 0x5f6934); // Enabled Interrupts IRQ9_B
-                IRQ9_C=(uint*)(biosmem_b+ 0x5f6938); // Enabled Interrupts IRQ9_C
+				ISTNRM = (uint*)(biosmem_b + 0x5F6900); // Pending Interrupts 1
+				ISTEXT= (uint*)(biosmem_b + 0x5f6904); // Pending Interrupts 2
+				ISTERR = (uint*)(biosmem_b + 0x5f6908); // Pending Interrupts 3
+                IML2NRM=(uint*)(biosmem_b+ 0x5f6910); // Enabled Interrupts IML2NRM
+                IML2EXT=(uint*)(biosmem_b+ 0x5f6914); // Enabled Interrupts IML2EXT
+                IML2ERR=(uint*)(biosmem_b+ 0x5f6918); // Enabled Interrupts IML2ERR
+                IML4NRM=(uint*)(biosmem_b+ 0x5f6920); // Enabled Interrupts IML4NRM
+                IML4EXT=(uint*)(biosmem_b+ 0x5f6924); // Enabled Interrupts IML4EXT
+                IML4ERR=(uint*)(biosmem_b+ 0x5f6928); // Enabled Interrupts IML4ERR
+                IML6NRM=(uint*)(biosmem_b+ 0x5f6930); // Enabled Interrupts IML6NRM
+                IML6EXT=(uint*)(biosmem_b+ 0x5f6934); // Enabled Interrupts IML6EXT
+                IML6ERR=(uint*)(biosmem_b+ 0x5f6938); // Enabled Interrupts IML6ERR
                 SB_PDTNRM=(uint*)(biosmem_b+ 0x5f6940); // SB_PDTNRM	PVR-DMA trigger select from normal interrupt
                 SB_PDTEXT=(uint*)(biosmem_b+ 0x5f6944); // SB_PDTEXT	PVR-DMA trigger select from external interrupt
                 #endregion
@@ -1901,9 +1925,9 @@ namespace DC4Ever
                 FOG_CLAMP_MAX=(uint*)(biosmem_b+ 0x5f8000 + 0x2f * 4);		//[FOG_CLAMP_MAX]
                 FOG_CLAMP_MIN=(uint*)(biosmem_b+ 0x5f8000 + 0x30 * 4);		// [FOG_CLAMP_MIN]
                 SPG_TRIGGER_POS=(uint*)(biosmem_b+ 0x5f8000 + 0x31 * 4);		// [SPG_TRIGGER_POS]
-                SPG_HBLANK_INT=(uint*)(biosmem_b+ (0xa05f8000 + 0x32 * 4)); // 0xa05f80c8, SPG_HBLANK_INT
-                SPG_VBLANK_INT=(uint*)(biosmem_b+ (0xa05f8000 + 0x33 * 4)); // 0xa05f80cc, SPG_VBLANK_INT
-                SPG_CONTROL=(uint*)(biosmem_b+ (0xa05f8000 + 0x34 * 4)); // 0xa05f80d0, SPG_CONTROL
+                SPG_HBLANK_INT=(uint*)(biosmem_b+ (0x5f8000 + 0x32 * 4)); // 0xa05f80c8, SPG_HBLANK_INT
+                SPG_VBLANK_INT=(uint*)(biosmem_b+ (0x5f8000 + 0x33 * 4)); // 0xa05f80cc, SPG_VBLANK_INT
+                SPG_CONTROL=(uint*)(biosmem_b+ (0x5f8000 + 0x34 * 4)); // 0xa05f80d0, SPG_CONTROL
                 SPG_HBLANK=(uint*)(biosmem_b+ 0x5f8000 + 0x35 * 4); // 0xa05f80d4, SPG_HBLANK
                 SPG_LOAD=(uint*)(biosmem_b+ 0x5f8000 + 0x36 * 4); // 0xa05f80d8, SPG_LOAD
                 SPG_WIDTH=(uint*)(biosmem_b+ 0x5f8000 + 0x39 * 4); // TEXTURESTRIDE [SPG_WIDTH] (3D) (Width of rectangular texture)
@@ -1939,7 +1963,7 @@ namespace DC4Ever
 
             #endregion
 
-			InitBios();//hle and shit
+			bios.InitBios();//hle and shit
         }
 		#region not used any more
 		// read/write to system ram -  not used anymore 
@@ -1979,7 +2003,7 @@ namespace DC4Ever
 		*/
 		#endregion
 		public static bool stop_textout = false;
-        static void WriteLine(string ln)
+        public static void WriteLine(string ln)
         {
 #if !optimised_b
 			if (!stop_textout)
