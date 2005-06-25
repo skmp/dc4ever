@@ -24,7 +24,7 @@ namespace DC4Ever
     public unsafe static partial  class emu
     {
         public static ulong gl_cop_cnt=0;
-		public const uint dc_boot_vec = 0x8C00B800;
+		public const uint dc_boot_vec = 0x8C00b800;//0x8C008300;
 		const uint dc_bios_vec = 0xA0000000;
 		#region sh4 regs and shit declares
 		//consts
@@ -111,7 +111,7 @@ namespace DC4Ever
 				 finvalidop,einexact,eunderflow,eoverflow,edivbyzero,
 				 einvalidop,cinexact,cunderflow,coverflow,cdivbyzero,
 				 cinvalid,cfpuerr,DN,SZ;
-            public static uint PR_, FR_;
+            public static uint PR, FR_;
             public static void init()
 			{
 				reg=0x0004001;
@@ -150,11 +150,11 @@ namespace DC4Ever
 				FR=(value>>21)&0x1;
 				}
 			}
-			public static uint PR
+			/*public static uint PR
 			{
 				get{return PR_;}
 				set{if (value!=PR_){PR_=value; PRchange();}}
-			}
+			}*/
 			public static uint FR
 			{
 				get{return FR_;}
@@ -174,7 +174,48 @@ namespace DC4Ever
 		public static float* fr = (float*)dc.mmgr.AllocMem(16 * sizeof(float));//fp regs set 1
 		public static float* xr = (float*)dc.mmgr.AllocMem(16 * sizeof(float));//fp regs set 2
         //todo DR/s
-		public static double* dr = (double*)fr;//fp regs set 1, in double form
+		//public static double* dr = (double*)fr;//fp regs set 1, in double form
+		static double* dat_dr = (double*)dc.mmgr.AllocMem(8 * sizeof(float));
+		public unsafe class dr_regs
+		{
+			public double this[int i]
+			{
+
+				get
+				{
+					uint* t = (uint*)dat_dr;
+					t[0] = fr_uint[(i << 1) | 1];
+					t[1] = fr_uint[(i << 1)];
+					return *(double*)t;
+				}
+				set
+				{
+					double val = value;
+					uint* t = (uint*)&val;
+					fr_uint[(i << 1) | 1] = t[0];
+					fr_uint[(i << 1)] = t[1];
+				}
+			}
+			public double this[uint i]
+			{
+
+				get
+				{
+					uint* t = (uint*)dat_dr;
+					t[0] = fr_uint[(i << 1) | 1];
+					t[1] = fr_uint[(i << 1)];
+					return *(double*)t;
+				}
+				set
+				{
+					double val = value;
+					uint* t = (uint*)&val;
+					fr_uint[(i << 1) | 1] = t[0];
+					fr_uint[(i << 1)] = t[1];
+				}
+			}
+		}
+		public static dr_regs dr = new dr_regs();
 		//public static double* xr_dbl = (double*)xr;//fp regs set 2, in double form
 
         public static uint* fr_uint = (uint*)fr;//fp regs set 1, in uint form
@@ -222,6 +263,15 @@ namespace DC4Ever
             runsh =true;
             uint tc=0;
 			//bool log_opts = false;
+
+			//biosmem_w[0x998 >> 1] = 0x9;
+			//
+			//bios_file[] = 0x9;
+			//bios_file[0x38e +1 ] = 0x0;
+
+			//bios_file[0x98a] = 0x9;
+			//bios_file[0x98a + 1] = 0x0;
+		
             do
 			{
 				#region dbshit
@@ -283,9 +333,9 @@ namespace DC4Ever
 
                 #region Interpreter
                 opcode=read(pc,3);
-				sh4_opcodes_test.testop(opcode);//check for any switch missmatches
-				if (fpscr.PR==1)
-					WriteLine("Double mode is not emulated;" +  DisasmOpcode(opcode,pc));
+				//sh4_opcodes_test.testop(opcode);//check for any switch missmatches
+				//if (fpscr.PR==1)
+					//WriteLine("Double mode is not emulated;" +  DisasmOpcode(opcode,pc));
 				#region debug 
 				/*
 				if (log_opts)
@@ -322,6 +372,8 @@ namespace DC4Ever
 				#endif
 				//file.Close();
                 tc = ccount[opcode];
+				//if (opcode == 0x40f3)
+//					break;
                 #region interpreter
                 switch (opcode>>12)//proc opcode
                 {
@@ -495,6 +547,9 @@ namespace DC4Ever
 							        case 0x6://0110
 								        i0000_nnnn_0110_1010();
 								        break;
+									case 0xf://1111
+										i0000_nnnn_1111_1010();
+										break;
 							        default:
                                         iInvalidOpcode();
                                         break;
@@ -706,30 +761,6 @@ namespace DC4Ever
 							case 0x6://0100_xxxx_0110_0010
 								i0100_nnnn_0110_0010();
 								break;
-							case 0x8://0100_xxxx_1000_0010
-								i0100_nnnn_1000_0010();
-								break;
-							case 0x9://0100_xxxx_1001_0010
-								i0100_nnnn_1001_0010();
-								break;
-							case 0xA://0100_xxxx_1010_0010
-								i0100_nnnn_1010_0010();
-								break;
-							case 0xB://0100_xxxx_1011_0010
-								i0100_nnnn_1011_0010();
-								break;
-							case 0xC://0100_xxxx_1100_0010
-								i0100_nnnn_1100_0010();
-								break;
-							case 0xD://0100_xxxx_1101_0010
-								i0100_nnnn_1101_0010();
-								break;
-							case 0xE://0100_xxxx_1110_0010
-								i0100_nnnn_1110_0010();
-								break;
-							case 0xF://0100_xxxx_1111_0010
-								i0100_nnnn_1111_0010();
-								break;
 							default:
 								iInvalidOpcode();
 								break;
@@ -738,27 +769,34 @@ namespace DC4Ever
 							break;
 						case 0x3://0011
 							#region 0x3 multi
-						switch ((opcode>>4)&0xf)
-						{
-							case 0x0://0100_xxxx_0000_0011
-								i0100_nnnn_0000_0011();
-								break;
-							case 0x1://0100_xxxx_0001_0011
-								i0100_nnnn_0001_0011();
-								break;
-							case 0x2://0100_xxxx_0010_0011
-								i0100_nnnn_0010_0011();
-								break;
-							case 0x3://0100_xxxx_0011_0011
-								i0100_nnnn_0011_0011();
-								break;
-							case 0x4://0100_xxxx_0100_0011
-								i0100_nnnn_0100_0011();
-								break;
-							default:
-								iInvalidOpcode();
-								break;
-						}
+							if (((opcode >> 7) & 0x1) != 0)
+							{
+								i0100_nnnn_1mmm_0011();
+							}
+							else
+							{
+								switch ((opcode >> 4) & 0xf)
+								{
+									case 0x0://0100_xxxx_0000_0011
+										i0100_nnnn_0000_0011();
+										break;
+									case 0x1://0100_xxxx_0001_0011
+										i0100_nnnn_0001_0011();
+										break;
+									case 0x2://0100_xxxx_0010_0011
+										i0100_nnnn_0010_0011();
+										break;
+									case 0x3://0100_xxxx_0011_0011
+										i0100_nnnn_0011_0011();
+										break;
+									case 0x4://0100_xxxx_0100_0011
+										i0100_nnnn_0100_0011();
+										break;
+									default:
+										iInvalidOpcode();
+										break;
+								}
+							}
 							#endregion 
 							break;
 						case 0x4://0100
@@ -927,6 +965,9 @@ namespace DC4Ever
 								break;
 							case 0x6://0100_xxxx_0110_1010
 								i0100_nnnn_0110_1010();
+								break;
+							case 0xf://0100_xxxx_0110_1010
+								i0100_nnnn_1111_1010();
 								break;
 							default:
 								iInvalidOpcode();
@@ -1337,7 +1378,7 @@ namespace DC4Ever
 							case 0x1://rts- driect
 								pc_funct = 1;
 								delayslot = pr;
-								cstRemCall(pr);
+								cstRemCall(pr, CallType.Normal);
 								break;
 						}
 
@@ -1480,11 +1521,12 @@ namespace DC4Ever
             UpdateMem(nCycles);
             UpdatePvr(nCycles);
             UpdateBios(nCycles);
+			dma_check();
             UpdateIntExc(nCycles);
             return false;
         }
 
-        static void PRchange()
+        /*static void PRchange()
 		{//Precision Mode change
 			if (fpscr.PR_==0 )//change to single
 			{
@@ -1494,8 +1536,9 @@ namespace DC4Ever
 			else//change to double
 			{
                 WriteLine("Warning : DOUBLE MODE IS NOT SUPORTED FOR NOW");
+				//fpscr.PR_ = 0;
             }
-		}
+		}*/
 		static void FRchange()
 		{//change FP register bank..
             //somewhat faster with pointers.. actualy , 17.4x faster..
@@ -1508,8 +1551,31 @@ namespace DC4Ever
 
 			xr = fp_tmp;
 			xr_uint = ft_u_t;
-			dr = (double*)fr;
+			//dr = (double*)fr;
             //fp_tmp.CopyTo(xr, 0);
+		}
+
+		static void dma_check()
+		{
+			if ((*DMAOR & 1)!=0)
+			{
+				if ((*CHCR0 & 1) != 0)
+				{
+					WriteLine("DMA CHANEL 0");
+				}
+				if ((*CHCR1 & 1)!=0)
+				{
+					WriteLine("DMA CHANEL 1");
+				}
+				if ((*CHCR2 & 1)!=0)
+				{
+					WriteLine("DMA CHANEL 2");
+				}
+				if ((*CHCR3 & 1) != 0)
+				{
+					WriteLine("DMA CHANEL 3");
+				}
+			}
 		}
     }
 }
