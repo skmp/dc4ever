@@ -10,17 +10,17 @@
 
 
 using System;
-#if nrt
+
 using didr = Microsoft.DirectX.DirectDraw;
-#endif
+
 namespace DC4Ever
 {
 	/// <summary>
 	/// Interfaces with managed DirectX
 	/// </summary>
-	public static class dx
+	public class dx
 	{
-        #if nrt
+        
 		public static Microsoft.DirectX.DirectDraw.Device dddev; 
 		public static Microsoft.DirectX.DirectDraw.Surface fb;//frontbuffer
 		public static Microsoft.DirectX.DirectDraw.Surface bb;//backbuffer
@@ -42,14 +42,14 @@ namespace DC4Ever
 			bb=new didr.Surface(desc,dddev);
 			bb.ColorFill (0);
 //#endif
-            emu.bitinfo = new DC4Ever.emu.BITMAPINFOHEADER();
-            emu.bitinfo.biSize = 40;
-            emu.bitinfo.biWidth = 640;
-            emu.bitinfo.biHeight = -480;
-            emu.bitinfo.biPlanes = 1;
-            emu.bitinfo.biBitCount = 16;
-            emu.bitinfo.biSizeImage = 640 * 480 * 2;
+            pvr.bitinfo = new DC4Ever.pvr.BITMAPINFOHEADER();
+            pvr.bitinfo.biSize = 40;
+            pvr.bitinfo.biWidth = 640;
+            pvr.bitinfo.biHeight = -480;
+            pvr.bitinfo.biPlanes = 1;
+            pvr.bitinfo.biBitCount = 16;
+            pvr.bitinfo.biSizeImage = 640 * 480 * 2;
         }
-        #endif
+        
     }
 }
