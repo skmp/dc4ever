@@ -12,19 +12,18 @@
 using System;
 
 using System.Diagnostics;
-#if nrt
+
 using System.Windows.Forms;
 using System.Text;
 using System.IO;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
-#endif
 
 
 namespace System
 {
-    #if nrt
+    
 	/// <summary>
 	/// Summary description for DebugConsole.
 	/// </summary>
@@ -69,7 +68,7 @@ namespace System
 				}
 			}
 			base.Dispose( disposing );
-            DC4Ever.emu.runsh = false;//stop cpu if it is running..
+            DC4Ever.sh4.runsh = false;//stop cpu if it is running..
             Application.Exit ();
 		}
 
@@ -85,9 +84,9 @@ namespace System
             this.SaveFileDlg = new System.Windows.Forms.SaveFileDialog();
             this.CheckScroll = new System.Windows.Forms.CheckBox();
             this.OutputView = new System.Windows.Forms.ListView();
-            this.Col1 = new System.Windows.Forms.ColumnHeader("");
-            this.Col2 = new System.Windows.Forms.ColumnHeader("");
-            this.Col3 = new System.Windows.Forms.ColumnHeader("");
+            this.Col1 = new System.Windows.Forms.ColumnHeader();
+            this.Col2 = new System.Windows.Forms.ColumnHeader();
+            this.Col3 = new System.Windows.Forms.ColumnHeader();
             this.CheckTop = new System.Windows.Forms.CheckBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel2.SuspendLayout();
@@ -178,7 +177,6 @@ namespace System
 // 
 // DebugConsoleWrapper
 // 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(5, 13);
             this.ClientSize = new System.Drawing.Size(993, 248);
             this.Controls.Add(this.OutputView);
             this.Controls.Add(this.panel2);
@@ -222,7 +220,7 @@ namespace System
 			if (this.CheckScroll.CheckState == CheckState.Checked)
 			{
 				this.OutputView.EnsureVisible(this.OutputView.Items.Count-1);
-				DC4Ever.emu.DoEvents();
+				DC4Ever.ta.DoEvents();
             }
 		}
 
@@ -279,53 +277,47 @@ namespace System
 
 	}
 	// DebugConsole Singleton
-    #endif
+    
 	public class DebugConsole : TraceListener
 	{
 
-#if nrt
+
 		public DebugConsoleWrapper DebugForm = new DebugConsoleWrapper();
-#else	
-        //public DebugConsoleWrapper DebugForm ;
-#endif
+
         // if this parameter is set to true, a call to WriteLine will always create a new row
 		// (if false, it may be appended to the current buffer created with some Write calls)
 		public bool UseCrWl = true;
 
 		public DebugConsole() 
 		{
-#if nrt
+
 			DebugForm.Show();
-#endif
+
 		}
 
 		public void Init(bool UseDebugOutput, bool UseCrForWriteLine)
 		{
-            #if nrt
+
 			if (UseDebugOutput==true)
 				Debug.Listeners.Add(this);
 			else
 				Trace.Listeners.Add(this);
 
 			this.UseCrWl = UseCrForWriteLine;
-#endif
+
 		}
 
 		override public void Write(string message) 
 		{   
-            #if nrt
 			DebugForm.Buffer.Append(message);
 			DebugForm.UpdateCurrentRow(false);
-#else
-            Console.Write(message);
-#endif
 		}
 
 		override public void WriteLine(string msg) 
 		{
-            #if nrt
+
             //return;
-            string message = DC4Ever.emu.gl_cop_cnt.ToString() + "|||" + msg;
+            string message = DC4Ever.sh4.gl_cop_cnt.ToString() + "|||" + msg;
             if (this.UseCrWl==true) 
 			{
 				DebugForm.CreateEventRow();
@@ -335,9 +327,6 @@ namespace System
 			DebugForm.Buffer.Append(message); 
 			DebugForm.UpdateCurrentRow(true);
 			DebugForm.Buffer = new StringBuilder(); 
-#else
-            Console.WriteLine(message);
-#endif
 		}
 	}
 
