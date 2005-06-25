@@ -15,26 +15,28 @@ namespace DC4Ever
 	/// Emulates the 
 	/// HLE Syscall emulation
 	/// </summary>
-    public unsafe static partial  class emu
+    public unsafe class bios
 	{
-		const uint dc_bios_hle_vec_1 = 0x100;
-		const uint dc_bios_hle_vec_2 = 0x100 + 2;
-		const uint dc_bios_hle_vec_3 = 0x100 + 4;
-		const uint dc_bios_hle_vec_4 = 0x100 + 6;
-		const uint dc_bios_hle_vec_5 = 0x100 + 8;
+		public const int kb = 1024;
+		public const int mb = kb * 1024;
+		public const uint dc_bios_hle_vec_1 = 0x100;
+		public const uint dc_bios_hle_vec_2 = 0x100 + 2;
+		public const uint dc_bios_hle_vec_3 = 0x100 + 4;
+		public const uint dc_bios_hle_vec_4 = 0x100 + 6;
+		public const uint dc_bios_hle_vec_5 = 0x100 + 8;
 
-		const uint dc_bios_syscall_system = 0x8C0000B0;
-		const uint dc_bios_syscall_font = 0x8C0000B4;
-		const uint dc_bios_syscall_flashrom = 0x8C0000B8;
-		const uint dc_bios_syscall_GDrom_misc = 0x8C0000BC;
-		const uint dc_bios_syscall_resets_Misc = 0x8c0000e0;
+		public const uint dc_bios_syscall_system = 0x8C0000B0;
+		public const uint dc_bios_syscall_font = 0x8C0000B4;
+		public const uint dc_bios_syscall_flashrom = 0x8C0000B8;
+		public const uint dc_bios_syscall_GDrom_misc = 0x8C0000BC;
+		public const uint dc_bios_syscall_resets_Misc = 0x8c0000e0;
 
-		static bool nobios;//no bios so everything has to be emulated(forced full hle)
-		static bool hle;//use hle emulation mixed mode (hle+bios)
-		static bool useBios = false;//use bios if it exists..
-		static byte[] bios_file = new byte[2*mb];// 2mb bios rom
-		static byte[] bios_flash = new byte[256*kb];//256 kb internal flash ram
-		static uint FakeRomFondAddr = 0x8cF82C18;//start of mem
+		public static bool nobios;//no bios so everything has to be emulated(forced full hle)
+		public static bool hle;//use hle emulation mixed mode (hle+bios)
+		public static bool useBios = false;//use bios if it exists..
+		public static byte[] bios_file = new byte[2*mb];// 2mb bios rom
+		public static byte[] bios_flash = new byte[256*kb];//256 kb internal flash ram
+		public static uint FakeRomFondAddr = 0x8cF82C18;//start of mem
 		public static int loadipbin(string name)//load and proc ip.bin/bootfile  -1/-2 on error
 		{
 			try//load ip.bin
@@ -43,7 +45,7 @@ namespace DC4Ever
 				System.IO.FileStream fs = fi.OpenRead();
                 byte[] tmp=new byte[32*kb];
 				fs.Read(tmp,0,32*kb);
-                pointerlib.unmanaged_pointer.ArrCpy(ram_b, tmp, 0, 0x8000, 32 * kb);
+                pointerlib.unmanaged_pointer.ArrCpy(mem.ram_b, tmp, 0, 0x8000, 32 * kb);
                 tmp = null; GC.Collect();
                 fs.Close();
 			}
@@ -58,7 +60,7 @@ namespace DC4Ever
 				System.IO.FileStream fs = fi.OpenRead();
                 byte[] tmp = new byte[fi.Length];
                 fs.Read(tmp,0, (int)fi.Length);
-                pointerlib.unmanaged_pointer.ArrCpy(ram_b, tmp, 0,32 * kb + 0x8000,(uint) fi.Length);
+                pointerlib.unmanaged_pointer.ArrCpy(mem.ram_b, tmp, 0,32 * kb + 0x8000,(uint) fi.Length);
                 tmp = null; GC.Collect();
                 fs.Close();
 				return 0;
@@ -80,7 +82,7 @@ namespace DC4Ever
 				fs.Read(fd, 0, (int)fi.Length);
 				for (uint i = 0; i < fi.Length; i++)
 				{
-					write(FakeRomFondAddr + i, fd[i], 1);
+					mem.write(FakeRomFondAddr + i, fd[i], 1);
 				}
 				fs.Close();
 			}
@@ -135,7 +137,7 @@ namespace DC4Ever
 				dc.dcon.WriteLine("Flash ram cannot be saved to \"" + name + "\"");
 			}
 		}
-		static unsafe uint readBios(uint adr,int len)//read from bios mem - no write (rom)
+		public static unsafe uint readBios(uint adr,int len)//read from bios mem - no write (rom)
 		{
 
 			//0x38e
@@ -162,194 +164,194 @@ namespace DC4Ever
 				{
 					//
 					//return a value according to the addr/register data
-					switch (pc)
+					switch (sh4.pc)
 					{
 						case dc_bios_hle_vec_1:
-							switch (r[7])
+							switch (sh4.r[7])
 							{
 								case 0:
 									//SYSINFO_INIT 
-									WriteLine("Bios call : SYSINFO_INIT");
-									WriteLine("Bios call was skiped");
+									mem.WriteLine("Bios call : SYSINFO_INIT");
+									mem.WriteLine("Bios call was skiped");
 									return 65537;//just jump back- no emulation :P
 									//break;
 								case 1:
 									//not a valid syscall 
-									WriteLine("Bios call : not a valid syscall");
-									WriteLine("Bios call was skiped");
+									mem.WriteLine("Bios call : not a valid syscall");
+									mem.WriteLine("Bios call was skiped");
 									return 65537;//just jump back- no emulation :P
 									//break;
 								case 2:
 									//SYSINFO_ICON 
-									WriteLine("Bios call : SYSINFO_ICON");
-									WriteLine("Bios call was skiped");
+									mem.WriteLine("Bios call : SYSINFO_ICON");
+									mem.WriteLine("Bios call was skiped");
 									return 65537;//just jump back- no emulation :P
 									//break;
 								case 3:
 									//SYSINFO_ID 
-									WriteLine("Bios call : SYSINFO_ID");
-									WriteLine("Bios call was skiped");
+									mem.WriteLine("Bios call : SYSINFO_ID");
+									mem.WriteLine("Bios call was skiped");
 									return 65537;//just jump back- no emulation :P
 									//break;
 							}
 							break;
 						case dc_bios_hle_vec_2:
-							switch (r[1])
+							switch (sh4.r[1])
 							{
 								case 0:
 									//ROMFONT_ADDRESS 
 									//WriteLine("bios call : ROMFONT_ADDRESS");
-									r[0] = FakeRomFondAddr;
+									sh4.r[0] = FakeRomFondAddr;
 									//WriteLine("Bios call was HLE'd");
 									return 65537;//just jump back- no emulation :P
 									//break;
 								case 1:
 									//ROMFONT_LOCK 
-									WriteLine("Bios call : ROMFONT_LOCK");
-									WriteLine("Bios call was skiped");
+									mem.WriteLine("Bios call : ROMFONT_LOCK");
+									mem.WriteLine("Bios call was skiped");
 									return 65537;//just jump back- no emulation :P
 									//break;
 								case 2:
 									//ROMFONT_UNLOCK 
-									WriteLine("Bios call : ROMFONT_UNLOCK");
-									WriteLine("Bios call was skiped");
+									mem.WriteLine("Bios call : ROMFONT_UNLOCK");
+									mem.WriteLine("Bios call was skiped");
 									return 65537;//just jump back- no emulation :P
 									//break;
 							}
 							break;
 						case dc_bios_hle_vec_3:
-							switch (r[7])
+							switch (sh4.r[7])
 							{
 								case 0:
 									//FLASHROM_INFO  
-									WriteLine("Bios call : FLASHROM_INFO");
-									WriteLine("Bios call was skiped");
+									mem.WriteLine("Bios call : FLASHROM_INFO");
+									mem.WriteLine("Bios call was skiped");
 									return 65537;//just jump back- no emulation :P
 									//break;
 								case 1:
 									//FLASHROM_READ  
-									WriteLine("Bios call : FLASHROM_READ");
-									WriteLine("Bios call was skiped");
+									mem.WriteLine("Bios call : FLASHROM_READ");
+									mem.WriteLine("Bios call was skiped");
 									return 65537;//just jump back- no emulation :P
 									//break;
 								case 2:
 									//FLASHROM_WRITE  
-									WriteLine("Bios call : FLASHROM_WRITE");
-									WriteLine("Bios call was skiped");
+									mem.WriteLine("Bios call : FLASHROM_WRITE");
+									mem.WriteLine("Bios call was skiped");
 									return 65537;//just jump back- no emulation :P
 									//break;
 								case 3:
 									//FLASHROM_DELETE  
-									WriteLine("Bios call : FLASHROM_DELETE");
-									WriteLine("Bios call was skiped");
+									mem.WriteLine("Bios call : FLASHROM_DELETE");
+									mem.WriteLine("Bios call was skiped");
 									return 65537;//just jump back- no emulation :P
 									//break;
 							}
 							break;
 						case dc_bios_hle_vec_4:
-							switch (r[6])
+							switch (sh4.r[6])
 							{
 								case 0xFFFFFFFF:
 									//MISC superfunction 
-									WriteLine("Bios call : MISC superfunction");
-									WriteLine("Bios call was skiped");
+									mem.WriteLine("Bios call : MISC superfunction");
+									mem.WriteLine("Bios call was skiped");
 									return 65537;//just jump back- no emulation :P
 									//break;
 								case 0:
 									//GDROM superfunction 
-									switch (r[7])
+									switch (sh4.r[7])
 									{
 										case 0:
-											WriteLine("GDROM_SEND_COMMAND");
-											WriteLine("Bios call was skiped");
+											mem.WriteLine("GDROM_SEND_COMMAND");
+											mem.WriteLine("Bios call was skiped");
 											return 65537;//just jump back- no emulation :P
 //											break;
 
 										case 1:
-											WriteLine("GDROM_CHECK_COMMAND");
-											WriteLine("Bios call was skiped");
+											mem.WriteLine("GDROM_CHECK_COMMAND");
+											mem.WriteLine("Bios call was skiped");
 											return 65537;//just jump back- no emulation :P
 //											break;
 
 										case 2:
-											WriteLine("GDROM_MAINLOOP");
-											WriteLine("Bios call was skiped");
+											mem.WriteLine("GDROM_MAINLOOP");
+											mem.WriteLine("Bios call was skiped");
 											return 65537;//just jump back- no emulation :P
 //											break;
 
 										case 3:
-											WriteLine("GDROM_INIT");
-											WriteLine("Bios call was skiped");
+											mem.WriteLine("GDROM_INIT");
+											mem.WriteLine("Bios call was skiped");
 											return 65537;//just jump back- no emulation :P
 //											break;
 
 										case 4:
-											WriteLine("GDROM_CHECK_DRIVE");
-											WriteLine("Bios call was FAKED");
-											write(r[4], 2, 4);// standby
-											write(r[4] + 4, 0x80, 4);// GD-ROM
+											mem.WriteLine("GDROM_CHECK_DRIVE");
+											mem.WriteLine("Bios call was FAKED");
+											mem.write(sh4.r[4], 2, 4);// standby
+											mem.write(sh4.r[4] + 4, 0x80, 4);// GD-ROM
 
-											r[0] = 0;
+											sh4.r[0] = 0;
 											return 65537;//just jump back- no emulation :P
 //											break;
 
 										case 5:
-											WriteLine("GDROM_?DMA?");
-											WriteLine("Bios call was skiped");
+											mem.WriteLine("GDROM_?DMA?");
+											mem.WriteLine("Bios call was skiped");
 											return 65537;//just jump back- no emulation :P
 //											break;
 
 										case 6:
-											WriteLine("GDROM_?DMA?");
-											WriteLine("Bios call was skiped");
+											mem.WriteLine("GDROM_?DMA?");
+											mem.WriteLine("Bios call was skiped");
 											return 65537;//just jump back- no emulation :P
 //											break;
 
 										case 7:
-											WriteLine("GDROM_?DMA?");
-											WriteLine("Bios call was skiped");
+											mem.WriteLine("GDROM_?DMA?");
+											mem.WriteLine("Bios call was skiped");
 											return 65537;//just jump back- no emulation :P
 ///											break;
 
 										case 8:
-											WriteLine("GDROM_ABORT_COMMAND");
-											WriteLine("Bios call was skiped");
+											mem.WriteLine("GDROM_ABORT_COMMAND");
+											mem.WriteLine("Bios call was skiped");
 											return 65537;//just jump back- no emulation :P
 ///											break;
 
 										case 9:
-											WriteLine("GDROM_RESET");
-											WriteLine("Bios call was skiped");
+											mem.WriteLine("GDROM_RESET");
+											mem.WriteLine("Bios call was skiped");
 											return 65537;//just jump back- no emulation :P
 ///											break;
 
 										case 10:
-											WriteLine("GDROM_SECTOR_MODE");
-											WriteLine("Bios call was skiped");
+											mem.WriteLine("GDROM_SECTOR_MODE");
+											mem.WriteLine("Bios call was skiped");
 											return 65537;//just jump back- no emulation :P
 ///											break;
 
 										case 11:
-											WriteLine("GDROM_?");
-											WriteLine("Bios call was skiped");
+											mem.WriteLine("GDROM_?");
+											mem.WriteLine("Bios call was skiped");
 											return 65537;//just jump back- no emulation :P
 //											break;
 
 										case 12:
-											WriteLine("GDROM_?");
-											WriteLine("Bios call was skiped");
+											mem.WriteLine("GDROM_?");
+											mem.WriteLine("Bios call was skiped");
 											return 65537;//just jump back- no emulation :P
 ///											break;
 
 										case 13:
-											WriteLine("GDROM_?");
-											WriteLine("Bios call was skiped");
+											mem.WriteLine("GDROM_?");
+											mem.WriteLine("Bios call was skiped");
 											return 65537;//just jump back- no emulation :P
 ///											break;
 									}
 
-									WriteLine("Bios call : GDROM superfunction ");
-									WriteLine("Bios call was skiped");
+									mem.WriteLine("Bios call : GDROM superfunction ");
+									mem.WriteLine("Bios call was skiped");
 									return 65537;//just jump back- no emulation :P
 									//break;
 
@@ -357,13 +359,13 @@ namespace DC4Ever
 							break;
 						case dc_bios_hle_vec_5:
 							{
-								WriteLine("Bios call : unkoen system call");
-								WriteLine("Bios call was skiped");
+								mem.WriteLine("Bios call : unkoen system call");
+								mem.WriteLine("Bios call was skiped");
 								return 65537;//just jump back- no emulation :P
 							}
 					}
 					//return 65537;
-					WriteLine("ReadBios (" + adr + ") at pc " + pc);
+					mem.WriteLine("ReadBios (" + adr + ") at pc " + sh4.pc);
 				}
 				#endregion
 			}
@@ -382,10 +384,10 @@ namespace DC4Ever
 					fixed(byte *p=&bios_file[adr])
 						return *(uint*)p;
 			}
-			dc.dcon.WriteLine("Wrong read size in readBios (" + len+") at pc "+pc);
+			dc.dcon.WriteLine("Wrong read size in readBios (" + len+") at pc "+sh4.pc);
 			return 0;
 		}
-		static unsafe uint readBios_falsh(uint adr,int len)
+		public static unsafe uint readBios_falsh(uint adr,int len)
 		{
 			switch (len)
 			{
@@ -398,10 +400,10 @@ namespace DC4Ever
 					fixed(byte *p=&bios_flash[adr])
 						return *(uint*)p;
 			}
-			dc.dcon.WriteLine("Wrong read size in readBios_flash (" + len+") at pc "+pc);
+			dc.dcon.WriteLine("Wrong read size in readBios_flash (" + len+") at pc "+sh4.pc);
 			return 0;
 		}
-		static unsafe void writeBios_flash(uint adr,uint data,int len)//write to the flash
+		public static unsafe void writeBios_flash(uint adr,uint data,int len)//write to the flash
 		{
 			switch (len)
 			{
@@ -417,17 +419,17 @@ namespace DC4Ever
 						*(uint*)p=data;
 					return; 
 			}
-			dc.dcon.WriteLine("Wrong write size in writeBios_flash (" + len+") at pc "+pc);
+			dc.dcon.WriteLine("Wrong write size in writeBios_flash (" + len+") at pc "+sh4.pc);
 		}
 
-        static void UpdateBios(uint cycles) { }
-		static void InitBios()
+        public static void UpdateBios(uint cycles) { }
+		public static void InitBios()
 		{
-			write(dc_bios_syscall_system , dc_bios_hle_vec_1, 4);
-			write(dc_bios_syscall_font, dc_bios_hle_vec_2, 4);
-			write(dc_bios_syscall_flashrom, dc_bios_hle_vec_3, 4);
-			write(dc_bios_syscall_GDrom_misc, dc_bios_hle_vec_4, 4);
-			write(dc_bios_syscall_resets_Misc, dc_bios_hle_vec_5, 4);
+			mem.write(dc_bios_syscall_system , dc_bios_hle_vec_1, 4);
+			mem.write(dc_bios_syscall_font, dc_bios_hle_vec_2, 4);
+			mem.write(dc_bios_syscall_flashrom, dc_bios_hle_vec_3, 4);
+			mem.write(dc_bios_syscall_GDrom_misc, dc_bios_hle_vec_4, 4);
+			mem.write(dc_bios_syscall_resets_Misc, dc_bios_hle_vec_5, 4);
 		}
     }
 }
