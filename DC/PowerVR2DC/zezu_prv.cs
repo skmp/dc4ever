@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 using System.Runtime.InteropServices;
-using Softec;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -18,7 +17,7 @@ namespace DC4Ever
 	unsafe delegate void Dbg_outCallBack(uint dwDebugFlags, byte* szFormat);
 	unsafe delegate void CPU_HaltCB(byte * szReason);
 
-	static unsafe class zezu_pvr
+	unsafe class zezu_pvr
 	{
 
 		/* Plugin types */
@@ -173,25 +172,25 @@ namespace DC4Ever
 
 		public static void FrameDone()
 		{
-			emu.WriteLine("DLL:FrameDone");
+			mem.WriteLine("DLL:FrameDone");
 			//emu.fps++;
 		}
 
 		public static void VtxStripDone()
 		{
-			emu.WriteLine("DLL:VtxStrip");
+			mem.WriteLine("DLL:VtxStrip");
 			//emu.fps++;
 		}
 
 
 		public static void Save_Config(byte* RegStr, uint Config)
 		{
-			emu.WriteLine("DLL:Save_Config");
+			mem.WriteLine("DLL:Save_Config");
 		}
 
 		public static void Load_Config(byte* RegStr, uint* Config)
 		{
-			emu.WriteLine("DLL:Load_Config");
+			mem.WriteLine("DLL:Load_Config");
 		}
 
 		public static void InteruptHandler(uint type)
@@ -199,25 +198,25 @@ namespace DC4Ever
 			switch (type)
 			{
 				case  RENDER_VIDEO:
-					emu.RaiseInterupt(emu.sh4_int.holly_RENDER_DONE);
-					emu.Is3DOn = true;
-					emu.fps++;
-					emu.DoEvents();
+					intc.RaiseInterupt(sh4_int.holly_RENDER_DONE);
+					pvr.Is3DOn = true;
+					pvr.fps++;
+					ta.DoEvents();
 					break;
 				case OPAQUE_LIST :
-					emu.RaiseInterupt(emu.sh4_int.holly_OPAQUE);
+					intc.RaiseInterupt(sh4_int.holly_OPAQUE);
 					break;
 				case OPAQUE_MOD_LIST :
-					emu.RaiseInterupt(emu.sh4_int.holly_OPAQUEMOD);
+					intc.RaiseInterupt(sh4_int.holly_OPAQUEMOD);
 					break;
 				case TRANS_LIST :
-					emu.RaiseInterupt(emu.sh4_int.holly_TRANS);
+					intc.RaiseInterupt(sh4_int.holly_TRANS);
 					break;
 				case TRANS_MOD_LIST :
-					emu.RaiseInterupt(emu.sh4_int.holly_TRANSMOD);
+					intc.RaiseInterupt(sh4_int.holly_TRANSMOD);
 					break;
 				case PUNCH_THRU_LIST :
-					emu.RaiseInterupt(emu.sh4_int.holly_PUNCHTHRU);
+					intc.RaiseInterupt(sh4_int.holly_PUNCHTHRU);
 					break;
 				default:
 					dc.dcon.WriteLine("DLL:InteruptHandler");
@@ -247,17 +246,17 @@ namespace DC4Ever
 
 
 			ginfo.hWnd = dc.frmMain.screen.Handle;
-			ginfo.PVR_REGS = (uint*)&emu.biosmem_b[0x5f8000];
-			ginfo.VRAM = emu.vram_b;
+			ginfo.PVR_REGS = (uint*)&mem.biosmem_b[0x5f8000];
+			ginfo.VRAM = pvr.vram_b;
 
-			ginfo.StatsFrame=FrameDone;
-			ginfo.StatsVtxStrip=VtxStripDone;
-			ginfo.Save_Config=Save_Config;
+			ginfo.StatsFrame=new NullCallBack(FrameDone);
+			ginfo.StatsVtxStrip= new NullCallBack(VtxStripDone);
+			ginfo.Save_Config= new Save_ConfigCB(Save_Config);
 
-			ginfo.Load_Config=Load_Config;
-			ginfo.CPU_Halt=CPU_Halt;
-			ginfo.Debug_Printf = LogHandler;
-			ginfo.Enqueue_IRQ = InteruptHandler;
+			ginfo.Load_Config= new Load_ConfigCB(Load_Config);
+			ginfo.CPU_Halt= new CPU_HaltCB(CPU_Halt);
+			ginfo.Debug_Printf = new Dbg_outCallBack(LogHandler);
+			ginfo.Enqueue_IRQ = new interCB(InteruptHandler);
 			
 
 			Redirect(ref ginfo_2, ginfo);
