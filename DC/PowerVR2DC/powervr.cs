@@ -11,9 +11,7 @@
 
 using System;
 using System.Drawing;
-#if nrt
 using System.Runtime.InteropServices;
-#endif
 using Tao.OpenGl;
 using Tao.Sdl;
 using SdlDotNet;
@@ -23,7 +21,7 @@ namespace DC4Ever
 	/// <summary>
 	/// Summary description for 
 	/// </summary>
-    public unsafe static partial  class emu
+    public unsafe class pvr
     {
 
 		#region WinApi
@@ -63,13 +61,13 @@ namespace DC4Ever
         public static uint f;
 		public static uint fps;
 		static int clc_pvr_frame = 0, clc_pvr_scanline=0;
-		static uint prv_cur_scanline = 0;
+		public static uint prv_cur_scanline = 0;
 		public static int clc_pvr_renderdone = 0;
 		//public static byte[] vram= new byte[8*mb];
-        public static byte* vram_b = (byte*)dc.mmgr.AllocMem(8 * mb);
+        public static byte* vram_b = (byte*)dc.mmgr.AllocMem(8 * mem.mb);
         static ushort* vram_w = (ushort*)vram_b;
         static uint* vram_dw = (uint*)vram_b;
-        static unsafe void writePvr(uint adr,uint data,int len)
+        public static unsafe void writePvr(uint adr,uint data,int len)
 		{
             mw += (uint)len;
 			#region Address translation
@@ -88,7 +86,7 @@ namespace DC4Ever
 			}
 			else 
 			{
-				dc.dcon.WriteLine("Address read out of Vram on write (pc="+pc+")");
+				dc.dcon.WriteLine("Address read out of Vram on write (pc="+sh4.pc+")");
 				return;
 			}
 			#endregion
@@ -109,9 +107,9 @@ namespace DC4Ever
                     vram_dw[adr >> 2] = data;
                     return; 
 			}
-			dc.dcon.WriteLine("Wrong write size in write (" + len+") at pc "+pc);
+			dc.dcon.WriteLine("Wrong write size in write (" + len+") at pc "+sh4.pc);
 		}
-		static unsafe uint readPvr(uint adr, int len)
+		public static unsafe uint readPvr(uint adr, int len)
 		{
 			#region Address translation
 			if ((adr > 0xFFFFFF)&& (adr<0x1800000))//using 32 bit interface
@@ -129,7 +127,7 @@ namespace DC4Ever
 			}
 			else 
 			{
-				dc.dcon.WriteLine("Address read out of Vram on read (pc="+pc+")");
+				dc.dcon.WriteLine("Address read out of Vram on read (pc="+sh4.pc+")");
 				return 0;
 			}
 			#endregion
@@ -146,22 +144,22 @@ namespace DC4Ever
 					//	return *(uint*)p;
                     return vram_dw[adr>>2];
             }
-			dc.dcon.WriteLine("Wrong read size in read (" + len+") at pc "+pc);
+			dc.dcon.WriteLine("Wrong read size in read (" + len+") at pc "+sh4.pc);
 			return 0;
 		}
-		static unsafe  void present()// draw the framebuffer(640*480*16 bit)
+		public static unsafe  void present()// draw the framebuffer(640*480*16 bit)
 		{
-            #if nrt
+           #if nrt
                 System.IntPtr hdc = dx.bb.GetDc();
                 fixed (BITMAPINFOHEADER* bi = &bitinfo)
-                    StretchDIBits(hdc, 0, 0, 640, 480, 0, 0, 640, 480,vram_b+*FB_R_SOF1 , bi, 0, 13369376);
+                    StretchDIBits(hdc, 0, 0, 640, 480, 0, 0, 640, 480,vram_b+*mem.FB_R_SOF1 , bi, 0, 13369376);
                 dx.bb.ReleaseDc(hdc);
                 dx.fb.Draw(new Rectangle(dc.frmMain.PointToScreen(new Point(dc.frmMain.ClientRectangle.X + 8, dc.frmMain.ClientRectangle.Y + 8))
                     , new Size(dc.frmMain.screen.Width, dc.frmMain.screen.Height)), dx.bb, Microsoft.DirectX.DirectDraw.DrawFlags.DoNotWait | Microsoft.DirectX.DirectDraw.DrawFlags.Async);
             #endif
             fps+=1;
 		}
-        static void UpdatePvr(uint cycles)
+        public static void UpdatePvr(uint cycles)
         {
 			clc_pvr_frame += (int)cycles;    //cycle count  #2
 			
@@ -170,12 +168,12 @@ namespace DC4Ever
 //#if !zezuExt
 				//ok .. here , after much effort , we reached a full screen redraw :P
 				//now , we will copy everything onto the screen (meh) and raise a vblank interupt
-				RaiseInterupt(sh4_int.holly_VBLank);//weeeee
+				intc.RaiseInterupt(sh4_int.holly_VBLank);//weeeee
 				//zezu_pvr.PvrUpdate(2);
 				if (!Is3DOn)
 					present();
 
-				DoEvents();
+				ta.DoEvents();
 				//zezu_pvr.PvrUpdate(0xFFFFFF);
 				//zezu_pvr.PvrUpdate(zezu_pvr.
 //#else
@@ -191,11 +189,11 @@ namespace DC4Ever
 				//now , we will copy everything onto the screen (meh) and raise a vblank interupt
 				prv_cur_scanline=(prv_cur_scanline+1)%480;
 
-				uint data = *SPG_VBLANK_INT;
+				uint data = *mem.SPG_VBLANK_INT;
 				if ((data & 0x3FFF) == prv_cur_scanline)
-					RaiseInterupt(sh4_int.holly_SCANINT1);
-				else if (((data >> 16) & 0x3FFF) == prv_cur_scanline)
-					RaiseInterupt(sh4_int.holly_SCANINT2);
+					intc.RaiseInterupt(sh4_int.holly_SCANINT1);
+				if (((data >> 16) & 0x3FFF) == prv_cur_scanline)
+					intc.RaiseInterupt(sh4_int.holly_SCANINT2);
 				
 				clc_pvr_scanline -= (3495253 / 480);
 			}
@@ -208,16 +206,16 @@ namespace DC4Ever
 					//render done interupt :P
 					//I MUST FIX THAT .. SOMEDAY
 #if!zezuExt
-					if (curListheader.vertex_count != 0)
+					if (ta.curListheader.vertex_count != 0)
 					{
-						curListheader.vertex_count = 0;
+						ta.curListheader.vertex_count = 0;
 						Gl.glEnd();
 					}
 					Video.GLSwapBuffers();
 
 					Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
 
-					DoEvents();
+					ta.DoEvents();
 #endif
 				}
 			}
@@ -227,14 +225,14 @@ namespace DC4Ever
 			//}
 		}
 
-		static uint HblankInfo()
+		public static uint HblankInfo()
 		{
 			return 0;
 		}
 		
-		static uint VblankInfo()
+		public static uint VblankInfo()
 		{
-			uint data = *SPG_VBLANK_INT;
+			uint data = *mem.SPG_VBLANK_INT;
 			if (((data & 0x3FFF) <= prv_cur_scanline) && (((data >> 16) & 0x3FFF) >= prv_cur_scanline))
 				return 1;
 			else
