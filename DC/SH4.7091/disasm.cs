@@ -1,10 +1,10 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 
 namespace DC4Ever
 {
-	static unsafe partial class emu
+	public unsafe class sh4_disasm
 	{
 		public static string DisasmOpcode(uint opcode, uint pc)
 		{
@@ -13,1020 +13,1020 @@ namespace DC4Ever
 			{
 				case 0x0://finished
 					#region case 0x0
-					switch (opcode & 0xf)
+				switch (opcode & 0xf)
+				{
+					case 0x0://0000
+						return "Invalid opcode";
+						//break;
+					case 0x1://0001
+						return "Invalid opcode";
+						//break;
+					case 0x2://0010
+						#region case 0x2 multi opcodes
+					switch ((opcode >> 4) & 0xf)
 					{
 						case 0x0://0000
-							return "Invalid opcode";
-						//break;
+							return d0000_nnnn_0000_0010(opcode, pc);
+							//return "stc SR{" + sr.reg.ToString() + "}," + RegToString(Get2N(opcode));
+							//break;
 						case 0x1://0001
-							return "Invalid opcode";
-						//break;
+							return d0000_nnnn_0001_0010(opcode, pc);
+							//return "stc GBR{" + gbr.ToString() + "}," + RegToString(Get2N(opcode)) + "//nimp";
+							//break;
 						case 0x2://0010
-							#region case 0x2 multi opcodes
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0000
-									return d0000_nnnn_0000_0010(opcode, pc);
-								//return "stc SR{" + sr.reg.ToString() + "}," + RegToString(Get2N(opcode));
-								//break;
-								case 0x1://0001
-									return d0000_nnnn_0001_0010(opcode, pc);
-								//return "stc GBR{" + gbr.ToString() + "}," + RegToString(Get2N(opcode)) + "//nimp";
-								//break;
-								case 0x2://0010
-									return d0000_nnnn_0010_0010(opcode, pc);
-								//break;
-								case 0x3://0011
-									return d0000_nnnn_0011_0010(opcode, pc);
-								//break;
-								case 0x4://0100
-									return d0000_nnnn_0100_0010(opcode, pc);
-								//break;
-								case 0x8://1000
-									return d0000_nnnn_1000_0010(opcode, pc);
-								//break;
-								case 0x9://1001
-									return d0000_nnnn_1001_0010(opcode, pc);
-								//break;
-								case 0xA://1010
-									return d0000_nnnn_1010_0010(opcode, pc);
-								//break;
-								case 0xB://1011
-									return d0000_nnnn_1011_0010(opcode, pc);
-								//break;
-								case 0xC://1100
-									return d0000_nnnn_1100_0010(opcode, pc);
-								//break;
-								case 0xD://1101
-									return d0000_nnnn_1101_0010(opcode, pc);
-								//break;
-								case 0xE://1110
-									return d0000_nnnn_1110_0010(opcode, pc);
-								//break;
-								case 0xF://1111
-									return d0000_nnnn_1111_0010(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
+							return d0000_nnnn_0010_0010(opcode, pc);
+							//break;
 						case 0x3://0011
-							#region case 0x3 multi opcodes
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0000
-									return d0000_nnnn_0000_0011(opcode, pc);
-								//break;
-								case 0x2://0010
-									return d0000_nnnn_0010_0011(opcode, pc);
-								//break;
-								case 0x8://1000
-									return d0000_nnnn_1000_0011(opcode, pc);
-								//break;
-								case 0x9://1001
-									return d0000_nnnn_1001_0011(opcode, pc);
-								//break;
-								case 0xA://1010
-									return d0000_nnnn_1010_0011(opcode, pc);
-								//break;
-								case 0xB://1011
-									return d0000_nnnn_1011_0011(opcode, pc);
-								//break;
-								case 0xC://1100
-									return d0000_nnnn_1100_0011(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
+							return d0000_nnnn_0011_0010(opcode, pc);
+							//break;
 						case 0x4://0100
-							return d0000_nnnn_mmmm_0100(opcode, pc);
-						//break;
-						case 0x5://0101
-							return d0000_nnnn_mmmm_0101(opcode, pc);
-						//break;
-						case 0x6://0110
-							return d0000_nnnn_mmmm_0110(opcode, pc);
-						//break;
-						case 0x7://0111
-							return d0000_nnnn_mmmm_0111(opcode, pc);
-						//break;
+							return d0000_nnnn_0100_0010(opcode, pc);
+							//break;
 						case 0x8://1000
-							#region case 0x8 multi opcodes
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0000
-									return d0000_0000_0000_1000(opcode, pc);
-								//break;
-								case 0x1://0001
-									return d0000_0000_0001_1000(opcode, pc);
-								//break;
-								case 0x2://0010
-									return d0000_0000_0010_1000(opcode, pc);
-								//break;
-								case 0x3://0011
-									return d0000_0000_0011_1000(opcode, pc);
-								//break;
-								case 0x4://0100
-									return d0000_0000_0100_1000(opcode, pc);
-								//break;
-								case 0x5://0101
-									return d0000_0000_0101_1000(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
+							return d0000_nnnn_1000_0010(opcode, pc);
+							//break;
 						case 0x9://1001
-							#region case 0x9 multi opcodes
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0000
-									return d0000_0000_0000_1001(opcode, pc);
-								//break;
-								case 0x1://0001
-									return d0000_0000_0001_1001(opcode, pc);
-								//break;
-								case 0x2://0010
-									return d0000_nnnn_0010_1001(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
+							return d0000_nnnn_1001_0010(opcode, pc);
+							//break;
 						case 0xA://1010
-							#region case 0xA multi opcodes
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0000
-									return d0000_nnnn_0000_1010(opcode, pc);
-								//break;
-								case 0x1://0001
-									return d0000_nnnn_0001_1010(opcode, pc);
-								//break;
-								case 0x2://0010
-									return d0000_nnnn_0010_1010(opcode, pc);
-								//break;
-								case 0x5://0101
-									return d0000_nnnn_0101_1010(opcode, pc);
-								//break;
-								case 0x6://0110
-									return d0000_nnnn_0110_1010(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
+							return d0000_nnnn_1010_0010(opcode, pc);
+							//break;
 						case 0xB://1011
-							#region case 0xB multi opcodes
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0000
-									return d0000_0000_0000_1011(opcode, pc);
-								//break;
-								case 0x1://0001
-									return d0000_0000_0001_1011(opcode, pc);
-								//break;
-								case 0x2://0010
-									return d0000_0000_0010_1011(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
+							return d0000_nnnn_1011_0010(opcode, pc);
+							//break;
 						case 0xC://1100
-							return d0000_nnnn_mmmm_1100(opcode, pc);
-						//break;
+							return d0000_nnnn_1100_0010(opcode, pc);
+							//break;
 						case 0xD://1101
-							return d0000_nnnn_mmmm_1101(opcode, pc);
-						//break;
+							return d0000_nnnn_1101_0010(opcode, pc);
+							//break;
 						case 0xE://1110
-							return d0000_nnnn_mmmm_1110(opcode, pc);
-						//break;
+							return d0000_nnnn_1110_0010(opcode, pc);
+							//break;
 						case 0xF://1111
-							return d0000_nnnn_mmmm_1111(opcode, pc);
-						//break;
+							return d0000_nnnn_1111_0010(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
 					}
+						#endregion
+						//break;
+					case 0x3://0011
+						#region case 0x3 multi opcodes
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0000
+							return d0000_nnnn_0000_0011(opcode, pc);
+							//break;
+						case 0x2://0010
+							return d0000_nnnn_0010_0011(opcode, pc);
+							//break;
+						case 0x8://1000
+							return d0000_nnnn_1000_0011(opcode, pc);
+							//break;
+						case 0x9://1001
+							return d0000_nnnn_1001_0011(opcode, pc);
+							//break;
+						case 0xA://1010
+							return d0000_nnnn_1010_0011(opcode, pc);
+							//break;
+						case 0xB://1011
+							return d0000_nnnn_1011_0011(opcode, pc);
+							//break;
+						case 0xC://1100
+							return d0000_nnnn_1100_0011(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0x4://0100
+						return d0000_nnnn_mmmm_0100(opcode, pc);
+						//break;
+					case 0x5://0101
+						return d0000_nnnn_mmmm_0101(opcode, pc);
+						//break;
+					case 0x6://0110
+						return d0000_nnnn_mmmm_0110(opcode, pc);
+						//break;
+					case 0x7://0111
+						return d0000_nnnn_mmmm_0111(opcode, pc);
+						//break;
+					case 0x8://1000
+						#region case 0x8 multi opcodes
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0000
+							return d0000_0000_0000_1000(opcode, pc);
+							//break;
+						case 0x1://0001
+							return d0000_0000_0001_1000(opcode, pc);
+							//break;
+						case 0x2://0010
+							return d0000_0000_0010_1000(opcode, pc);
+							//break;
+						case 0x3://0011
+							return d0000_0000_0011_1000(opcode, pc);
+							//break;
+						case 0x4://0100
+							return d0000_0000_0100_1000(opcode, pc);
+							//break;
+						case 0x5://0101
+							return d0000_0000_0101_1000(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0x9://1001
+						#region case 0x9 multi opcodes
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0000
+							return d0000_0000_0000_1001(opcode, pc);
+							//break;
+						case 0x1://0001
+							return d0000_0000_0001_1001(opcode, pc);
+							//break;
+						case 0x2://0010
+							return d0000_nnnn_0010_1001(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0xA://1010
+						#region case 0xA multi opcodes
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0000
+							return d0000_nnnn_0000_1010(opcode, pc);
+							//break;
+						case 0x1://0001
+							return d0000_nnnn_0001_1010(opcode, pc);
+							//break;
+						case 0x2://0010
+							return d0000_nnnn_0010_1010(opcode, pc);
+							//break;
+						case 0x5://0101
+							return d0000_nnnn_0101_1010(opcode, pc);
+							//break;
+						case 0x6://0110
+							return d0000_nnnn_0110_1010(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0xB://1011
+						#region case 0xB multi opcodes
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0000
+							return d0000_0000_0000_1011(opcode, pc);
+							//break;
+						case 0x1://0001
+							return d0000_0000_0001_1011(opcode, pc);
+							//break;
+						case 0x2://0010
+							return d0000_0000_0010_1011(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0xC://1100
+						return d0000_nnnn_mmmm_1100(opcode, pc);
+						//break;
+					case 0xD://1101
+						return d0000_nnnn_mmmm_1101(opcode, pc);
+						//break;
+					case 0xE://1110
+						return d0000_nnnn_mmmm_1110(opcode, pc);
+						//break;
+					case 0xF://1111
+						return d0000_nnnn_mmmm_1111(opcode, pc);
+						//break;
+				}
 					#endregion
-				break;
+					break;
 				case 0x1://finished
 					return d0001_nnnn_mmmm_iiii(opcode, pc);
-				//return "mov.l " + RegToString(Get3N(opcode)) + ",@(" + Get4N(opcode) + "," + RegToString(Get2N(opcode)) + ")";
-				//break;
+					//return "mov.l " + RegToString(Get3N(opcode)) + ",@(" + Get4N(opcode) + "," + RegToString(Get2N(opcode)) + ")";
+					//break;
 				case 0x2://finished
 					#region case 0x2
-					switch (opcode & 0xf)
-					{
-						case 0x0://0000
-							return d0010_nnnn_mmmm_0000(opcode, pc);
+				switch (opcode & 0xf)
+				{
+					case 0x0://0000
+						return d0010_nnnn_mmmm_0000(opcode, pc);
 						//break;
-						case 0x1://0001
-							return d0010_nnnn_mmmm_0001(opcode, pc);
+					case 0x1://0001
+						return d0010_nnnn_mmmm_0001(opcode, pc);
 						//break;
-						case 0x2://0010
-							return d0010_nnnn_mmmm_0010(opcode, pc);
+					case 0x2://0010
+						return d0010_nnnn_mmmm_0010(opcode, pc);
 						//break;
-						case 0x4://0100
-							return d0010_nnnn_mmmm_0100(opcode, pc);
+					case 0x4://0100
+						return d0010_nnnn_mmmm_0100(opcode, pc);
 						//break;
-						case 0x5://0101
-							return d0010_nnnn_mmmm_0101(opcode, pc);
+					case 0x5://0101
+						return d0010_nnnn_mmmm_0101(opcode, pc);
 						//break;
-						case 0x6://0110
-							return d0010_nnnn_mmmm_0110(opcode, pc);
+					case 0x6://0110
+						return d0010_nnnn_mmmm_0110(opcode, pc);
 						//break;
-						case 0x7://0111
-							return d0010_nnnn_mmmm_0111(opcode, pc);
+					case 0x7://0111
+						return d0010_nnnn_mmmm_0111(opcode, pc);
 						//break;
-						case 0x8://1000
-							return d0010_nnnn_mmmm_1000(opcode, pc);
+					case 0x8://1000
+						return d0010_nnnn_mmmm_1000(opcode, pc);
 						//break;
-						case 0x9://1001
-							return d0010_nnnn_mmmm_1001(opcode, pc);
+					case 0x9://1001
+						return d0010_nnnn_mmmm_1001(opcode, pc);
 						//break;
-						case 0xA://1010
-							return d0010_nnnn_mmmm_1010(opcode, pc);
+					case 0xA://1010
+						return d0010_nnnn_mmmm_1010(opcode, pc);
 						//break;
-						case 0xB://1011
-							return d0010_nnnn_mmmm_1011(opcode, pc);
+					case 0xB://1011
+						return d0010_nnnn_mmmm_1011(opcode, pc);
 						//break;
-						case 0xC://1100
-							return d0010_nnnn_mmmm_1100(opcode, pc);
+					case 0xC://1100
+						return d0010_nnnn_mmmm_1100(opcode, pc);
 						//break;
-						case 0xD://1101
-							return d0010_nnnn_mmmm_1101(opcode, pc);
+					case 0xD://1101
+						return d0010_nnnn_mmmm_1101(opcode, pc);
 						//break;
-						case 0xE://1110
-							return d0010_nnnn_mmmm_1110(opcode, pc);
+					case 0xE://1110
+						return d0010_nnnn_mmmm_1110(opcode, pc);
 						//break;
-						case 0xF://1111
-							return d0010_nnnn_mmmm_1111(opcode, pc);
+					case 0xF://1111
+						return d0010_nnnn_mmmm_1111(opcode, pc);
 						//break;
-						default:
-							return "Invalid opcode";
+					default:
+						return "Invalid opcode";
 						//break;
-					}
+				}
 					#endregion
-//				break;
+					//				break;
 				case 0x3://finished
 					#region case 0x3
-					switch (opcode & 0xf)
-					{
-						case 0x0://0000
-							return d0011_nnnn_mmmm_0000(opcode, pc);
+				switch (opcode & 0xf)
+				{
+					case 0x0://0000
+						return d0011_nnnn_mmmm_0000(opcode, pc);
 						//break;
-						case 0x2://0010
-							return d0011_nnnn_mmmm_0010(opcode, pc);
+					case 0x2://0010
+						return d0011_nnnn_mmmm_0010(opcode, pc);
 						//break;
-						case 0x3://0011
-							return d0011_nnnn_mmmm_0011(opcode, pc);
+					case 0x3://0011
+						return d0011_nnnn_mmmm_0011(opcode, pc);
 						//break;
-						case 0x4://0100
-							return d0011_nnnn_mmmm_0100(opcode, pc);
+					case 0x4://0100
+						return d0011_nnnn_mmmm_0100(opcode, pc);
 						//break;
-						case 0x5://0101
-							return d0011_nnnn_mmmm_0101(opcode, pc);
+					case 0x5://0101
+						return d0011_nnnn_mmmm_0101(opcode, pc);
 						//break;
-						case 0x6://0110
-							return d0011_nnnn_mmmm_0110(opcode, pc);
+					case 0x6://0110
+						return d0011_nnnn_mmmm_0110(opcode, pc);
 						//break;
-						case 0x7://0111
-							return d0011_nnnn_mmmm_0111(opcode, pc);
+					case 0x7://0111
+						return d0011_nnnn_mmmm_0111(opcode, pc);
 						//break;
-						case 0x8://1000
-							return d0011_nnnn_mmmm_1000(opcode, pc);
+					case 0x8://1000
+						return d0011_nnnn_mmmm_1000(opcode, pc);
 						//break;
-						case 0xA://1010
-							return d0011_nnnn_mmmm_1010(opcode, pc);
+					case 0xA://1010
+						return d0011_nnnn_mmmm_1010(opcode, pc);
 						//break;
-						case 0xB://1011
-							return d0011_nnnn_mmmm_1011(opcode, pc);
+					case 0xB://1011
+						return d0011_nnnn_mmmm_1011(opcode, pc);
 						//break;
-						case 0xC://1100
-							return d0011_nnnn_mmmm_1100(opcode, pc);
+					case 0xC://1100
+						return d0011_nnnn_mmmm_1100(opcode, pc);
 						//break;
-						case 0xD://1101
-							return d0011_nnnn_mmmm_1101(opcode, pc);
+					case 0xD://1101
+						return d0011_nnnn_mmmm_1101(opcode, pc);
 						//break;
-						case 0xE://1110
-							return d0011_nnnn_mmmm_1110(opcode, pc);
+					case 0xE://1110
+						return d0011_nnnn_mmmm_1110(opcode, pc);
 						//break;
-						case 0xF://1111
-							return d0011_nnnn_mmmm_1111(opcode, pc);
+					case 0xF://1111
+						return d0011_nnnn_mmmm_1111(opcode, pc);
 						//break;
-						default:
-							return "Invalid opcode";
+					default:
+						return "Invalid opcode";
 						//break;
-					}
+				}
 					#endregion
-				//break;
+					//break;
 				case 0x4://finished
 					#region case 0x4
-					switch (opcode & 0xf)
+				switch (opcode & 0xf)
+				{
+					case 0x0://0000
+						#region 0x0 multi
+					switch ((opcode >> 4) & 0xf)
 					{
-						case 0x0://0000
-							#region 0x0 multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0100_xxxx_0000_0000
-									return d0100_nnnn_0000_0000(opcode, pc);
-								//break;
-								case 0x1://0100_xxxx_0001_0000
-									return d0100_nnnn_0001_0000(opcode, pc);
-								//break;
-								case 0x2://0100_xxxx_0010_0000
-									return d0100_nnnn_0010_0000(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
-						case 0x1://0001
-							#region 0x1 multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0100_xxxx_0000_0001
-									return d0100_nnnn_0000_0001(opcode, pc);
-								//break;
-								case 0x1://0100_xxxx_0001_0001
-									return d0100_nnnn_0001_0001(opcode, pc);
-								//break;
-								case 0x2://0100_xxxx_0010_0001
-									return d0100_nnnn_0010_0001(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
-						case 0x2://0010
-							#region 0x2 multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0100_xxxx_0000_0010
-									return d0100_nnnn_0000_0010(opcode, pc);
-								//break;
-								case 0x1://0100_xxxx_0001_0010
-									return d0100_nnnn_0001_0010(opcode, pc);
-								//break;
-								case 0x2://0100_xxxx_0010_0010
-									return d0100_nnnn_0010_0010(opcode, pc);
-								//break;
-								case 0x5://0100_xxxx_0101_0010
-									return d0100_nnnn_0101_0010(opcode, pc);
-								//break;
-								case 0x6://0100_xxxx_0110_0010
-									return d0100_nnnn_0110_0010(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
-						case 0x3://0011
-							#region 0x3 multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0100_xxxx_0000_0011
-									return d0100_nnnn_0000_0011(opcode, pc);
-								//break;
-								case 0x1://0100_xxxx_0001_0011
-									return d0100_nnnn_0001_0011(opcode, pc);
-								//break;
-								case 0x2://0100_xxxx_0010_0011
-									return d0100_nnnn_0010_0011(opcode, pc);
-								//break;
-								case 0x3://0100_xxxx_0011_0011
-									return d0100_nnnn_0011_0011(opcode, pc);
-								//break;
-								case 0x4://0100_xxxx_0100_0011
-									return d0100_nnnn_0100_0011(opcode, pc);
-								//break;
-								case 0x8://0100_xxxx_1000_0010
-									return d0100_nnnn_1000_0011(opcode, pc);
-								//break;
-								case 0x9://0100_xxxx_1001_0010
-									return d0100_nnnn_1001_0011(opcode, pc);
-								//break;
-								case 0xA://0100_xxxx_1010_0010
-									return d0100_nnnn_1010_0011(opcode, pc);
-								//break;
-								case 0xB://0100_xxxx_1011_0010
-									return d0100_nnnn_1011_0011(opcode, pc);
-								//break;
-								case 0xC://0100_xxxx_1100_0010
-									return d0100_nnnn_1100_0011(opcode, pc);
-								//break;
-								case 0xD://0100_xxxx_1101_0010
-									return d0100_nnnn_1101_0011(opcode, pc);
-								//break;
-								case 0xE://0100_xxxx_1110_0010
-									return d0100_nnnn_1110_0011(opcode, pc);
-								//break;
-								case 0xF://0100_xxxx_1111_0010
-									return d0100_nnnn_1111_0011(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
-						case 0x4://0100
-							#region 0x4 multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0100_xxxx_0000_0100
-									return d0100_nnnn_0000_0100(opcode, pc);
-								//break;
-								case 0x2://0100_xxxx_0010_0100
-									return d0100_nnnn_0010_0100(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
-						case 0x5://0101
-							#region 0x5 multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0100_xxxx_0000_0101
-									return d0100_nnnn_0000_0101(opcode, pc);
-								//break;
-								case 0x1://0100_xxxx_0001_0101
-									return d0100_nnnn_0001_0101(opcode, pc);
-								//break;
-								case 0x2://0100_xxxx_0010_0101
-									return d0100_nnnn_0010_0101(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
-						case 0x6://0110
-							#region 0x6 multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0100_xxxx_0000_0110
-									return d0100_nnnn_0000_0110(opcode, pc);
-								//break;
-								case 0x1://0100_xxxx_0001_0110
-									return d0100_nnnn_0001_0110(opcode, pc);
-								//break;
-								case 0x2://0100_xxxx_0010_0110
-									return d0100_nnnn_0010_0110(opcode, pc);
-								//break;
-								case 0x5://0100_xxxx_0101_0110
-									return d0100_nnnn_0101_0110(opcode, pc);
-								//break;
-								case 0x6://0100_xxxx_0110_0110
-									return d0100_nnnn_0110_0110(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
-						case 0x7://0111
-							#region 0x7 multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0100_xxxx_0000_0111
-									return d0100_nnnn_0000_0111(opcode, pc);
-								//break;
-								case 0x1://0100_xxxx_0001_0111
-									return d0100_nnnn_0001_0111(opcode, pc);
-								//break;
-								case 0x2://0100_xxxx_0010_0111
-									return d0100_nnnn_0010_0111(opcode, pc);
-								//break;
-								case 0x3://0100_xxxx_0011_0111
-									return d0100_nnnn_0011_0111(opcode, pc);
-								//break;
-								case 0x4://0100_xxxx_0100_0111
-									return d0100_nnnn_0100_0111(opcode, pc);
-								//break;
-								case 0x8://0100_xxxx_1000_0111
-									return d0100_nnnn_1000_0111(opcode, pc);
-								//break;
-								case 0x9://0100_xxxx_1001_0111
-									return d0100_nnnn_1001_0111(opcode, pc);
-								//break;
-								case 0xA://0100_xxxx_1010_0111
-									return d0100_nnnn_1010_0111(opcode, pc);
-								//break;
-								case 0xB://0100_xxxx_1011_0111
-									return d0100_nnnn_1011_0111(opcode, pc);
-								//break;
-								case 0xC://0100_xxxx_1100_0111
-									return d0100_nnnn_1100_0111(opcode, pc);
-								//break;
-								case 0xD://0100_xxxx_1101_0111
-									return d0100_nnnn_1101_0111(opcode, pc);
-								//break;
-								case 0xE://0100_xxxx_1110_0111
-									return d0100_nnnn_1110_0111(opcode, pc);
-								//break;
-								case 0xF://0100_xxxx_1111_0111
-									return d0100_nnnn_1111_0111(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
-						case 0x8://1000
-							#region 0x8 multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0100_xxxx_0000_1000
-									return d0100_nnnn_0000_1000(opcode, pc);
-								//break;
-								case 0x1://0100_xxxx_0001_1000
-									return d0100_nnnn_0001_1000(opcode, pc);
-								//break;
-								case 0x2://0100_xxxx_0010_1000
-									return d0100_nnnn_0010_1000(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
-						case 0x9://1001
-							#region 0x9 multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0100_xxxx_0000_1001
-									return d0100_nnnn_0000_1001(opcode, pc);
-								//break;
-								case 0x1://0100_xxxx_0001_1001
-									return d0100_nnnn_0001_1001(opcode, pc);
-								//break;
-								case 0x2://0100_xxxx_0010_1001
-									return d0100_nnnn_0010_1001(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
-
-						case 0xA://1010
-							#region 0x9 multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0100_xxxx_0000_1010
-									return d0100_nnnn_0000_1010(opcode, pc);
-								//break;
-								case 0x1://0100_xxxx_0001_1010
-									return d0100_nnnn_0001_1010(opcode, pc);
-								//break;
-								case 0x2://0100_xxxx_0010_1010
-									return d0100_nnnn_0010_1010(opcode, pc);
-								//break;
-								case 0x5://0100_xxxx_0101_1010
-									return d0100_nnnn_0101_1010(opcode, pc);
-								//break;
-								case 0x6://0100_xxxx_0110_1010
-									return d0100_nnnn_0110_1010(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
-
-						case 0xB://1011
-							#region 0xB multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0100_xxxx_0000_1011
-									return d0100_nnnn_0000_1011(opcode, pc);
-								//break;
-								case 0x1://0100_xxxx_0001_1011
-									return d0100_nnnn_0001_1011(opcode, pc);
-								//break;
-								case 0x2://0100_xxxx_0010_1011
-									return d0100_nnnn_0010_1011(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
-						case 0xC://1100
-							return d0100_nnnn_mmmm_1100(opcode, pc);
-						//break;
-						case 0xD://1101
-							return d0100_nnnn_mmmm_1101(opcode, pc);
-						//break;
-						case 0xE://1110
-							#region 0xE multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0100_xxxx_0000_1110
-									return d0100_nnnn_0000_1110(opcode, pc);
-								//break;
-								case 0x1://0100_xxxx_0001_1110
-									return d0100_nnnn_0001_1110(opcode, pc);
-								//break;
-								case 0x2://0100_xxxx_0010_1110
-									return d0100_nnnn_0010_1110(opcode, pc);
-								//break;
-								case 0x3://0100_xxxx_0011_1110
-									return d0100_nnnn_0011_1110(opcode, pc);
-								//break;
-								case 0x4://0100_xxxx_0100_1110
-									return d0100_nnnn_0100_1110(opcode, pc);
-								//break;
-								case 0x8://0100_xxxx_1000_1110
-									return d0100_nnnn_1000_1110(opcode, pc);
-								//break;
-								case 0x9://0100_xxxx_1001_1110
-									return d0100_nnnn_1001_1110(opcode, pc);
-								//break;
-								case 0xA://0100_xxxx_1010_1110
-									return d0100_nnnn_1010_1110(opcode, pc);
-								//break;
-								case 0xB://0100_xxxx_1011_1110
-									return d0100_nnnn_1011_1110(opcode, pc);
-								//break;
-								case 0xC://0100_xxxx_1100_1110
-									return d0100_nnnn_1100_1110(opcode, pc);
-								//break;
-								case 0xD://0100_xxxx_1101_1110
-									return d0100_nnnn_1101_1110(opcode, pc);
-								//break;
-								case 0xE://0100_xxxx_1110_1110
-									return d0100_nnnn_1110_1110(opcode, pc);
-								//break;
-								case 0xF://0100_xxxx_1111_1110
-									return d0100_nnnn_1111_1110(opcode, pc);
-								//break;
-								default:
-									return "Invalid opcode";
-								//break;
-							}
-							#endregion
-						//break;
-						case 0xF://1111
-							return d0100_nnnn_mmmm_1111(opcode, pc);
-						//break;
+						case 0x0://0100_xxxx_0000_0000
+							return d0100_nnnn_0000_0000(opcode, pc);
+							//break;
+						case 0x1://0100_xxxx_0001_0000
+							return d0100_nnnn_0001_0000(opcode, pc);
+							//break;
+						case 0x2://0100_xxxx_0010_0000
+							return d0100_nnnn_0010_0000(opcode, pc);
+							//break;
 						default:
 							return "Invalid opcode";
-						//break;
+							//break;
 					}
+						#endregion
+						//break;
+					case 0x1://0001
+						#region 0x1 multi
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0100_xxxx_0000_0001
+							return d0100_nnnn_0000_0001(opcode, pc);
+							//break;
+						case 0x1://0100_xxxx_0001_0001
+							return d0100_nnnn_0001_0001(opcode, pc);
+							//break;
+						case 0x2://0100_xxxx_0010_0001
+							return d0100_nnnn_0010_0001(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0x2://0010
+						#region 0x2 multi
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0100_xxxx_0000_0010
+							return d0100_nnnn_0000_0010(opcode, pc);
+							//break;
+						case 0x1://0100_xxxx_0001_0010
+							return d0100_nnnn_0001_0010(opcode, pc);
+							//break;
+						case 0x2://0100_xxxx_0010_0010
+							return d0100_nnnn_0010_0010(opcode, pc);
+							//break;
+						case 0x5://0100_xxxx_0101_0010
+							return d0100_nnnn_0101_0010(opcode, pc);
+							//break;
+						case 0x6://0100_xxxx_0110_0010
+							return d0100_nnnn_0110_0010(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0x3://0011
+						#region 0x3 multi
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0100_xxxx_0000_0011
+							return d0100_nnnn_0000_0011(opcode, pc);
+							//break;
+						case 0x1://0100_xxxx_0001_0011
+							return d0100_nnnn_0001_0011(opcode, pc);
+							//break;
+						case 0x2://0100_xxxx_0010_0011
+							return d0100_nnnn_0010_0011(opcode, pc);
+							//break;
+						case 0x3://0100_xxxx_0011_0011
+							return d0100_nnnn_0011_0011(opcode, pc);
+							//break;
+						case 0x4://0100_xxxx_0100_0011
+							return d0100_nnnn_0100_0011(opcode, pc);
+							//break;
+						case 0x8://0100_xxxx_1000_0010
+							return d0100_nnnn_1000_0011(opcode, pc);
+							//break;
+						case 0x9://0100_xxxx_1001_0010
+							return d0100_nnnn_1001_0011(opcode, pc);
+							//break;
+						case 0xA://0100_xxxx_1010_0010
+							return d0100_nnnn_1010_0011(opcode, pc);
+							//break;
+						case 0xB://0100_xxxx_1011_0010
+							return d0100_nnnn_1011_0011(opcode, pc);
+							//break;
+						case 0xC://0100_xxxx_1100_0010
+							return d0100_nnnn_1100_0011(opcode, pc);
+							//break;
+						case 0xD://0100_xxxx_1101_0010
+							return d0100_nnnn_1101_0011(opcode, pc);
+							//break;
+						case 0xE://0100_xxxx_1110_0010
+							return d0100_nnnn_1110_0011(opcode, pc);
+							//break;
+						case 0xF://0100_xxxx_1111_0010
+							return d0100_nnnn_1111_0011(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0x4://0100
+						#region 0x4 multi
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0100_xxxx_0000_0100
+							return d0100_nnnn_0000_0100(opcode, pc);
+							//break;
+						case 0x2://0100_xxxx_0010_0100
+							return d0100_nnnn_0010_0100(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0x5://0101
+						#region 0x5 multi
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0100_xxxx_0000_0101
+							return d0100_nnnn_0000_0101(opcode, pc);
+							//break;
+						case 0x1://0100_xxxx_0001_0101
+							return d0100_nnnn_0001_0101(opcode, pc);
+							//break;
+						case 0x2://0100_xxxx_0010_0101
+							return d0100_nnnn_0010_0101(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0x6://0110
+						#region 0x6 multi
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0100_xxxx_0000_0110
+							return d0100_nnnn_0000_0110(opcode, pc);
+							//break;
+						case 0x1://0100_xxxx_0001_0110
+							return d0100_nnnn_0001_0110(opcode, pc);
+							//break;
+						case 0x2://0100_xxxx_0010_0110
+							return d0100_nnnn_0010_0110(opcode, pc);
+							//break;
+						case 0x5://0100_xxxx_0101_0110
+							return d0100_nnnn_0101_0110(opcode, pc);
+							//break;
+						case 0x6://0100_xxxx_0110_0110
+							return d0100_nnnn_0110_0110(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0x7://0111
+						#region 0x7 multi
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0100_xxxx_0000_0111
+							return d0100_nnnn_0000_0111(opcode, pc);
+							//break;
+						case 0x1://0100_xxxx_0001_0111
+							return d0100_nnnn_0001_0111(opcode, pc);
+							//break;
+						case 0x2://0100_xxxx_0010_0111
+							return d0100_nnnn_0010_0111(opcode, pc);
+							//break;
+						case 0x3://0100_xxxx_0011_0111
+							return d0100_nnnn_0011_0111(opcode, pc);
+							//break;
+						case 0x4://0100_xxxx_0100_0111
+							return d0100_nnnn_0100_0111(opcode, pc);
+							//break;
+						case 0x8://0100_xxxx_1000_0111
+							return d0100_nnnn_1000_0111(opcode, pc);
+							//break;
+						case 0x9://0100_xxxx_1001_0111
+							return d0100_nnnn_1001_0111(opcode, pc);
+							//break;
+						case 0xA://0100_xxxx_1010_0111
+							return d0100_nnnn_1010_0111(opcode, pc);
+							//break;
+						case 0xB://0100_xxxx_1011_0111
+							return d0100_nnnn_1011_0111(opcode, pc);
+							//break;
+						case 0xC://0100_xxxx_1100_0111
+							return d0100_nnnn_1100_0111(opcode, pc);
+							//break;
+						case 0xD://0100_xxxx_1101_0111
+							return d0100_nnnn_1101_0111(opcode, pc);
+							//break;
+						case 0xE://0100_xxxx_1110_0111
+							return d0100_nnnn_1110_0111(opcode, pc);
+							//break;
+						case 0xF://0100_xxxx_1111_0111
+							return d0100_nnnn_1111_0111(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0x8://1000
+						#region 0x8 multi
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0100_xxxx_0000_1000
+							return d0100_nnnn_0000_1000(opcode, pc);
+							//break;
+						case 0x1://0100_xxxx_0001_1000
+							return d0100_nnnn_0001_1000(opcode, pc);
+							//break;
+						case 0x2://0100_xxxx_0010_1000
+							return d0100_nnnn_0010_1000(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0x9://1001
+						#region 0x9 multi
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0100_xxxx_0000_1001
+							return d0100_nnnn_0000_1001(opcode, pc);
+							//break;
+						case 0x1://0100_xxxx_0001_1001
+							return d0100_nnnn_0001_1001(opcode, pc);
+							//break;
+						case 0x2://0100_xxxx_0010_1001
+							return d0100_nnnn_0010_1001(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+
+					case 0xA://1010
+						#region 0x9 multi
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0100_xxxx_0000_1010
+							return d0100_nnnn_0000_1010(opcode, pc);
+							//break;
+						case 0x1://0100_xxxx_0001_1010
+							return d0100_nnnn_0001_1010(opcode, pc);
+							//break;
+						case 0x2://0100_xxxx_0010_1010
+							return d0100_nnnn_0010_1010(opcode, pc);
+							//break;
+						case 0x5://0100_xxxx_0101_1010
+							return d0100_nnnn_0101_1010(opcode, pc);
+							//break;
+						case 0x6://0100_xxxx_0110_1010
+							return d0100_nnnn_0110_1010(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+
+					case 0xB://1011
+						#region 0xB multi
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0100_xxxx_0000_1011
+							return d0100_nnnn_0000_1011(opcode, pc);
+							//break;
+						case 0x1://0100_xxxx_0001_1011
+							return d0100_nnnn_0001_1011(opcode, pc);
+							//break;
+						case 0x2://0100_xxxx_0010_1011
+							return d0100_nnnn_0010_1011(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0xC://1100
+						return d0100_nnnn_mmmm_1100(opcode, pc);
+						//break;
+					case 0xD://1101
+						return d0100_nnnn_mmmm_1101(opcode, pc);
+						//break;
+					case 0xE://1110
+						#region 0xE multi
+					switch ((opcode >> 4) & 0xf)
+					{
+						case 0x0://0100_xxxx_0000_1110
+							return d0100_nnnn_0000_1110(opcode, pc);
+							//break;
+						case 0x1://0100_xxxx_0001_1110
+							return d0100_nnnn_0001_1110(opcode, pc);
+							//break;
+						case 0x2://0100_xxxx_0010_1110
+							return d0100_nnnn_0010_1110(opcode, pc);
+							//break;
+						case 0x3://0100_xxxx_0011_1110
+							return d0100_nnnn_0011_1110(opcode, pc);
+							//break;
+						case 0x4://0100_xxxx_0100_1110
+							return d0100_nnnn_0100_1110(opcode, pc);
+							//break;
+						case 0x8://0100_xxxx_1000_1110
+							return d0100_nnnn_1000_1110(opcode, pc);
+							//break;
+						case 0x9://0100_xxxx_1001_1110
+							return d0100_nnnn_1001_1110(opcode, pc);
+							//break;
+						case 0xA://0100_xxxx_1010_1110
+							return d0100_nnnn_1010_1110(opcode, pc);
+							//break;
+						case 0xB://0100_xxxx_1011_1110
+							return d0100_nnnn_1011_1110(opcode, pc);
+							//break;
+						case 0xC://0100_xxxx_1100_1110
+							return d0100_nnnn_1100_1110(opcode, pc);
+							//break;
+						case 0xD://0100_xxxx_1101_1110
+							return d0100_nnnn_1101_1110(opcode, pc);
+							//break;
+						case 0xE://0100_xxxx_1110_1110
+							return d0100_nnnn_1110_1110(opcode, pc);
+							//break;
+						case 0xF://0100_xxxx_1111_1110
+							return d0100_nnnn_1111_1110(opcode, pc);
+							//break;
+						default:
+							return "Invalid opcode";
+							//break;
+					}
+						#endregion
+						//break;
+					case 0xF://1111
+						return d0100_nnnn_mmmm_1111(opcode, pc);
+						//break;
+					default:
+						return "Invalid opcode";
+						//break;
+				}
 					#endregion
-				//break;
+					//break;
 				case 0x5://finished
 					return d0101_nnnn_mmmm_iiii(opcode, pc);
-				//break;
+					//break;
 				case 0x6://finished
 					#region case 0x6
-					switch (opcode & 0xf)
-					{
-						case 0x0://0000
-							return d0110_nnnn_mmmm_0000(opcode, pc);
+				switch (opcode & 0xf)
+				{
+					case 0x0://0000
+						return d0110_nnnn_mmmm_0000(opcode, pc);
 						//break;
-						case 0x1://0001
-							return d0110_nnnn_mmmm_0001(opcode, pc);
+					case 0x1://0001
+						return d0110_nnnn_mmmm_0001(opcode, pc);
 						//break;
-						case 0x2://0010
-							return d0110_nnnn_mmmm_0010(opcode, pc);
+					case 0x2://0010
+						return d0110_nnnn_mmmm_0010(opcode, pc);
 						//break;
-						case 0x3://0011
-							return d0110_nnnn_mmmm_0011(opcode, pc);
+					case 0x3://0011
+						return d0110_nnnn_mmmm_0011(opcode, pc);
 						//break;
-						case 0x4://0100
-							return d0110_nnnn_mmmm_0100(opcode, pc);
+					case 0x4://0100
+						return d0110_nnnn_mmmm_0100(opcode, pc);
 						//break;
-						case 0x5://0101
-							return d0110_nnnn_mmmm_0101(opcode, pc);
+					case 0x5://0101
+						return d0110_nnnn_mmmm_0101(opcode, pc);
 						//break;
-						case 0x6://0110
-							return d0110_nnnn_mmmm_0110(opcode, pc);
+					case 0x6://0110
+						return d0110_nnnn_mmmm_0110(opcode, pc);
 						//break;
-						case 0x7://0111
-							return d0110_nnnn_mmmm_0111(opcode, pc);
+					case 0x7://0111
+						return d0110_nnnn_mmmm_0111(opcode, pc);
 						//break;
-						case 0x8://1000
-							return d0110_nnnn_mmmm_1000(opcode, pc);
+					case 0x8://1000
+						return d0110_nnnn_mmmm_1000(opcode, pc);
 						//break;
-						case 0x9://1001
-							return d0110_nnnn_mmmm_1001(opcode, pc);
+					case 0x9://1001
+						return d0110_nnnn_mmmm_1001(opcode, pc);
 						//break;
-						case 0xA://1010
-							return d0110_nnnn_mmmm_1010(opcode, pc);
+					case 0xA://1010
+						return d0110_nnnn_mmmm_1010(opcode, pc);
 						//break;
-						case 0xB://1011
-							return d0110_nnnn_mmmm_1011(opcode, pc);
+					case 0xB://1011
+						return d0110_nnnn_mmmm_1011(opcode, pc);
 						//break;
-						case 0xC://1100
-							return d0110_nnnn_mmmm_1100(opcode, pc);
+					case 0xC://1100
+						return d0110_nnnn_mmmm_1100(opcode, pc);
 						//break;
-						case 0xD://1101
-							return d0110_nnnn_mmmm_1101(opcode, pc);
+					case 0xD://1101
+						return d0110_nnnn_mmmm_1101(opcode, pc);
 						//break;
-						case 0xE://1110
-							return d0110_nnnn_mmmm_1110(opcode, pc);
+					case 0xE://1110
+						return d0110_nnnn_mmmm_1110(opcode, pc);
 						//break;
-						case 0xF://1111
-							return d0110_nnnn_mmmm_1111(opcode, pc);
+					case 0xF://1111
+						return d0110_nnnn_mmmm_1111(opcode, pc);
 						//break;
-						default:
-							return "Invalid opcode";
+					default:
+						return "Invalid opcode";
 						//break;
-					}
+				}
 					#endregion
-				//break;
+					//break;
 				case 0x7://finished
 					return d0111_nnnn_iiii_iiii(opcode, pc);
-				//break;
+					//break;
 				case 0x8://finished
 					#region case 0x8
-					switch ((opcode >> 8) & 0xf)
-					{
-						case 0x0://0000
-							return d1000_0000_mmmm_iiii(opcode, pc);
+				switch ((opcode >> 8) & 0xf)
+				{
+					case 0x0://0000
+						return d1000_0000_mmmm_iiii(opcode, pc);
 						//break;
-						case 0x1://0001
-							return d1000_0001_mmmm_iiii(opcode, pc);
+					case 0x1://0001
+						return d1000_0001_mmmm_iiii(opcode, pc);
 						//break;
-						case 0x4://0100
-							return d1000_0100_mmmm_iiii(opcode, pc);
+					case 0x4://0100
+						return d1000_0100_mmmm_iiii(opcode, pc);
 						//break;
-						case 0x5://0101
-							return d1000_0101_mmmm_iiii(opcode, pc);
+					case 0x5://0101
+						return d1000_0101_mmmm_iiii(opcode, pc);
 						//break;
-						case 0x8://1000
-							return d1000_1000_iiii_iiii(opcode, pc);
+					case 0x8://1000
+						return d1000_1000_iiii_iiii(opcode, pc);
 						//break;
-						case 0x9://1001
-							return d1000_1001_iiii_iiii(opcode, pc);
+					case 0x9://1001
+						return d1000_1001_iiii_iiii(opcode, pc);
 						//break;
-						case 0xB://1011
-							return d1000_1011_iiii_iiii(opcode, pc);
+					case 0xB://1011
+						return d1000_1011_iiii_iiii(opcode, pc);
 						//break;
-						case 0xD://1101
-							return d1000_1101_iiii_iiii(opcode, pc);
+					case 0xD://1101
+						return d1000_1101_iiii_iiii(opcode, pc);
 						//break;
-						case 0xF://1111
-							return d1000_1111_iiii_iiii(opcode, pc);
+					case 0xF://1111
+						return d1000_1111_iiii_iiii(opcode, pc);
 						//break;
-						default:
-							return "Invalid opcode";
+					default:
+						return "Invalid opcode";
 						//break;
-					}
+				}
 					#endregion
-				//break;
+					//break;
 				case 0x9://finished
 					return d1001_nnnn_iiii_iiii(opcode, pc);
-				//break;
+					//break;
 				case 0xA://finished
 					return d1010_iiii_iiii_iiii(opcode, pc);
-				//break;
+					//break;
 				case 0xB://finished
 					return d1011_iiii_iiii_iiii(opcode, pc);
-				//break;
+					//break;
 				case 0xC://finished
 					#region case 0xC
-					switch ((opcode >> 8) & 0xf)
-					{
-						case 0x0://0000
-							return d1100_0000_iiii_iiii(opcode, pc);
+				switch ((opcode >> 8) & 0xf)
+				{
+					case 0x0://0000
+						return d1100_0000_iiii_iiii(opcode, pc);
 						//break;
-						case 0x1://0001
-							return d1100_0001_iiii_iiii(opcode, pc);
+					case 0x1://0001
+						return d1100_0001_iiii_iiii(opcode, pc);
 						//break;
-						case 0x2://0010
-							return d1100_0010_iiii_iiii(opcode, pc);
+					case 0x2://0010
+						return d1100_0010_iiii_iiii(opcode, pc);
 						//break;
-						case 0x3://0011
-							return d1100_0011_iiii_iiii(opcode, pc);
+					case 0x3://0011
+						return d1100_0011_iiii_iiii(opcode, pc);
 						//break;
-						case 0x4://0100
-							return d1100_0100_iiii_iiii(opcode, pc);
+					case 0x4://0100
+						return d1100_0100_iiii_iiii(opcode, pc);
 						//break;
-						case 0x5://0101
-							return d1100_0101_iiii_iiii(opcode, pc);
+					case 0x5://0101
+						return d1100_0101_iiii_iiii(opcode, pc);
 						//break;
-						case 0x6://0110
-							return d1100_0110_iiii_iiii(opcode, pc);
+					case 0x6://0110
+						return d1100_0110_iiii_iiii(opcode, pc);
 						//break;
-						case 0x7://0111
-							return d1100_0111_iiii_iiii(opcode, pc);
+					case 0x7://0111
+						return d1100_0111_iiii_iiii(opcode, pc);
 						//break;
-						case 0x8://1000
-							return d1100_1000_iiii_iiii(opcode, pc);
+					case 0x8://1000
+						return d1100_1000_iiii_iiii(opcode, pc);
 						//break;
-						case 0x9://1001
-							return d1100_1001_iiii_iiii(opcode, pc);
+					case 0x9://1001
+						return d1100_1001_iiii_iiii(opcode, pc);
 						//break;
-						case 0xA://1010
-							return d1100_1010_iiii_iiii(opcode, pc);
+					case 0xA://1010
+						return d1100_1010_iiii_iiii(opcode, pc);
 						//break;
-						case 0xB://1011
-							return d1100_1011_iiii_iiii(opcode, pc);
+					case 0xB://1011
+						return d1100_1011_iiii_iiii(opcode, pc);
 						//break;
-						case 0xC://1100
-							return d1100_1100_iiii_iiii(opcode, pc);
+					case 0xC://1100
+						return d1100_1100_iiii_iiii(opcode, pc);
 						//break;
-						case 0xD://1101
-							return d1100_1101_iiii_iiii(opcode, pc);
+					case 0xD://1101
+						return d1100_1101_iiii_iiii(opcode, pc);
 						//break;
-						case 0xE://1110
-							return d1100_1110_iiii_iiii(opcode, pc);
+					case 0xE://1110
+						return d1100_1110_iiii_iiii(opcode, pc);
 						//break;
-						case 0xF://1111
-							return d1100_1111_iiii_iiii(opcode, pc);
+					case 0xF://1111
+						return d1100_1111_iiii_iiii(opcode, pc);
 						//break;
-						default:
-							return "Invalid opcode";
+					default:
+						return "Invalid opcode";
 						//break;
-					}
+				}
 					#endregion
-				//break;
+					//break;
 				case 0xD://finished
 					return d1101_nnnn_iiii_iiii(opcode, pc);
-				//break;
+					//break;
 				case 0xE://finished
 					return d1110_nnnn_iiii_iiii(opcode, pc);
-				//break;
+					//break;
 				case 0xF://finished - fix for fsca
 					#region case 0xf
-					switch (opcode & 0xf)
+				switch (opcode & 0xf)
+				{
+					case 0x0://0000
+						return d1111_nnnn_mmmm_0000(opcode, pc);
+						//break;
+					case 0x1://0001
+						return d1111_nnnn_mmmm_0001(opcode, pc);
+						//break;
+					case 0x2://0010
+						return d1111_nnnn_mmmm_0010(opcode, pc);
+						//break;
+					case 0x3://0011
+						return d1111_nnnn_mmmm_0011(opcode, pc);
+						//break;
+					case 0x4://0100
+						return d1111_nnnn_mmmm_0100(opcode, pc);
+						//break;
+					case 0x5://0101
+						return d1111_nnnn_mmmm_0101(opcode, pc);
+						//break;
+					case 0x6://0110
+						return d1111_nnnn_mmmm_0110(opcode, pc);
+						//break;
+					case 0x7://0111
+						return d1111_nnnn_mmmm_0111(opcode, pc);
+						//break;
+					case 0x8://1000
+						return d1111_nnnn_mmmm_1000(opcode, pc);
+						//break;
+					case 0x9://1001
+						return d1111_nnnn_mmmm_1001(opcode, pc);
+						//break;
+					case 0xA://1010
+						return d1111_nnnn_mmmm_1010(opcode, pc);
+						//break;
+					case 0xB://1011
+						return d1111_nnnn_mmmm_1011(opcode, pc);
+						//break;
+					case 0xC://1100
+						return d1111_nnnn_mmmm_1100(opcode, pc);
+						//break;
+					case 0xD://1101
+						#region 0xD multi
+					switch ((opcode >> 4) & 0xf)
 					{
 						case 0x0://0000
-							return d1111_nnnn_mmmm_0000(opcode, pc);
-						//break;
+							return d1111_nnnn_0000_1101(opcode, pc);
+							//break;
 						case 0x1://0001
-							return d1111_nnnn_mmmm_0001(opcode, pc);
-						//break;
+							return d1111_nnnn_0001_1101(opcode, pc);
+							//break;
 						case 0x2://0010
-							return d1111_nnnn_mmmm_0010(opcode, pc);
-						//break;
+							return d1111_nnnn_0010_1101(opcode, pc);
+							//break;
 						case 0x3://0011
-							return d1111_nnnn_mmmm_0011(opcode, pc);
-						//break;
+							return d1111_nnnn_0011_1101(opcode, pc);
+							//break;
 						case 0x4://0100
-							return d1111_nnnn_mmmm_0100(opcode, pc);
-						//break;
+							return d1111_nnnn_0100_1101(opcode, pc);
+							//break;
 						case 0x5://0101
-							return d1111_nnnn_mmmm_0101(opcode, pc);
-						//break;
+							return d1111_nnnn_0101_1101(opcode, pc);
+							//break;
 						case 0x6://0110
-							return d1111_nnnn_mmmm_0110(opcode, pc);
-						//break;
-						case 0x7://0111
-							return d1111_nnnn_mmmm_0111(opcode, pc);
-						//break;
+							return d1111_nnnn_0110_1101(opcode, pc);
+							//break;
 						case 0x8://1000
-							return d1111_nnnn_mmmm_1000(opcode, pc);
-						//break;
+							return d1111_nnnn_1000_1101(opcode, pc);
+							//break;
 						case 0x9://1001
-							return d1111_nnnn_mmmm_1001(opcode, pc);
-						//break;
+							return d1111_nnnn_1001_1101(opcode, pc);
+							//break;
 						case 0xA://1010
-							return d1111_nnnn_mmmm_1010(opcode, pc);
-						//break;
+							return d1111_nnnn_1010_1101(opcode, pc);
+							//break;
 						case 0xB://1011
-							return d1111_nnnn_mmmm_1011(opcode, pc);
-						//break;
-						case 0xC://1100
-							return d1111_nnnn_mmmm_1100(opcode, pc);
-						//break;
-						case 0xD://1101
-							#region 0xD multi
-							switch ((opcode >> 4) & 0xf)
-							{
-								case 0x0://0000
-									return d1111_nnnn_0000_1101(opcode, pc);
+							return d1111_nnnn_1011_1101(opcode, pc);
+							//break;
+						case 0xF://1111_xxxx_1111_1101
+							#region 0xf multi
+							//we have :
+							//1111_nnn0_1111_1101
+							//1111_nn01_1111_1101
+							//1111_1011_1111_1101
+							//1111_0011_1111_1101
+						switch ((opcode >> 8) & 0x1)
+						{
+							case 0x0://1111_nnn0_1111_1101 - fsca DC special
+								return d1111_nnn0_1111_1101(opcode, pc);
 								//break;
-								case 0x1://0001
-									return d1111_nnnn_0001_1101(opcode, pc);
-								//break;
-								case 0x2://0010
-									return d1111_nnnn_0010_1101(opcode, pc);
-								//break;
-								case 0x3://0011
-									return d1111_nnnn_0011_1101(opcode, pc);
-								//break;
-								case 0x4://0100
-									return d1111_nnnn_0100_1101(opcode, pc);
-								//break;
-								case 0x5://0101
-									return d1111_nnnn_0101_1101(opcode, pc);
-								//break;
-								case 0x6://0110
-									return d1111_nnnn_0110_1101(opcode, pc);
-								//break;
-								case 0x8://1000
-									return d1111_nnnn_1000_1101(opcode, pc);
-								//break;
-								case 0x9://1001
-									return d1111_nnnn_1001_1101(opcode, pc);
-								//break;
-								case 0xA://1010
-									return d1111_nnnn_1010_1101(opcode, pc);
-								//break;
-								case 0xB://1011
-									return d1111_nnnn_1011_1101(opcode, pc);
-								//break;
-								case 0xF://1111_xxxx_1111_1101
-									#region 0xf multi
-									//we have :
-									//1111_nnn0_1111_1101
-									//1111_nn01_1111_1101
-									//1111_1011_1111_1101
-									//1111_0011_1111_1101
-									switch ((opcode >> 8) & 0x1)
+							case 0x1://1111_xxy1_1111_1101
+								//if (opcode==0xfffd) {return "Invalid opcode";//break;}//1111_x111_1111_1101- invalid
+								//1111_nn01_1111_1101
+								//1111_1011_1111_1101
+								//1111_0011_1111_1101
+								if (((opcode >> 9) & 0x1) == 0)//1111_xxy1_1111_1101
+								{
+									return d1111_nn01_1111_1101(opcode, pc);
+								}
+								else//1111_yy11_1111_1101
+								{
+									if (((opcode >> 10) & 0x3) == 0)//1111_yy11_1111_1101
 									{
-										case 0x0://1111_nnn0_1111_1101 - fsca DC special
-											return d1111_nnn0_1111_1101(opcode, pc);
-										//break;
-										case 0x1://1111_xxy1_1111_1101
-											//if (opcode==0xfffd) {return "Invalid opcode";//break;}//1111_x111_1111_1101- invalid
-											//1111_nn01_1111_1101
-											//1111_1011_1111_1101
-											//1111_0011_1111_1101
-											if (((opcode >> 9) & 0x1) == 0)//1111_xxy1_1111_1101
-											{
-												return d1111_nn01_1111_1101(opcode, pc);
-											}
-											else//1111_yy11_1111_1101
-											{
-												if (((opcode >> 10) & 0x3) == 0)//1111_yy11_1111_1101
-												{
-													return d1111_0011_1111_1101(opcode, pc);
-												}
-												else if (((opcode >> 10) & 0x3) == 2)//1111_yy11_1111_1101
-												{
-													return d1111_1011_1111_1101(opcode, pc);
-												}
-											}
-											//1111_x111_1111_1101- invalid
-											return "Invalid opcode";
-										//break;
-										default:
-											return "Invalid opcode";
-										//break;
+										return d1111_0011_1111_1101(opcode, pc);
 									}
-									#endregion
+									else if (((opcode >> 10) & 0x3) == 2)//1111_yy11_1111_1101
+									{
+										return d1111_1011_1111_1101(opcode, pc);
+									}
+								}
+								//1111_x111_1111_1101- invalid
+								return "Invalid opcode";
 								//break;
-								default:
-									return "Invalid opcode";
+							default:
+								return "Invalid opcode";
 								//break;
-							}
+						}
 							#endregion
-						//break;
-						case 0xE://1110
-							return d1111_nnnn_mmmm_1110(opcode, pc);
-						//break;
+							//break;
 						default:
 							return "Invalid opcode";
-						//break;
+							//break;
 					}
+						#endregion
+						//break;
+					case 0xE://1110
+						return d1111_nnnn_mmmm_1110(opcode, pc);
+						//break;
+					default:
+						return "Invalid opcode";
+						//break;
+				}
 					#endregion
-				//break;
+					//break;
 				case 0x10://Custom emulation opcodes ;) "just for the fun of it (tm)"
-					switch (opcode & 0xFF)
-					{
-						case 0x1://rts- driect
-							return "Custom ; rts direct (" + emu.pr.ToString() + ")";
+				switch (opcode & 0xFF)
+				{
+					case 0x1://rts- driect
+						return "Custom ; rts direct (" + sh4.pr.ToString() + ")";
 						//break;
-					}
+				}
 
-				break;
+					break;
 				default:
 					return "Invalid opcode";
-				//break;
+					//break;
 			}
 			#endregion
 			return "Invalid opcode";
@@ -1035,18 +1035,18 @@ namespace DC4Ever
 
 		static string RegToString(uint reg)
 		{
-			return "R" + reg.ToString() + "{" + UintToHex(r[reg]) + "}";
+			return "R" + reg.ToString() + "{" + UintToHex(sh4.r[reg]) + "}";
 		}
 		static string SrToStr()
 		{
-			return "Sr{" + UintToHex(sr.reg) + "}";
+			return "Sr{" + UintToHex(sh4.sr.reg) + "}";
 		}
 
 		static string RegBankToString(uint reg)
 		{
-			return "R_bank" + reg.ToString() + "{" + UintToHex(r_bank[reg]) + "}";
+			return "R_bank" + reg.ToString() + "{" + UintToHex(sh4.r_bank[reg]) + "}";
 		}
-		static string UintToHex(uint val)
+		public static string UintToHex(uint val)
 		{
 			return "0x"+Convert.ToString(val, 16).ToUpper();
 		}
@@ -1091,7 +1091,7 @@ namespace DC4Ever
 		}
 		static int se16(ushort value)
 		{
-			return (sbyte)value;
+			return (short)value;
 		}
 
 		//
@@ -1099,26 +1099,23 @@ namespace DC4Ever
 		{
 
 			//addr &= 0x1FFFFFFF;
-			if ((addr & 0x1FFFFFFF) == (dc_bios_vec & 0x1FFFFFFF))
+			if ((addr & 0x1FFFFFFF) == (sh4.dc_bios_vec & 0x1FFFFFFF))
 				return "Dreamcast Bios Boot Address";
-			else if ((addr & 0x1FFFFFFF) == (dc_boot_vec & 0x1FFFFFFF))
+			else if ((addr & 0x1FFFFFFF) == (sh4.dc_boot_vec & 0x1FFFFFFF))
 				return "Dreamcast Boot Address[ip.bin]";
 			else if ((addr & 0x1FFFFFFF) == ((0x8C010000) & 0x1FFFFFFF))
 				return "1st_read.bin";
-			else if ((addr & 0x1FFFFFFF) == ((vbr+0x600) & 0x1FFFFFFF))
+			else if ((addr & 0x1FFFFFFF) == ((sh4.vbr+0x600) & 0x1FFFFFFF))
 				return "Interupt Hanlder Vector[0x" + Convert.ToString(addr, 16) + "]";
 			else
 				return "Unknown function name[0x" + Convert.ToString(addr, 16) + "]";
 		}
-	}
+	
 
 
-	#region disasm handlers
+		#region disasm handlers
 
-	//0xxx -  finished nimpl
-	public static unsafe partial class emu
-	{
-
+		#region 0xxx
 		//stc SR," + RegToString(Get2N(opcode)) + "                // no implementation
 		static string d0000_nnnn_0000_0010(uint opcode, uint pc)//0002
 		{
@@ -1434,19 +1431,16 @@ namespace DC4Ever
 			return "mac.l @" + RegToString(Get3N(opcode)) + "+,@" + RegToString(Get2N(opcode)) + "+";
 		}
 
-	}
-	//1xxx
-	public static unsafe partial class emu
-	{
+		#endregion
+		#region 1xxx
 		//mov.l " + RegToString(Get3N(opcode)) + ",@(" + Get4N(opcode) + "," + RegToString(Get2N(opcode)) + ")
 		static string d0001_nnnn_mmmm_iiii(uint opcode, uint pc)
 		{//TODO : Check This [26/4/05]
 			return "mov.l " + RegToString(Get3N(opcode)) + ",@(" + Get4N(opcode) + "," + RegToString(Get2N(opcode)) + ")";
 		}
-	}
-	//2xxx
-	public static unsafe partial class emu
-	{
+		#endregion
+		#region 2xxx
+
 		//mov.b " + RegToString(Get3N(opcode)) + ",@" + RegToString(Get2N(opcode)) + "        // no implemetation
 		static string d0010_nnnn_mmmm_0000(uint opcode, uint pc)
 		{//TODO : Check This [26/4/05]
@@ -1535,10 +1529,9 @@ namespace DC4Ever
 		{//TODO : Check This [26/4/05]
 			return ("muls " + RegToString(Get3N(opcode)) + "," + RegToString(Get2N(opcode)) + "");
 		}
-	}
-	//3xxx 
-	public static unsafe partial class emu
-	{
+									 
+		#endregion
+		#region 3xxx
 		// cmp/eq " + RegToString(Get3N(opcode)) + "," + RegToString(Get2N(opcode)) + "        // no implemetation
 		static string d0011_nnnn_mmmm_0000(uint opcode, uint pc)
 		{
@@ -1622,10 +1615,10 @@ namespace DC4Ever
 		{
 			return ("addv " + RegToString(Get3N(opcode)) + "," + RegToString(Get2N(opcode)) + "		//nimp");
 		}
-	}
-	//4xxx  
-	public static unsafe partial class emu
-	{
+									 
+		#endregion
+		#region 4xxx
+		
 		//sts.l FPUL,@-" + RegToString(Get2N(opcode)) + "          // no implemetation
 		static string d0100_nnnn_0101_0010(uint opcode, uint pc)
 		{
@@ -2162,19 +2155,19 @@ namespace DC4Ever
 		{
 			return ("mac.w @" + RegToString(Get3N(opcode)) + "+,@" + RegToString(Get2N(opcode)) + "+ 		//nimp");
 		}
-	}
-	//5xxx
-	public static unsafe partial class emu
-	{
+									 
+		#endregion
+		#region 5xxx
+		
 		//mov.l @(" + Get4N(opcode) + "," + RegToString(Get3N(opcode)) + ")," + RegToString(Get2N(opcode)) + "
 		static string d0101_nnnn_mmmm_iiii(uint opcode, uint pc)
 		{//TODO : Check This [26/4/05]
 			return "mov.l @(" + Get4N(opcode) + "," + RegToString(Get3N(opcode)) + ")," + RegToString(Get2N(opcode)) + "";
 		}
-	}
-	//6xxx
-	public static unsafe partial class emu
-	{
+		
+		#endregion
+		#region 6xxx
+		
 		//mov.b @" + RegToString(Get3N(opcode)) + "," + RegToString(Get2N(opcode)) + "        // no implemetation
 		static string d0110_nnnn_mmmm_0000(uint opcode, uint pc)
 		{//TODO : Check This [26/4/05]
@@ -2285,19 +2278,19 @@ namespace DC4Ever
 		{//ToDo : Check This [26/4/05]
 			return ("exts.w " + RegToString(Get3N(opcode)) + "," + RegToString(Get2N(opcode)) + "");
 		}
-	}
-	//7xxx
-	public static unsafe partial class emu
-	{
+									 
+		#endregion
+		#region 7xxx
+		
 		//add #" + Get2B(opcode) + "," + RegToString(Get2N(opcode)) + "
 		static string d0111_nnnn_iiii_iiii(uint opcode, uint pc)
 		{//TODO : CHACK THIS
 			return "add #" + Get2B(opcode) + "," + RegToString(Get2N(opcode)) + "";
 		}
-	}
-	//8xxx
-	public static unsafe partial class emu
-	{
+		
+		#endregion
+		#region 8xxx
+		
 		// bf " + Get2B(opcode) + "                   // no implemetation
 		static string d1000_1011_iiii_iiii(uint opcode, uint pc)
 		{//ToDo : Check Me [26/4/05]
@@ -2315,14 +2308,14 @@ namespace DC4Ever
 		// bt " + Get2B(opcode) + "                   // no implemetation
 		static string d1000_1001_iiii_iiii(uint opcode, uint pc)
 		{//TODO : Check This [26/4/05]
-			return "bt " + UintToHex((uint)((((sbyte)(opcode & 0xFF)) << 1) + pc + 4)) + "	;T=" + sr.T.ToString();
+			return "bt " + UintToHex((uint)((((sbyte)(opcode & 0xFF)) << 1) + pc + 4)) + "	;T=" + sh4.sr.T.ToString();
 		}
 
 
 		// bt.s " + Get2B(opcode) + "                 // no implemetation
 		static string d1000_1101_iiii_iiii(uint opcode, uint pc)
 		{
-			return "bt.s " + UintToHex((uint)( (uint) (((sbyte)(opcode & 0xFF)) * 2 + pc + 4))) + "	;T=" + sr.T.ToString();
+			return "bt.s " + UintToHex((uint)( (uint) (((sbyte)(opcode & 0xFF)) * 2 + pc + 4))) + "	;T=" + sh4.sr.T.ToString();
 		}
 
 
@@ -2359,39 +2352,39 @@ namespace DC4Ever
 		{//TODO : Check This [26/4/05]
 			return ("mov.w @(" + Get4N(opcode) + "," + RegToString(Get3N(opcode)) + "),R0");
 		}
-	}
-	//9xxx
-	public static unsafe partial class emu
-	{
+									 
+		#endregion
+		#region 9xxx
+		
 		//mov.w @(" + Get4N(opcode) + ",PC)," + RegToString(Get2N(opcode)) + "   
 		static string d1001_nnnn_iiii_iiii(uint opcode, uint pc)
 		{//TODO : Check This [26/4/05]
 			return "mov.w @(" + (Get2B(opcode)<<1) + ",PC)," + RegToString(Get2N(opcode)) + "";
 		}
-	}
-	//Axxx
-	public static unsafe partial class emu
-	{
+		
+		#endregion
+		#region Axxx
+		
 		// bra " +Get12bit(opcode) + "
 		static string d1010_iiii_iiii_iiii(uint opcode, uint pc)
 		{//ToDo : Check Me [26/4/05]
 			uint disp = Get12bit(opcode);
 			return "bra " + UintToHex((uint)((((short)((opcode & 0x0FFF) << 4)) >> 3) + pc + 4));
 		}
-	}
-	//Bxxx
-	public static unsafe partial class emu
-	{
+		
+		#endregion
+		#region Bxxx
+		
 		// bsr " +Get12bit(opcode) + "
 		static string d1011_iiii_iiii_iiii(uint opcode, uint pc)
 		{//ToDo : Check Me [26/4/05]
 			uint disp = Get12bit(opcode);
 			return "bsr " + UintToHex((uint)((((short)(disp << 4)) >> 3) + pc + 4));
 		}
-	}
-	//Cxxx
-	public static unsafe partial class emu
-	{
+									 
+		#endregion
+		#region Cxxx
+		
 		// mov.b R0,@(" + Get4N(opcode) + ",GBR)        // no implemetation
 		static string d1100_0000_iiii_iiii(uint opcode, uint pc)
 		{
@@ -2502,28 +2495,27 @@ namespace DC4Ever
 		{
 			return ("or.b #" + Get2B(opcode) + ",@(R0,GBR)		//nimp");
 		}
-	}
-	//Dxxx
-	public static unsafe partial class emu
-	{
+		
+		#endregion
+		#region Dxxx
+		
 		// mov.l @(" + Get4N(opcode) + ",PC)," + RegToString(Get2N(opcode)) + "    
 		static string d1101_nnnn_iiii_iiii(uint opcode, uint pc)
 		{//TODO : Check This [26/4/05]
 			return "mov.l @(" +( Get2B(opcode)<<2) + ",PC)," + RegToString(Get2N(opcode)) + "";
 		}
-	}
-	//Exxx
-	public static unsafe partial class emu
-	{
+		
+		#endregion
+		#region Exxx
 		// mov #" + Get2B(opcode) + "," + RegToString(Get2N(opcode)) + "
 		static string d1110_nnnn_iiii_iiii(uint opcode, uint pc)
 		{//TODO : Check This [26/4/05]
 			return "mov #" + Get2B(opcode) + "," + RegToString(Get2N(opcode)) + "";
 		}
-	}
-	//Fxxx
-	public static unsafe partial class emu
-	{
+		
+		#endregion
+		#region Fxxx
+
 		//fadd <FREG_M>,<FREG_N>        no implemetation
 		static string d1111_nnnn_mmmm_0000(uint opcode, uint pc)
 		{//TODO : CHECK THIS PR FP
@@ -2728,7 +2720,9 @@ namespace DC4Ever
 		{
 			return ("ftrv xmtrx,<FV_N>		//nimp");
 		}
-	}
 
-	#endregion
+		#endregion
+
+		#endregion
+	}
 }
