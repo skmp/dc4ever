@@ -8,5 +8,9 @@ I have recovered the history from several backups, trying to get the latest veri
 
 The code likely doesn't compile as is.
 
+nullDC was partially derived from this, after joining forces with David. A few things, like the interpreter, are somehow still alive and strong in Reicast, 15 years later!
+
+
 Cheers,
+
 ~skmp
